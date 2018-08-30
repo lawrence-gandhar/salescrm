@@ -36,6 +36,50 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+#*******************************************************************************
+# AUTHENTICATION  
+#*******************************************************************************   
 
 def index(request):
+    submit = request.POST.get("submit", False)
+
+    if submit:
+        
+        user = authenticate(username = request.POST["username"], password = request.POST["password"])
+        
+        if user is not None:
+            
+            login(request, user)
+
+            url_link = '/'
+
+            try:
+                usertype_link = Usertype.objects.get(pk = int(user.usertype_id))
+                url_link = usertype_link.link
+            except Usertype.DoesNotExist:
+                return render(request, 'crm/login.html', {}) 
+            except TypeError: 
+                return render(request, 'crm/login.html', {})      
+
+            return redirect(url_link + 'dashboard/')
     return render(request, 'crm/login.html', {})
+
+
+#*******************************************************************************
+# LOGOUT  
+#*******************************************************************************   
+
+@login_required
+def user_logout(request, usertype = None):
+    logout(request)
+    return HttpResponseRedirect('/')   
+
+
+#*******************************************************************************
+# PASSWORD CHANGE
+#*******************************************************************************    
+
+@login_required
+def change_password(request):
+    if request.is_ajax():
+        pass
