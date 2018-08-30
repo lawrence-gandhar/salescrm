@@ -51,17 +51,7 @@ def index(request):
             
             login(request, user)
 
-            url_link = '/'
-
-            try:
-                usertype_link = Usertype.objects.get(pk = int(user.usertype_id))
-                url_link = usertype_link.link
-            except Usertype.DoesNotExist:
-                return render(request, 'crm/login.html', {}) 
-            except TypeError: 
-                return render(request, 'crm/login.html', {})      
-
-            return redirect(url_link + 'dashboard/')
+            return redirect('dashboard/')
     return render(request, 'crm/login.html', {})
 
 
@@ -83,3 +73,12 @@ def user_logout(request, usertype = None):
 def change_password(request):
     if request.is_ajax():
         pass
+
+
+#*******************************************************************************
+# DASHBOARD
+#*******************************************************************************    
+
+@login_required
+def dashboard(request):
+    return render(request, 'crm/dashboard.html', {})
