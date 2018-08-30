@@ -5,6 +5,7 @@ try:
 
     urlpatterns = [
         path('', views.index, name='index'),    
+        path('dashboard/', views.dashboard, name='dashboard'),    
     ]
 
 except ImportError:
@@ -12,4 +13,5 @@ except ImportError:
 
     urlpatterns = [
         url('', views.index, name='index'),    
+        url('dashboard/', views.dashboard, name='dashboard'),    
     ]
