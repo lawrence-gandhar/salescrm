@@ -109,4 +109,18 @@ def change_password(request):
 
 @login_required
 def dashboard(request,  usertype = None):
-    return render(request, 'crm/dashboard.html', {})
+
+    data_dict = {}
+
+    template = 'crm/dashboard.html'
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = [
+                                "vendor/sparkline/index.js",
+                                "vendor/flot/jquery.flot.min.js",
+                                "vendor/flot/jquery.flot.resize.min.js",
+                                "vendor/flot/jquery.flot.spline.js",
+                            ]
+
+
+    return render(request, '', data_dict)
