@@ -7,7 +7,7 @@
                     Main
                 </li>
                 <li class="active">
-                    <a href="{% current_user_link user.id %}/dashboard/">Dashboard</a>
+                    <a href="/{% current_user_link user.id %}/dashboard/">Dashboard</a>
                 </li>
 
                 <li>
@@ -15,8 +15,8 @@
                         Leads Management<span class="sub-nav-icon"> <i class="stroke-arrow"></i> </span>
                     </a>
                     <ul id="leads" class="nav nav-second collapse">
-                        <li><a href="{% current_user_link user.id %}/leads/add/"> Add Lead</a></li>
-                        <li><a href="{% current_user_link user.id %}/leads/manage/"> Manage Lead</a></li>
+                        <li><a href="/{% current_user_link user.id %}/leads/add/"> Add Lead</a></li>
+                        <li><a href="/{% current_user_link user.id %}/leads/manage/"> Manage Lead</a></li>
                     </ul>
                 </li>
             </ul>
