@@ -5,7 +5,8 @@ try:
 
     urlpatterns = [
         path('', views.index, name='index'),    
-        path('dashboard/', views.dashboard, name='dashboard'),    
+        re_path(r'^(?P<usertype>[\w.@+-]+)/dashboard/', views.dashboard, name = 'dashboard'),  
+        re_path(r'^(?P<usertype>[\w.@+-]+)/logout/', views.user_logout, name = 'logout'),     
     ]
 
 except ImportError:
@@ -13,5 +14,6 @@ except ImportError:
 
     urlpatterns = [
         url('', views.index, name='index'),    
-        url('dashboard/', views.dashboard, name='dashboard'),    
+        url(r'^(?P<usertype>[\w.@+-]+)/dashboard/', views.dashboard, name = 'dashboard'),    
+        url(r'^(?P<usertype>[\w.@+-]+)/logout/', views.user_logout, name = 'logout'),    
     ]
