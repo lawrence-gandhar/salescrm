@@ -27,6 +27,10 @@ from django.shortcuts import render, redirect
 from .models import Usertype, User_usertype
 #from .models import Assessment_Settings, AssessmentFormOptions, AssessmentFormQuestions, AssessmentFormSection
 
+# Helper File Import
+from crm.helpers import *
+
+# system imports
 import sys, os, csv, json, datetime
 
 #
@@ -53,6 +57,8 @@ def index(request):
         if user is not None:
             
             login(request, user)
+
+            request.session["user_id"] = user.id
 
             url_link = '/'
 
@@ -112,7 +118,7 @@ def dashboard(request,  usertype = None):
 
     data_dict = {}
 
-    template = 'crm/dashboard.html'
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/dashboard.html'
     data_dict["css_files"] = []
 
     data_dict["js_files"] = [
@@ -123,4 +129,12 @@ def dashboard(request,  usertype = None):
                             ]
 
 
-    return render(request, '', data_dict)
+    return render(request, template, data_dict)
+
+
+#*******************************************************************************
+# ADD LEADS
+#*******************************************************************************    
+
+def add_lead(request):
+    pass
