@@ -133,8 +133,165 @@ def dashboard(request,  usertype = None):
 
 
 #*******************************************************************************
-# ADD LEADS
+# ADD LEAD STEP - 1
 #*******************************************************************************    
 
-def add_lead(request):
-    pass
+@login_required
+def add_lead(request, usertype = None):
+
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/add_lead.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    data_dict["lead_type"] = lead_type()
+    data_dict["lead_line_of_business"] = lead_line_of_business()
+    data_dict["lead_payment_type"] = lead_payment_type()
+    data_dict["lead_probability"] = lead_probability()
+    data_dict["country_list"] = country_list()
+
+    #
+    # ON POST OPERATION
+    #
+
+    submit = request.POST.get("submit", False)
+
+    if submit:
+
+        try:
+            lead = Leads_tbl(
+                company_name = request.POST["company_name"],
+                contact_title = request.POST["contact_title"],
+                contact_firstname = request.POST["contact_firstname"],
+                contact_lastname = request.POST["contact_lastname"],
+                contact_details = request.POST["contact_details"],
+                contact_designation = request.POST["contact_designation"],
+                address = request.POST["contact_address"],
+                country = request.POST["country"],
+                phone = request.POST["contact_phone"],
+                extension = request.POST["contact_extension"],
+                fax = request.POST["contact_fax"],
+                email = request.POST["contact_email"],
+                website = request.POST["contact_website"],
+                lead_type = Lead_type(id = int(request.POST["lead_type"])),
+                line_of_business = Lead_line_of_business(id = int(request.POST["lead_line_of_business"])),
+                payment_type = Lead_payment_type(id = int(request.POST["payment_type"])),
+                probability = Lead_probability(id = int(request.POST["probability"])),
+                fte = request.POST["fte"],
+                annual = request.POST["annual"],
+            )
+
+            lead.save()
+            messages.error(request, '1')
+            return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add-lead-step2/'+str(lead.id))
+
+        except:
+            messages.error(request, '0')
+            return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add/')
+
+    return render(request, template, data_dict)
+
+
+#*******************************************************************************
+# ADD LEAD STEP - 2
+#*******************************************************************************    
+
+@login_required
+def add_lead_step_2(request, usertype = None, id = None):
+
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/add_lead_step2.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    data_dict["error"] = ""
+    data_dict["error_2"] = ""
+
+    #
+    # ON GET OPERATION
+    #
+
+    try:
+        lead = Leads_tbl.objects.get(pk = id)
+    except Leads_tbl.DoesNotExist:
+        data_dict["error"] = "Invalid Lead ID. Operation Denied!"
+        return render(request, template, data_dict)    
+ 
+    data_dict["company_name"] = lead.company_name
+    data_dict["contact_title"] = lead.contact_title
+    data_dict["contact_firstname"] = lead.contact_firstname
+    data_dict["contact_lastname"] = lead.contact_lastname
+    data_dict["contact_details"] = lead.contact_details
+    data_dict["contact_designation"] = lead.contact_designation
+    data_dict["address"] = lead.address
+    data_dict["country_list"] = country_list([lead.country])
+    data_dict["phone"] = lead.phone
+    data_dict["extension"] = lead.extension
+    data_dict["fax"] = lead.fax
+    data_dict["email"] = lead.email
+    data_dict["website"] = lead.website
+    data_dict["fte"] = lead.fte
+    data_dict["annual"] = lead.annual
+
+    try:
+        lead_quest_present = Lead_questionnaire_model.objects.get(lead_id = id)
+                
+        data_dict["done"] = True
+        data_dict["lead_program_requirement"] = lead_program_requirement(lead_quest_present.qpr.split(','), 'qpr[]')
+        data_dict["lead_call_purpose"] = lead_call_purpose(lead_quest_present.lcp.split(','), 'lcp[]')
+        data_dict["lead_pricing_model"] = lead_pricing_model(lead_quest_present.lpm.split(','), 'lpm[]')
+
+        #print(lead_quest_present.qpr.split(','))
+
+    except Lead_questionnaire_model.DoesNotExist:
+        data_dict["done"] = False    
+        data_dict["lead_program_requirement"] = lead_program_requirement([0], 'qpr[]')
+        data_dict["lead_call_purpose"] = lead_call_purpose([0], 'lcp[]')
+        data_dict["lead_pricing_model"] = lead_pricing_model([0], 'lpm[]')
+
+    data_dict["lead_type"] = lead_type(lead.lead_type_id)
+    data_dict["lead_line_of_business"] = lead_line_of_business(lead.line_of_business_id)
+    data_dict["lead_payment_type"] = lead_payment_type(lead.payment_type_id)
+    data_dict["lead_probability"] = lead_probability(lead.probability_id)
+
+
+    #
+    # ON POST OPERATION
+    #
+
+    submit = request.POST.get("submit", False)
+
+    if submit:
+
+        print(request.POST.getlist("qpr"))
+
+        lead_quest = Lead_questionnaire_model(
+            lead_id = int(id),
+            qpr = ','.join(request.POST.getlist("qpr[]")),
+            lcp = ','.join(request.POST.getlist("lcp[]")),
+            lpm = ','.join(request.POST.getlist("lpm[]")),
+            inbound_per_month = int(request.POST["inbound_per_month"]),
+            outbound_per_month = int(request.POST["inbound_per_month"]),
+            inbound_mins_per_call = int(request.POST["inbound_mins_per_call"]),
+            outbound_mins_per_call = int(request.POST["outbound_mins_per_call"]),
+            call_contact = request.POST["call_contact"],
+            anticipated_date = request.POST["anticipated_date"],
+            product_service_description = request.POST["product_service_description"],
+            area_of_operation = ','.join(request.POST.getlist("area_of_operation")),
+            work_hours = float(request.POST["work_hours"]),
+            centers_interested = ','.join(request.POST.getlist("centers_interested")),
+            pricing = float(request.POST["pricing"]),
+            comments = request.POST["comments"],
+        )
+
+        try:
+            lead_quest.save()
+        except:
+            data_dict["error_2"] = "Error Occurred. Saving Failed. Try Again!"
+
+
+    return render(request, template, data_dict)
