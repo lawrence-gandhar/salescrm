@@ -12,6 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.utils import timezone, safestring
 
+# Helper File Import
+from crm.helpers import *
+
 # use Library
 register = template.Library()
 
@@ -50,28 +53,7 @@ def page_title():
 
 @register.simple_tag
 def current_user_link(value):
-    value = int(value)
-    url_link = ''
-
-    try:
-        usertype = User_usertype.objects.get(user_id = value)
-        usertype_id = usertype.usertype_id
-
-        try:
-            target_link = Usertype.objects.get(pk = int(usertype_id))
-            url_link = target_link.sub_link
-
-        except User_usertype.DoesNotExist:
-            pass 
-        except TypeError: 
-            pass       
-
-    except User_usertype.DoesNotExist:
-        pass    
-    except TypeError: 
-        pass
-
-    return url_link
+    return current_user_url(value)
 
 
 #
