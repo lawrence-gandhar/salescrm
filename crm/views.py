@@ -237,6 +237,13 @@ def add_lead_step_2(request, usertype = None, id = None):
     data_dict["fte"] = lead.fte
     data_dict["annual"] = lead.annual
 
+    data_dict["inbound_per_month"] = ""
+    data_dict["outbound_per_month"] = ""
+    data_dict["inbound_mins_per_call"] = ""
+    data_dict["outbound_mins_per_call"] = ""
+    data_dict["anticipated_date"] = ""
+    data_dict["call_contact"] = "None"
+
     try:
         lead_quest_present = Lead_questionnaire_model.objects.get(lead_id = id)
                 
@@ -245,7 +252,12 @@ def add_lead_step_2(request, usertype = None, id = None):
         data_dict["lead_call_purpose"] = lead_call_purpose(lead_quest_present.lcp.split(','), 'lcp[]')
         data_dict["lead_pricing_model"] = lead_pricing_model(lead_quest_present.lpm.split(','), 'lpm[]')
 
-        #print(lead_quest_present.qpr.split(','))
+        data_dict["inbound_per_month"] = lead_quest_present.inbound_per_month
+        data_dict["outbound_per_month"] = lead_quest_present.outbound_per_month
+        data_dict["inbound_mins_per_call"] = lead_quest_present.inbound_mins_per_call
+        data_dict["outbound_mins_per_call"] = lead_quest_present.outbound_mins_per_call
+        data_dict["anticipated_date"] = lead_quest_present.anticipated_date
+        data_dict["call_contact"] = lead_quest_present.call_contact
 
     except Lead_questionnaire_model.DoesNotExist:
         data_dict["done"] = False    
