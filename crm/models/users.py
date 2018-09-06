@@ -17,8 +17,12 @@ class Usertype(models.Model):
     def __str__(self):
         return self.name.title()
 
+    class Meta:
+        db_table = 'user_type'    
+
 class User_usertype(models.Model):
     user = models.OneToOneField(User, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
     usertype = models.OneToOneField(Usertype, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
 
-
+    class Meta:
+        db_table = 'user_usertype'   
