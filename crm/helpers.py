@@ -158,3 +158,7 @@ def country_list(selected = []):
             html.append('>'+country["name"]+'</option>')
 
     return ''.join(html)    
+
+def country_json():
+    with open(settings.BASE_DIR+"/crm/static/uploads/country_list.json") as json_file:  
+        return json.load(json_file)   
