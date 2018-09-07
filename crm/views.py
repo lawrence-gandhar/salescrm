@@ -243,6 +243,12 @@ def add_lead_step_2(request, usertype = None, id = None):
     data_dict["outbound_mins_per_call"] = ""
     data_dict["anticipated_date"] = ""
     data_dict["call_contact"] = "None"
+    data_dict["product_service_description"] = ""
+    data_dict["area_of_operation"] = country_list()
+    data_dict["centers_interested"] = country_list()
+    data_dict["work_hours"] = ""
+    data_dict["pricing"] = ""
+    data_dict["comments"] = ""
 
     try:
         lead_quest_present = Lead_questionnaire_model.objects.get(lead_id = id)
@@ -258,6 +264,12 @@ def add_lead_step_2(request, usertype = None, id = None):
         data_dict["outbound_mins_per_call"] = lead_quest_present.outbound_mins_per_call
         data_dict["anticipated_date"] = lead_quest_present.anticipated_date
         data_dict["call_contact"] = lead_quest_present.call_contact
+        data_dict["product_service_description"] = lead_quest_present.product_service_description
+        data_dict["area_of_operation"] = country_list(lead_quest_present.area_of_operation.split(','))
+        data_dict["centers_interested"] = country_list(lead_quest_present.centers_interested.split(','))
+        data_dict["work_hours"] = lead_quest_present.work_hours
+        data_dict["pricing"] = lead_quest_present.pricing
+        data_dict["comments"] = lead_quest_present.comments
 
     except Lead_questionnaire_model.DoesNotExist:
         data_dict["done"] = False    
@@ -307,3 +319,67 @@ def add_lead_step_2(request, usertype = None, id = None):
 
 
     return render(request, template, data_dict)
+
+
+#*******************************************************************************
+# MANAGE LEAD
+#*******************************************************************************   
+#   
+@login_required
+def manage_leads(request, usertype = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/manage_leads.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    data_dict["error"] = ""
+    data_dict["country_json"] = country_json()
+
+    leads = Leads_tbl.objects.all()
+    leads = leads.values('id', 'company_name', 'contact_title', 'contact_firstname', 'contact_lastname', 'address', 'country', 'contact_details', 'contact_designation', 'phone', 'fax', 'extension', 'phone', 'email', 'website', 'fte', 'annual','creation_date', 'last_updated', 'status__name', 'line_of_business__name', 'lead_type__name', 'payment_type__name', 'probability__name')
+    data_dict["leads"] = leads
+    
+    return render(request, template, data_dict)
+
+#
+# FETCH LEAD QUESTIONNAIRE DETAILS
+#     
+@login_required
+def fetch_lead_details(request, usertype = None):
+    if request.is_ajax():
+
+        try:
+            lead_queryset = Lead_questionnaire_model.objects.get(lead_id = int(request.POST["id"]))
+
+            call_purpose = Lead_call_purpose.objects.filter(pk__in = lead_queryset.lcp.split(',')).values_list('name',flat=True)
+            qpr_set = Lead_program_requirement.objects.filter(pk__in = lead_queryset.qpr.split(',')).values_list('name',flat=True)
+            lpm_set = Lead_pricing_model.objects.filter(pk__in = lead_queryset.lpm.split(',')).values_list('name',flat=True)
+
+
+            lead = {'id': lead_queryset.id, 
+                    'qpr': ', '.join(qpr_set),
+                    'lcp': ', '.join(call_purpose),
+                    'lpm': ', '.join(lpm_set),
+                    'inbound_per_month': lead_queryset.inbound_per_month,
+                    'inbound_mins_per_call': lead_queryset.inbound_mins_per_call,
+                    'outbound_per_month': lead_queryset.outbound_per_month,
+                    'outbound_mins_per_call': lead_queryset.outbound_mins_per_call,
+                    'call_contact': lead_queryset.call_contact,
+                    'anticipated_date': lead_queryset.anticipated_date,
+                    'product_service_description': lead_queryset.product_service_description,
+                    'area_of_operation': lead_queryset.area_of_operation,
+                    'work_hours': lead_queryset.work_hours,
+                    'centers_interested': lead_queryset.centers_interested,
+                    'pricing': lead_queryset.pricing,
+                    'comments': lead_queryset.comments, 
+                }
+
+            return HttpResponse(json.dumps(lead))
+        except Lead_questionnaire_model.DoesNotExist:
+            return HttpResponse(0)
+            
+
+        
+
