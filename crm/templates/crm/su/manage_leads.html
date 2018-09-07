@@ -101,8 +101,8 @@
                                         <td class="text-center">
                                             <i style="cursor:pointer;color:#f6a821"  class="fa fa-fw fa-pencil"></i>
                                             <i style="cursor:pointer;color:#f6a821"  class="fa fa-fw fa-trash"></i>
-                                            <i title="SHOW MORE" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-down" onclick="javascript:show_more({{lead.id|safe}}, $(this))"></i>
-                                            <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="javascript:show_less({{lead.id|safe}}, $(this))"></i>
+                                            <i title="SHOW MORE" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-down" onclick="show_more({{lead.id|safe}}, $(this))"></i>
+                                            <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="show_less({{lead.id|safe}}, $(this))"></i>
                                         </td>
                                     </tr>
                                     <tr id="{{lead.id|safe}}-lead-quest-data">
