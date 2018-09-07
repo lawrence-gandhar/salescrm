@@ -1,0 +1,277 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+<!-- Main content-->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-filled">
+                    <div class="panel-heading">
+                        MANAGE LEADS
+                    </div>
+                    <div class="panel-body">
+
+                            <div class="panel panel-filled" style="margin-bottom:10px;">
+                                <div class="panel-body" style="padding:5px;">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="input-group m-b-xs m-t-xs">
+                                                <input class="form-control" type="text" placeholder="Search by Company.." style="width: 100%">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <select class="form-control m-b-xs m-t-xs" name="account" style="width: 100%">
+                                                <option selected="">Select status</option>
+                                                <option>Option 1</option>
+                                                <option>Option 2</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <select class="form-control m-t-xs" name="account" style="width: 100%">
+                                                <option selected="">Sort by:</option>
+                                                <option>Option 1</option>
+                                                <option>Option 2</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                <tr style="background-color:#0095ff;">
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Company</th>
+                                    <th class="text-center">Contact</th>
+                                    <th class="text-center">Phone/Fax</th>
+                                    <th class="text-center">Email/Website</th>
+                                    <th class="text-center">Country</th>
+                                    <th class="text-center">Created On</th>
+                                    <th class="text-center">Updated On</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody style="font-size:90%;">
+                                    {% for lead in leads %}
+                                    <tr>
+                                        <td>{{lead.id|safe}}</td>
+                                        <td>{{lead.company_name|safe|title}}</td>
+                                        <td>
+                                            <p style="margin:0px;">Name : {{lead.contact_title|safe|title}} {{lead.contact_firstname|safe|title}} {{lead.contact_lastname|safe|title}}</p>
+                                            <p style="margin:0px;">Designation : {{lead.contact_designation|safe|title}}</p>                        
+                                        </td>
+                                        <td>
+                                            {% ifnotequal lead.phone|safe '' %}
+                                                <p style="margin:0px;"><b>PHONE:</b> {{lead.phone|safe}}</p>
+                                            {% endifnotequal %}
+                                            {% ifnotequal lead.extension|safe '' %}
+                                                <p style="margin:0px;"><b>EXT:</b> {{lead.extension|safe}}</p>
+                                            {% endifnotequal %}
+                                            {% ifnotequal lead.fax|safe '' %}
+                                                <p style="margin:0px;"><b>FAX:</b> {{lead.fax|safe}}</p> 
+                                            {% endifnotequal %}
+                                        </td>
+                                        <td>
+                                            {% ifnotequal lead.email|safe '' %}
+                                                <p style="margin:0px;"><b>EMAIL:</b> {{lead.email|safe}}</p>
+                                            {% endifnotequal %}
+                                            {% ifnotequal lead.email|safe '' %}
+                                                <p style="margin:0px;"><b>WEBSITE:</b> {{lead.website|safe}}</p>
+                                            {% endifnotequal %}
+                                        </td>
+                                        <td class="address">
+                                            <!--
+                                            {{lead.contact_details|safe}} 
+                                            {% ifnotequal lead.address|safe '' %}
+                                                <p>{{lead.address|safe}}</p> 
+                                            {% endifnotequal %}
+                                            -->
+                                            {% ifnotequal lead.country|safe '' %}
+                                                <p class="country">{{lead.country|safe}}</p>
+                                            {% endifnotequal %}
+                                        </td>
+                                        <td>{{lead.creation_date|date:"M d, Y"}}</td>
+                                        <td>{{lead.last_updated|date:"M d, Y"}}</td>
+                                        <td class="text-center">
+                                            <i style="cursor:pointer;color:#f6a821"  class="fa fa-fw fa-pencil"></i>
+                                            <i style="cursor:pointer;color:#f6a821"  class="fa fa-fw fa-trash"></i>
+                                            <i title="SHOW MORE" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-down" onclick="javascript:show_more({{lead.id|safe}}, $(this))"></i>
+                                            <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="javascript:show_less({{lead.id|safe}}, $(this))"></i>
+                                        </td>
+                                    </tr>
+                                    <tr id="{{lead.id|safe}}-lead-quest-data">
+                                        <td colspan="9" class="table-responsive lead-quest-data hide" >
+                                            <div class="loader-example hide">
+                                                <div class="loader-bar"></div>
+                                            </div>
+                                            <table class="table table-bordered hide" style="margin-bottom:0px;">
+                                                <thead style="background-color:#b3b3b3;color:#000000;"> 
+                                                    <th style="color:#000000">Assigned To</th> 
+                                                    <th style="color:#000000">L.O.B</th> 
+                                                    <th style="color:#000000">Payment Type</th> 
+                                                    <th style="color:#000000">Probability</th> 
+                                                    <th style="color:#000000">FTE</th> 
+                                                    <th style="color:#000000">Annual</th> 
+                                                </thead>
+                                                <tbody style="color:#000000">
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>{{lead.line_of_business__name|safe}}</td>
+                                                        <td>{{lead.payment_type__name|safe}}</td>
+                                                        <td>{{lead.probability__name|safe}}</td>
+                                                        <td>{{lead.fte|safe}}</td>
+                                                        <td>{{lead.annual|safe}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table> 
+                                            <table class="table table-bordered hide" style="margin-bottom:0px;margin-top:10px;">
+                                                <tbody>
+                                                    <tr style="background-color:#2f323b;color:#000000;">
+                                                        <th colspan="20">
+                                                            <span style="line-height:20px;">Questionnaire</span>
+                                                            <a href="/{% current_user_link user.id %}/leads/edit-lead-step2/{{lead.id}}" class="btn btn-xs btn-warning pull-right">
+                                                                <i class="fa fa-pencil"></i> &nbsp;&nbsp;Edit Questionnaire
+                                                            </a>
+                                                        </th>
+                                                    </tr>
+                                                    <tr style="background-color:#b3b3b3;color:#000000;">
+                                                        <th></th>
+                                                        <th colspan="2" style="color:#000000"> Call Estimated Per Month</th>
+                                                        <th colspan="2" style="color:#000000"> Anticipated length of the call</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr style="background-color:#b3b3b3;color:#000000;">
+                                                        <th style="color:#000000">Program Requirement</th>
+                                                        <th style="color:#000000">Inbound</th>
+                                                        <th style="color:#000000">Outbound</th>
+                                                        <th style="color:#000000">Inbound</th>
+                                                        <th style="color:#000000">Outbound</th>
+                                                        <th style="color:#000000">Purpose of the call</th>
+                                                        <th style="color:#000000">Call contact type</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#000000" id="qpr-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="inbound_per_month-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="outbound_per_month-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="inbound_mins_per_call-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="outbound_mins_per_call-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="lcp-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="call_contact-{{lead.id|safe}}"></td>
+                                                    </tr> 
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-bordered hide" style="margin-bottom:0px;margin-top:10px;">
+                                                <tbody>   
+                                                    <tr style="background-color:#b3b3b3;color:#000000;">
+                                                        <th style="color:#000000">Anticipated Start Date</th>
+                                                        <th style="color:#000000">Product/Service Detail</th>
+                                                        <th style="color:#000000">Area Of Operation</th>
+                                                        <th style="color:#000000">Center Interested</th>
+                                                        <th style="color:#000000">Work Hours</th>
+                                                        <th style="color:#000000">Pricing Model Discussed</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#000000" id="anticipated_date-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="product_service_description-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="area_of_operation-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="centers_interested-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="work_hours-{{lead.id|safe}}"></td>
+                                                        <td style="color:#000000" id="lpm-{{lead.id|safe}}"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>   
+                                            <table class="table table-bordered hide" style="margin-bottom:0px;margin-top:10px;">
+                                                <tbody>   
+                                                    <tr style="background-color:#b3b3b3;color:#000000;">
+                                                        <th style="color:#000000">comments</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td id="comments-{{lead.id|safe}}"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>                                                    
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    var country_json = {{country_json|safe}};
+
+    $(document).ready(function(){
+        $("td.address").each(function(i,v){
+            elem = $(this).find("p.country")
+            country_code = $(elem).text();
+            
+            $.each(country_json, function(i, item){
+                if(item.code == country_code){
+                    $(elem).text(item.name+" ("+item.code+")");
+                }
+            });
+        });
+
+    });
+
+
+    //======================================================================
+    // SHOW MORE DATA ON ICON CLICK
+    //======================================================================
+
+    function show_more(id, elem){
+        $("#"+id+'-lead-quest-data td.lead-quest-data').removeClass('hide');
+        $("#"+id+'-lead-quest-data').find("div.loader-example").removeClass('hide');
+
+        $(elem).parent().find("i.fa-level-up").removeClass("hide");
+        $(elem).addClass("hide");
+        
+        $.post("/{% current_user_link user.id %}/leads/fetch-lead-details/",{'id':parseInt(id),'csrfmiddlewaretoken': '{{ csrf_token }}'},function(data){
+            
+            if(data != 0){
+                data = $.parseJSON(data)
+                $("td#qpr-"+id).text(data.qpr);
+                $("td#lcp-"+id).text(data.lcp);
+                $("td#call_contact-"+id).text(data.call_contact);
+                $("td#inbound_mins_per_call-"+id).text(data.inbound_mins_per_call);
+                $("td#inbound_per_month-"+id).text(data.inbound_per_month);
+                $("td#outbound_mins_per_call-"+id).text(data.outbound_mins_per_call);
+                $("td#outbound_per_month-"+id).text(data.outbound_per_month);
+                $("td#product_service_description-"+id).text(data.product_service_description);
+                $("td#anticipated_date-"+id).text(data.anticipated_date);
+                $("td#area_of_operation-"+id).text(data.area_of_operation);
+                $("td#centers_interested-"+id).text(data.centers_interested);
+                $("td#lpm-"+id).text(data.lpm);
+                $("td#work_hours-"+id).text(data.work_hours);
+                $("td#comments-"+id).text(data.comments);
+            }
+
+            $("#"+id+'-lead-quest-data').find("div.loader-example").addClass('hide');
+            $("#"+id+'-lead-quest-data table').removeClass('hide');
+        });
+    }
+
+    function show_less(id, elem){
+        $("#"+id+'-lead-quest-data td.lead-quest-data').addClass('hide');
+        $("#"+id+'-lead-quest-data').find("div.loader-example").addClass('hide');
+        $("#"+id+'-lead-quest-data table').addClass('hide');
+        $(elem).parent().find("i.fa-level-down").removeClass("hide");
+        $(elem).addClass("hide");
+    }
+
+</script>
+{% endblock %}
