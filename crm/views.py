@@ -476,8 +476,6 @@ def edit_lead_step_2(request, usertype = None, id = None):
 
     if submit:
 
-        print(request.POST.getlist("qpr"))
-
         lead_quest = Lead_questionnaire_model(
             lead_id = int(id),
             qpr = ','.join(request.POST.getlist("qpr[]")),
