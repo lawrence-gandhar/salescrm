@@ -220,7 +220,7 @@ class Lead_questionnaire_model(models.Model):
     anticipated_date = models.CharField(blank = True,max_length = 20,)
     product_service_description = models.TextField(blank = True,)
     area_of_operation = models.TextField(blank = True, max_length = 100,)
-    work_hours = models.FloatField(default = 0, db_index = True, null = True, blank = True,)
+    work_hours = models.CharField(blank = True, max_length = 20, null = True,)
     centers_interested = models.TextField(blank = True,)
     pricing = models.FloatField(default = 0, db_index = True, null = True, blank = True,)
     comments = models.TextField(blank = True,)
