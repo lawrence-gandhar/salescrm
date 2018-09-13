@@ -21,9 +21,23 @@ label.control-label{font-size:90%;}
     {% endifnotequal %}
 
     <section class="content">
-
-
         <div class="container-fluid">
+            {% if messages %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% for message in messages %}
+                        <div class="panel panel-filled alert-success" style="background-color:rgb(0, 100, 0)">
+                            <div class="panel-heading">
+                                <div class="panel-tools">
+                                    <a class="panel-close"><i class="fa fa-times"></i></a>
+                                </div>
+                                {{ message|safe }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-filled">
@@ -54,14 +68,14 @@ label.control-label{font-size:90%;}
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Company Name</label>
                                                             <div class="col-md-10">
-                                                                <input type="text" class="form-control" id="inputEmail3" value="{{company_name|safe}}" required>
+                                                                <input name="company_name"  type="text" class="form-control" id="inputEmail3" value="{{company_name|safe}}" required>
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Contact Name</label>
                                                             <div class="col-sm-10">
                                                                 <div class="col-sm-2" style="padding-left:0px;padding-right:5px;">
-                                                                    <select class=" form-control input-sm">
+                                                                    <select class=" form-control input-sm" name="contact_title">
                                                                         <option {% ifequal contact_title|safe 'Mr' %} selected {% endifequal %}>Mr</option>
                                                                         <option {% ifequal contact_title|safe 'Ms' %} selected {% endifequal %}>Ms</option>
                                                                         <option {% ifequal contact_title|safe 'Mrs' %} selected {% endifequal %}>Mrs</option>
@@ -69,11 +83,11 @@ label.control-label{font-size:90%;}
                                                                     <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Title</span>
                                                                 </div>
                                                                 <div class="col-sm-5" style="padding-left:0px;padding-right:5px;">
-                                                                    <input type="text" class="form-control input-sm" id="" value="{{contact_firstname|safe}}">
+                                                                    <input type="text" class="form-control input-sm" id="" name="contact_firstname" value="{{contact_firstname|safe}}">
                                                                     <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Firstname</span>
                                                                 </div>
                                                                 <div class="col-sm-5" style="padding-left:0px;padding-right:0px;">
-                                                                    <input type="text" class="form-control input-sm" id="" value="{{contact_lastname|safe}}">
+                                                                    <input type="text" class="form-control input-sm" id="" name="contact_lastname" value="{{contact_lastname|safe}}">
                                                                     <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Lastname</span>
                                                                 </div>
                                                             </div>
@@ -81,19 +95,19 @@ label.control-label{font-size:90%;}
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Details Contact Info</label>
                                                             <div class="col-sm-10">
-                                                                <textarea class="form-control input-sm" id="">{{contact_details|safe}}</textarea>
+                                                                <textarea class="form-control input-sm" id="" name="contact_details">{{contact_details|safe}}</textarea>
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                                 <label for="inputEmail3" class="col-md-2 control-label">Designation</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{contact_designation|safe}}">
+                                                                <input name="contact_designation" type="text" class="form-control input-sm" id="" value="{{contact_designation|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                                 <label for="inputEmail3" class="col-md-2 control-label">Address</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{contact_address|safe}}">
+                                                                <input name="address" type="text" class="form-control input-sm" id="" value="{{contact_address|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
@@ -107,31 +121,31 @@ label.control-label{font-size:90%;}
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Phone</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{phone|safe}}">
+                                                                <input name="phone" type="text" class="form-control input-sm" id="" value="{{phone|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Extension</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{extension|safe}}">
+                                                                <input name="extension" type="text" class="form-control input-sm" id="" value="{{extension|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Fax</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{fax|safe}}">
+                                                                <input name="fax" type="text" class="form-control input-sm" id="" value="{{fax|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Email</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{email|safe}}">
+                                                                <input name="email" type="text" class="form-control input-sm" id="" value="{{email|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Website</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{website|safe}}">
+                                                                <input name="website" type="text" class="form-control input-sm" id="" value="{{website|safe}}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:5px;">
@@ -161,13 +175,13 @@ label.control-label{font-size:90%;}
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">FTE</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{fte|safe}}">
+                                                                <input name="fte" type="text" class="form-control input-sm" id="" value="{{fte|safe}}">
                                                             </div>
                                                         </div> 
                                                         <div class="form-group" style="margin-bottom:5px;">
                                                             <label for="inputEmail3" class="col-md-2 control-label">Annual $</label>
                                                             <div class="col-sm-10">
-                                                                <input type="text" class="form-control input-sm" id="" value="{{annual|safe}}">
+                                                                <input name="annual" type="text" class="form-control input-sm" id="" value="{{annual|safe}}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -333,7 +347,7 @@ label.control-label{font-size:90%;}
                                                                     <div class="form-group" style="">
                                                                         <label for="inputEmail3" class="col-md-2 control-label">Work Hours</label>
                                                                         <div class="col-md-10">
-                                                                            <input type="text" class="form-control" id="inputEmail3" name="work_hours" required>
+                                                                            <input type="text" class="form-control" id="inputEmail3" name="work_hours" required value="{{work_hours|safe}}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group" style="">
@@ -409,7 +423,27 @@ label.control-label{font-size:90%;}
     <script>
     
         $(document).ready(function(){
-            $("div#tab-6 input, div#tab-6 select, div#tab-6 textarea").prop("disabled",true);
+
+            {% ifequal step_1 True %}
+                $("div#tab-6 input, div#tab-6 select, div#tab-6 textarea").prop("disabled",false);
+                $("div#tab-7 input, div#tab-7 select, div#tab-7 textarea").prop("disabled",true);   
+                $("a[href$='#tab-6']").parent('li').addClass('active');
+                $("a[href$='#tab-7']").parent('li').removeClass('active');
+                $("div#tab-6").addClass('active');
+                $("div#tab-7").removeClass('active');
+            {% else %}
+                $("div#tab-6 input, div#tab-6 select, div#tab-6 textarea").prop("disabled",true);
+                $("div#tab-7 input, div#tab-7 select, div#tab-7 textarea").prop("disabled",false);
+                $("a[href$='#tab-6']").parent('li').removeClass('active');
+                $("a[href$='#tab-7']").parent('li').addClass('active');   
+                $("div#tab-7").addClass('active');
+                $("div#tab-6").removeClass('active');
+            {% endifequal %} 
+
+
+            {% ifequal done True %}
+                $("div#tab-7 input, div#tab-7 select, div#tab-6 select, div#tab-6 textarea").prop("disabled",true);   
+            {% endifequal %}
         });
     
     </script>
@@ -427,6 +461,5 @@ label.control-label{font-size:90%;}
 </section>                
 
 {% endifequal %}
-
 
 {% endblock %}    
