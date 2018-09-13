@@ -87,8 +87,6 @@ def checkboxes(data = (),selected = [], name = ""):
         html.append('<div class="checkbox checkbox-primary col-md-4">')
         html.append('<input id="'+html_id+str(i)+'" class="styled" type="checkbox" value="'+str(row["id"])+'" name = "'+name+'"')
 
-        print(selected)
-
         if str(row["id"]) in selected: 
             html.append(' checked')
 
