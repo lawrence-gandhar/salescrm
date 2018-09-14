@@ -12,7 +12,7 @@ from django.core.serializers import serialize
 from django.http import HttpResponse, Http404, HttpResponseForbidden, HttpResponseRedirect
 
 # Paginator class import
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnInteger
 
 # Django settings from settings.py
 from django.conf import settings	
@@ -24,8 +24,7 @@ from django.core.exceptions import ObjectDoesNotExist
 # Other imports
 from django.shortcuts import render, redirect
 
-from .models import Usertype, User_usertype
-#from .models import Assessment_Settings, AssessmentFormOptions, AssessmentFormQuestions, AssessmentFormSection
+#from .models import Usertype, User_usertype
 
 # Helper File Import
 from crm.helpers import *
@@ -184,11 +183,14 @@ def add_lead(request, usertype = None):
             )
 
             lead.save()
-            messages.error(request, '1')
+
+            add_lead_logs(lead.id, request.session["user_id"], 'Lead Added')
+
+            messages.error(request, 'Data Saved')
             return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add/2/'+str(lead.id))
 
         except:
-            messages.error(request, '0')
+            messages.error(request, 'Error Occurred!')
             return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add/')
 
     return render(request, template, data_dict)
@@ -353,6 +355,7 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 
             try:
                 lead_present.save()
+                add_lead_logs(id, 'Lead Modified')
                 messages.error(request, 'Data Saved')
                 return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/'+slug+'/'+step+'/' + str(id) +'/')
             except:
@@ -386,6 +389,7 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 
                 try:
                     lead_present.save()
+                    add_lead_logs(id, request.session["user_id"], 'Lead Questionnaire Modified')
                     messages.error(request, 'Data Saved')
                     return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/'+slug+'/'+step+'/' + str(id) +'/')
                 except:
@@ -413,6 +417,7 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 
                 try: 
                     lead_quest.save()
+                    add_lead_logs(id, request.session["user_id"], 'Lead Questionnaire Added')
                     messages.error(request, 'Data Saved')
                     return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/'+slug+'/'+step+'/' + str(id) +'/')
                 except:
@@ -437,8 +442,33 @@ def manage_leads(request, usertype = None):
     data_dict["error"] = ""
     data_dict["country_json"] = country_json()
 
-    leads = Leads_tbl.objects.all()
+    leads = Leads_tbl.objects
+    submit = request.POST.get('submit', False)
+
+    if submit:
+        leads = leads.filter(company_name__icontains=request.POST['company_name'])
+    else:
+        leads = leads.all()
+
     leads = leads.values('id', 'company_name', 'contact_title', 'contact_firstname', 'contact_lastname', 'address', 'country', 'contact_details', 'contact_designation', 'phone', 'fax', 'extension', 'phone', 'email', 'website', 'fte', 'annual','creation_date', 'last_updated', 'status__name', 'line_of_business__name', 'lead_type__name', 'payment_type__name', 'probability__name')
+    
+    paginator = Paginator(leads, 10) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+
+    
+    try:
+        if page is None:
+            page = 1
+        leads = paginator.get_page(page)
+        check = paginator.page(page)
+    except InvalidPage:
+        return render(request,'crm/error.html',{})
+    except PageNotAnInteger:
+            return render(request,'crm/error.html',{})
+    except EmptyPage:
+        return render(request,'crm/error.html',{}) 
+
     data_dict["leads"] = leads
     
     return render(request, template, data_dict)
@@ -480,4 +510,81 @@ def fetch_lead_details(request, usertype = None):
             return HttpResponse(json.dumps(lead))
         except Lead_questionnaire_model.DoesNotExist:
             return HttpResponse(0)
-         
+
+#
+#   LEAD ASSIGNMENTS
+#
+@login_required
+def lead_assignments(request, usertype = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/projects.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    leads = Leads_tbl.objects
+    submit = request.POST.get('submit', False)
+
+    if submit:
+        leads = leads.filter(company_name__icontains=request.POST['company_name'])
+    else:
+        leads = leads.all()
+
+    leads = leads.values('id', 'company_name', 'status__name', 'active', 'creation_date')
+    
+    paginator = Paginator(leads, 10) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+
+    
+    try:
+        if page is None:
+            page = 1
+        leads = paginator.get_page(page)
+        check = paginator.page(page)
+    except InvalidPage:
+        return render(request,'crm/error.html',{})
+    except PageNotAnInteger:
+            return render(request,'crm/error.html',{})
+    except EmptyPage:
+        return render(request,'crm/error.html',{}) 
+
+    data_dict["leads"] = leads
+
+    return render(request, template, data_dict)
+
+
+#
+#   LEAD ASSIGNMENTS
+#
+@login_required
+def lead_assignments_edit(request, usertype = None, id = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/edit_assignments.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    return render(request, template, data_dict)
+
+
+#
+#   LEAD LOG, PROGRESS AND TIMELINE
+#
+@login_required
+def timeline(request, usertype = None, id = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/timeline.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    lead_logs = Lead_logs.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'notes', 'user__first_name', 'user__last_name').order_by('creation_date')
+
+    data_dict['lead_id'] = id
+    data_dict['lead_logs'] = lead_logs
+
+    return render(request, template, data_dict)

@@ -1,0 +1,154 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="pull-right text-right" style="line-height: 14px">
+                            <small>App Pages<br>Basic<br> <span class="c-white">Projects</span></small>
+                        </div>
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-box1"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3>Projects</h3>
+                            <small>
+                                List of all projects
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="panel panel-filled">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="input-group m-b-xs m-t-xs">
+                                        <input class="form-control" type="text" placeholder="Search by Company.." style="width: 100%">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-default"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <select class="form-control m-b-xs m-t-xs" name="account" style="width: 100%">
+                                        <option selected="">Select status</option>
+                                        <option>Option 1</option>
+                                        <option>Option 2</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <select class="form-control m-t-xs" name="account" style="width: 100%">
+                                        <option selected="">Sort by:</option>
+                                        <option>Option 1</option>
+                                        <option>Option 2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-filled" style="margin-bottom: 0px">
+                        <div class="panel-body ">
+                            <div class="table-responsive">
+                            <table class="table table-vertical-align-middle table-bordered" style="margin-bottom: 0px">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        Company Name
+                                    </th>
+                                    <th>
+                                        Participate
+                                    </th>
+                                    <th width="70px">
+                                        Active
+                                    </th>
+                                    <th class="text-right">
+                                        Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for lead in leads %}
+                                <tr>
+                                    <td width="70px">
+                                        {% if lead.status__name|safe == 'New' %}
+                                            <span class="label label-accent">{{lead.status__name|safe}}</span>
+                                        {% else %}
+                                            <span class="label label-default">{{lead.status__name|safe}}</span>   
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="#">{{lead.company_name}}</a>
+                                        <div class="small"><i class="fa fa-clock-o"></i> Created On {{lead.creation_date|date:'M d, Y'}}</div>
+                                    </td>
+                                    <td>
+                                        <a href="#"><img alt="image" class="img-rounded image-md" src="{% static 'images/a1.jpg' %}"></a>
+                                        <a href="#"><img alt="image" class="img-rounded image-md" src="{% static 'images/a2.jpg' %}"></a>
+                                        <a href="#"><img alt="image" class="img-rounded image-md" src="{% static 'images/a3.jpg' %}"></a>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if lead.active %}
+                                            <span class="label label-success">Active</span>
+                                        {% else %}
+                                            <span class="label label-danger">In-Active</span>   
+                                        {% endif %}
+                                    </td>
+                                    <td width="70px" class="text-center">
+                                        <i title="VIEW" style="cursor:pointer;color:#f6a821;" class="fa fa-fw fa-eye"></i>
+                                        <a href="/{% current_user_link user.id %}/leads/edit-assignment/{{lead.id}}"><i title="EDIT" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-pencil"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pull-right">
+                <ul class="pagination pagination-sm">
+                    
+                    {% if leads.has_previous %}
+                        <li><a href="?page=1">&laquo; First</a></li>
+                        <li><a href="?page={{ leads.previous_page_number }}">Previous</a></li>
+                    {% else %}    
+                        <li class="disabled"><a href="#">Previous {{leads.num_pages}}</a></li>
+                    {% endif %}
+    
+                    {% for i in leads.paginator.page_range %}
+                        <li {% ifequal leads.number i  %} class="active" {% endifequal %}>
+                            <a href="?page={{i|safe}}">{{i|safe}}</a>
+                        </li>
+                    {% endfor %}    
+    
+                    {% if leads.has_next %}
+                        <li><a href="?page={{ leads.next_page_number }}">Next</a></li>
+                        <li><a href="?page={{ leads.paginator.num_pages }}">Last &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="pull-left" style="margin-top:20px;color:#f6a821">
+                <span class="pull-left">Page {{ leads.number }} of {{ leads.paginator.num_pages }}</span>
+            </div>
+
+        </div>
+    </section>
+    <!-- End main content-->
+{% endblock %}

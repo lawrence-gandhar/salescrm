@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.db import models
 from crm.models import *
+import datetime
+from django.contrib.auth.models import User
 
 #************************************************************************************************************
 # Lead Table
@@ -225,7 +227,7 @@ class Lead_questionnaire_model(models.Model):
     pricing = models.FloatField(default = 0, db_index = True, null = True, blank = True,)
     comments = models.TextField(blank = True,)
     creation_date = models.DateTimeField(auto_now_add = True,auto_now = False, db_index = True,)
-    last_updated = models.DateTimeField(auto_now_add = False,auto_now = True, db_index = True,)	
+    last_updated = models.DateTimeField(auto_now_add = False, auto_now = True, db_index = True,)	
 
     def __str__(self):
         return self.creation_date
@@ -235,3 +237,17 @@ class Lead_questionnaire_model(models.Model):
         ordering = ['pk']
         verbose_name_plural = 'Leads Questionnaire Model Table'	
 		
+#************************************************************************************************************			
+#	LEAD LOGS
+#************************************************************************************************************			
+
+class Lead_logs(models.Model):
+	lead = models.ForeignKey('Leads_tbl', on_delete = models.CASCADE, db_index = True,)
+	notes = models.TextField(blank = True, null = True, )
+	user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL)
+	creation_date = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True,)
+
+	class Meta:	
+		db_table = 'lead_logs'
+		ordering = ['pk']
+		verbose_name_plural = 'Lead Logs Table'

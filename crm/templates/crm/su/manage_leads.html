@@ -11,38 +11,26 @@
                         MANAGE LEADS
                     </div>
                     <div class="panel-body">
-
+                        <form action="" method="post">
+                            {% csrf_token %}
                             <div class="panel panel-filled" style="margin-bottom:8px;">
                                 <div class="panel-body" style="padding:5px;">
                                     <div class="row">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4 pull-right">
                                             <div class="input-group m-b-xs m-t-xs">
-                                                <input class="form-control" type="text" placeholder="Search by Company.." style="width: 100%">
+                                                <input name='company_name' class="form-control" type="text" placeholder="Search by Company.." style="width: 100%">
+                                                <input name='submit' class="form-control" type="hidden" readonly value='True'>
                                                 <div class="input-group-btn">
                                                     <button class="btn btn-default"><i class="fa fa-search"></i></button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3">
-                                            <select class="form-control m-b-xs m-t-xs" name="account" style="width: 100%">
-                                                <option selected="">Select status</option>
-                                                <option>Option 1</option>
-                                                <option>Option 2</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-3">
-                                            <select class="form-control m-t-xs" name="account" style="width: 100%">
-                                                <option selected="">Sort by:</option>
-                                                <option>Option 1</option>
-                                                <option>Option 2</option>
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </form>
 
-
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="">
                             <table class="table table-hover table-striped table-bordered" style="margin-bottom:0px;">
                                 <thead>
                                 <tr style="background-color:#0095ff;">
@@ -103,7 +91,7 @@
                                             <i style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-trash"></i>
                                             <i title="SHOW MORE" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-down" onclick="show_more({{lead.id|safe}}, $(this))"></i>
                                             <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="show_less({{lead.id|safe}}, $(this))"></i>
-                                            <a title="PROGRESS" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/edit/1/{{lead.id|safe}}/"><i class="fa fa-fw fa-flash"></i></a>
+                                            <a title="PROGRESS" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/timeline/{{lead.id|safe}}/"><i class="fa fa-fw fa-flash"></i></a>
                                         </td>
                                     </tr>
                                     <tr id="{{lead.id|safe}}-lead-quest-data">
@@ -210,14 +198,29 @@
         </div>
         <div class="pull-right">
             <ul class="pagination pagination-sm">
-            <li class="disabled"><a href="#">Previous</a></li>
-                <li class="active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">Next</a></li>
+                
+                {% if leads.has_previous %}
+                    <li><a href="?page=1">&laquo; First</a></li>
+                    <li><a href="?page={{ leads.previous_page_number }}">Previous</a></li>
+                {% else %}    
+                    <li class="disabled"><a href="#">Previous {{leads.num_pages}}</a></li>
+                {% endif %}
+
+                {% for i in leads.paginator.page_range %}
+                    <li {% ifequal leads.number i  %} class="active" {% endifequal %}>
+                        <a href="?page={{i|safe}}">{{i|safe}}</a>
+                    </li>
+                {% endfor %}    
+
+                {% if leads.has_next %}
+                    <li><a href="?page={{ leads.next_page_number }}">Next</a></li>
+                    <li><a href="?page={{ leads.paginator.num_pages }}">Last &raquo;</a></li>
+                {% endif %}
             </ul>
         </div>
-    </div>
+        <div class="pull-left" style="margin-top:20px;color:#f6a821">
+            <span class="pull-left">Page {{ leads.number }} of {{ leads.paginator.num_pages }}</span>
+        </div>
 </section>
 
 <script>

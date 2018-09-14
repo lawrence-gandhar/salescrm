@@ -1,0 +1,180 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+<!-- Main content-->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="view-header">
+                    <div class="pull-right text-right" style="line-height: 14px">
+                        <small>App Pages<br>Basic<br> <span class="c-white">Contacts</span></small>
+                    </div>
+                    <div class="header-icon">
+                        <i class="pe page-header-icon pe-7s-users"></i>
+                    </div>
+                    <div class="header-title">
+                        <h3>Participate Assignment</h3>
+                        <small>
+                            List Of Participates
+                        </small>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel" style="margin-bottom:0px;">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-8" style="height:380px !important; overflow-y: auto;">
+                                <div class="panel">
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag1" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/profile.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Bradly Danforth </a></h5>
+                                                <div class="m-b-xs c-white small">Miami, FL</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag2" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a1.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Carl Novack</a></h5>
+                                                <div class="m-b-xs c-white small">San Francisco, CA</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 05.10.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag3" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a2.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Carl Novack</a></h5>
+                                                <div class="m-b-xs c-white small">San Francisco, CA</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 05.10.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag4" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a3.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Bradly Danforth </a></h5>
+                                                <div class="m-b-xs c-white small">Miami, FL</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag5" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a4.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Bradly Danforth </a></h5>
+                                                <div class="m-b-xs c-white small">Miami, FL</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag6" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a5.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Bradly Danforth </a></h5>
+                                                <div class="m-b-xs c-white small">Miami, FL</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-4" id="drag7" draggable="true" ondragstart="drag(event)">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/profile.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> Bradly Danforth </a></h5>
+                                                <div class="m-b-xs c-white small">Miami, FL</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-filled" >
+                                    <div class="panel-heading" style="background-color:#f6a821">
+                                        Drag and drop in this area to Assign Participates
+                                    </div>
+                                    <div style="height:330px !important;overflow-y:auto" data-boxtype="drop-on-me" class="panel-body" id="drop-point" ondrop="drop_element(event)" ondragover="allowDrop(event)">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    $(document).ready(function(){})
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+    
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+
+        if(ev.target.getAttribute('data-boxtype') != document.getElementById(data).getAttribute('data-boxtype')){
+            ev.target.appendChild(document.getElementById(data));
+            return data
+        }else return false;
+    }
+
+    function drop_element(event){
+        id = drop(event);
+        
+        if(id !==false){
+            participate_image = $("#"+id).find("img").attr("src");
+            participate_name = $("#"+id).find("h5 > a").text();
+            participate_city = $("#"+id).find("div.m-b-xs").text(); 
+            participate_last_activity = $("#"+id).find("small").text();
+
+            html = '<div class="table" style="margin-bottom:0px;"><table class="table-responsive"><tr>';
+            html += '<td style="padding:5px"><img alt="image" class="img-rounded image-lg" src="'+participate_image+'"></td>';
+            html += '<td style="padding:5px">';
+            html += '<h5 class="m-b-none"><a href="#"> '+participate_name+'</a></h5>';
+            html += '<div class="m-b-xs c-white small">'+participate_city+'</div>';
+            html += '<small><i class="fa fa-clock-o"></i> '+participate_last_activity+'</small>';
+            html += '</td>';
+            html += '</tr></table></div>';
+
+
+            $("#"+id).prop('draggable',null).prop('ondragstart',null).empty().removeClass('col-md-4').addClass('row').append(html);
+            $("#"+id).find('*').attr('data-boxtype','dont-drop-on-me');
+
+            $("#drop-point").scrollTop($("#drop-point")[0].scrollHeight);
+        }
+    }
+
+
+
+
+    
+</script>
+
+
+{% endblock %}

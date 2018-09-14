@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Usertype, User_usertype
 
 from crm.models.users import User_usertype, Usertype
-from crm.models.leads import Leads_tbl, Lead_type, Lead_line_of_business, Lead_payment_type, Lead_probability
+from crm.models.leads import Leads_tbl, Lead_type, Lead_line_of_business, Lead_payment_type, Lead_probability, Lead_logs
 from crm.models.leads import Lead_status, Lead_program_requirement, Lead_call_purpose, Lead_pricing_model, Lead_questionnaire_model
 
 # system related imports
@@ -160,3 +160,25 @@ def country_list(selected = []):
 def country_json():
     with open(settings.BASE_DIR+"/crm/static/uploads/country_list.json") as json_file:  
         return json.load(json_file)   
+
+
+#
+#   ADD LEAD LOGS
+#
+
+def add_lead_logs(lead_id = None, user = None, notes = None):
+    if lead_id is None or notes is None or user is None:
+        return False
+    
+    try:
+        lead_log = Lead_logs(
+            lead_id = lead_id,
+            notes = notes,
+            user_id = user,
+        )
+
+        lead_log.save()
+        return True
+
+    except:
+        return False

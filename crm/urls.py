@@ -10,7 +10,10 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/add/$', views.add_lead, name = 'add-lead'),    
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/(?P<slug>[\w]+)/(?P<step>[\d])/(?P<id>[\d]+)/$', views.add_lead_step_2,),     
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/manage/', views.manage_leads, name = 'manage-leads'),
-        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'),     
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'), 
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/timeline/(?P<id>[\d]+)/$', views.timeline), 
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/assignments/$', views.lead_assignments,),  
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/edit-assignment/(?P<id>[\d]+)/$', views.lead_assignments_edit),       
     ]
 
 except ImportError:
@@ -23,5 +26,8 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/add/$', views.add_lead, name = 'add-lead'),    
         url(r'^(?P<usertype>[\w.@+-]+)/leads/(?P<slug>[\w]+)/(?P<step>[\d])/(?P<id>[\d]+)/$', views.add_lead_step_2,),    
         url(r'^(?P<usertype>[\w.@+-]+)/leads/manage/', views.manage_leads, name = 'manage-leads'),    
-        url(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'),     
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'),    
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/timeline/(?P<id>[\d]+)/$', views.timeline),  
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/assignments/$', views.lead_assignments,), 
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/edit-assignment/(?P<id>[\d]+)/$', views.lead_assignments_edit),     
     ]
