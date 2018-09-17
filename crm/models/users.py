@@ -22,7 +22,7 @@ class Usertype(models.Model):
 
 class User_usertype(models.Model):
     user = models.OneToOneField(User, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
-    usertype = models.OneToOneField(Usertype, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
+    usertype = models.ForeignKey(Usertype, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
 
     class Meta:
         db_table = 'user_usertype'   

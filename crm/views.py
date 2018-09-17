@@ -526,18 +526,19 @@ def lead_assignments(request, usertype = None):
     leads = Leads_tbl.objects
     submit = request.POST.get('submit', False)
 
-    if submit:
+    if request.POST:
         leads = leads.filter(company_name__icontains=request.POST['company_name'])
     else:
         leads = leads.all()
 
-    leads = leads.values('id', 'company_name', 'status__name', 'active', 'creation_date')
+    leads = leads.prefetch_related('assigned_to')
     
-    paginator = Paginator(leads, 10) # Show 25 contacts per page
+    #values('id', 'company_name', 'status__name', 'active', 'creation_date',)
+    
+    paginator = Paginator(leads, 25) # Show 25 contacts per page
 
     page = request.GET.get('page')
 
-    
     try:
         if page is None:
             page = 1
@@ -566,6 +567,37 @@ def lead_assignments_edit(request, usertype = None, id = None):
     data_dict["css_files"] = []
 
     data_dict["js_files"] = []
+
+    users_present = Leads_tbl.objects.get(pk = int(id))
+
+    users_present_now = users_present.assigned_to.all().values_list('id', flat = True)
+
+    users_present_list = users_present.assigned_to.all().values('id', 'first_name', 'last_name', 'email')
+
+    data_dict["users_present_list"] = users_present_list
+
+    try:
+        user_type = Usertype.objects.get(name__iexact = 'Agent')
+
+        agents = User_usertype.objects.filter(usertype_id = user_type.id).values_list('user_id', flat= True)
+        
+        users = User.objects.filter(id__in = agents).exclude(id__in = users_present_now).values('id', 'first_name', 'last_name', 'email')
+
+        data_dict["users"] = users
+
+    except Usertype.DoesNotExist:
+        data_dict["users"] = {}
+
+
+    if request.POST:
+
+        user_list = request.POST.getlist('users_list[]')
+
+        user = User.objects.filter(id__in = user_list)
+
+        lead = Leads_tbl.objects.get(pk = int(id))
+        lead.assigned_to.set(user)
+        lead.save()
 
     return render(request, template, data_dict)
 

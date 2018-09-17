@@ -24,7 +24,7 @@ class Leads_tbl(models.Model):
 	email = models.EmailField(max_length = 250, blank = True, db_index = True,)
 	website = models.CharField(max_length = 200, blank = True, db_index = True,)
 	lead_type = models.ForeignKey('Lead_type', on_delete = models.SET_NULL, null = True, blank = True, db_index = True,)
-	assigned_to = models.IntegerField(db_index = True, default = 0,)
+	assigned_to = models.ManyToManyField(User, blank = True, db_index = True,)
 	status = models.ForeignKey('Lead_status',default = 1, on_delete = models.SET_NULL, null = True, blank = True, db_index = True,)
 	line_of_business = models.ForeignKey('Lead_line_of_business', on_delete = models.SET_NULL, null = True, blank = True, db_index = True,)
 	payment_type = models.ForeignKey('Lead_payment_type', on_delete = models.SET_NULL, null = True, blank = True, db_index = True,)
@@ -37,6 +37,9 @@ class Leads_tbl(models.Model):
 	
 	def __str__(self):
 		return self.company_name
+
+	def get_assigned_to_name(self):
+		return ', '.join(self.assigned_to.all())	
 	
 	class Meta:	
 		db_table = 'leads_tbl'
