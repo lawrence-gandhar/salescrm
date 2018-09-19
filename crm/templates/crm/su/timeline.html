@@ -42,8 +42,7 @@
                                     <div class="vertical-timeline-content">
                                         <div class="p-sm">
                                             <span class="vertical-date pull-right"> {{log.creation_date|date:"M d, Y"}} <br/> <small>{{log.creation_date|date:"H:i:s"}}</small> </span>
-
-                                            <h2>{{log.notes}} <br/><small style="font-size:80%">By {{log.user__first_name|title}} {{log.user__last_name|title}}</small></h2>
+                                            <h2>{{log.notes|safe}} <br/><small style="font-size:80%">By {{log.user__first_name|title}} {{log.user__last_name|title}}</small></h2>
                                         </div>
                                     </div>
                                 </div>

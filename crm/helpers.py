@@ -22,7 +22,9 @@ from crm.models.leads import *
 import sys, os, csv, json, datetime, random, string
 
 
+#******************************************************************************* 
 # CURRENT USERTYPE SUBLINK
+#******************************************************************************* 
 #
 def current_user_url(value):
     value = int(value)
@@ -49,17 +51,17 @@ def current_user_url(value):
     return url_link
 
 
-#
+#******************************************************************************* 
 # LEADS FORM ELEMENTS
-#
+#******************************************************************************* 
 
-#
+#******************************************************************************* 
 # DROPDOWNS
+#******************************************************************************* 
 #
-
-def dropdowns(data = (),selected = 0):
+def dropdowns(data = (), selected = 0, select_text = "-- Select --"):
     
-    html = ['<option value="0">-- Select --</option>']
+    html = ['<option value="0">'+select_text+'</option>']
 
     if selected == 0:
         html = ['<option value="0" selected>-- Select --</option>']
@@ -73,8 +75,9 @@ def dropdowns(data = (),selected = 0):
 
     return ''.join(html)
 
-#
+#******************************************************************************* 
 # CHECKBOXES
+#******************************************************************************* 
 #
 def checkboxes(data = (),selected = [], name = ""):
 
@@ -94,10 +97,10 @@ def checkboxes(data = (),selected = [], name = ""):
         i +=1
     return ''.join(html)    
 
-#
+#******************************************************************************* 
 # RADIOS 
+#******************************************************************************* 
 #
-
 def radios(data = (), selected = 0, name = ""):
 
     html = []
@@ -113,11 +116,11 @@ def radios(data = (), selected = 0, name = ""):
     return ''.join(html)  
 
 
-#
+#******************************************************************************* 
 # CALLER FUNCTIONS
+#******************************************************************************* 
 #
-
-def lead_type(selected = 0):
+def lead_type(selected = 0, name = ""):
     return dropdowns(Lead_type.objects.filter(active = True).values('id', 'name'), selected)
 
 def lead_line_of_business(selected = 0, name = ""):
@@ -138,11 +141,13 @@ def lead_call_purpose(selected = [], name = ""):
 def lead_pricing_model(selected = [], name = ""):
     return checkboxes(Lead_pricing_model.objects.filter(active = True).values('id', 'name'), selected, name) 
 
+def lead_status(selected = 0, name = ""):
+    return dropdowns(Lead_status.objects.filter(active = True).values('id', 'name'), selected, "-- Select Status --")
 
-#
+#******************************************************************************* 
 #   COUNTRY LIST DROPDOWN
-#     
-
+#*******************************************************************************     
+#
 def country_list(selected = []):
 
     html = ['<option value="">-- Select Country --</option>']
@@ -162,10 +167,10 @@ def country_json():
         return json.load(json_file)   
 
 
-#
+#******************************************************************************* 
 #   ADD LEAD LOGS
+#******************************************************************************* 
 #
-
 def add_lead_logs(lead_id = None, user = None, notes = None):
     if lead_id is None or notes is None or user is None:
         return False

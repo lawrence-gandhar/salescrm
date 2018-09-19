@@ -3,61 +3,70 @@
 {% load navigation %}
 {% load static %}
     <!-- Main content-->
+
+    <style>
+        .dropdown-menu-2 > li > a:hover, .dropdown-menu-2 > li > a:focus {
+            color: #262626;
+            text-decoration: none;
+            background-color: #f5f5f5;
+        }
+    </style>
+
     <section class="content">
         <div class="container-fluid">
 
             <div class="row">
                 <div class="col-lg-12">
                     <div class="view-header">
-                        <div class="pull-right text-right" style="line-height: 14px">
-                            <small>App Pages<br>Basic<br> <span class="c-white">Projects</span></small>
-                        </div>
                         <div class="header-icon">
                             <i class="pe page-header-icon pe-7s-box1"></i>
                         </div>
                         <div class="header-title">
-                            <h3>Projects</h3>
+                            <h3>Leads Assignment</h3>
                             <small>
-                                List of all projects
+                                List of all leads and assignments
                             </small>
                         </div>
                     </div>
                     <hr>
                 </div>
             </div>
-
-
-
             <div class="row">
                 <div class="col-md-12">
 
                     <div class="panel panel-filled">
-                        <div class="panel-body">
+                        <div class="panel-body" style="padding: 10px">
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <form action="" method="post">
-                                    {% csrf_token %}
-                                    <div class="input-group m-b-xs m-t-xs">
+                                <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="form-group m-b-xs m-t-xs">
                                         <input name="company_name" class="form-control" type="text" placeholder="Search by Company.." style="width: 100%">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-default"><i class="fa fa-search"></i></button>
-                                        </div>
                                     </div>
-                                    </form>
                                 </div>
                                 <div class="col-lg-3">
-                                    <select class="form-control m-b-xs m-t-xs" name="account" style="width: 100%">
-                                        <option selected="">Select status</option>
-                                        <option>Option 1</option>
-                                        <option>Option 2</option>
+                                    <select class="form-control m-b-xs m-t-xs" name="lead_status" style="width: 100%" >
+                                        {{lead_status|safe}}
                                     </select>
                                 </div>
-                                <div class="col-lg-3">
-                                    <select class="form-control m-t-xs" name="account" style="width: 100%">
-                                        <option selected="">Sort by:</option>
-                                        <option>Option 1</option>
-                                        <option>Option 2</option>
+                                <div class="col-lg-2">
+                                    <select class="form-control m-t-xs" name="active_inactive" style="width: 100%" >
+                                        <option value="2">-- Other Filters --</option>
+                                        <option value="1">ACTIVE</option>
+                                        <option value="0">IN-ACTIVE</option>
                                     </select>
+                                </div>
+                                
+                                <div class="col-lg-3">
+                                    <div class="btn-group" style="margin-top:5px;">
+                                        <button class="btn btn-success" type="submit"><i class="fa fa-search"></i> Search</button>
+                                        </form>
+                                        <button data-toggle="dropdown" class="btn btn-info dropdown-toggle" aria-expanded="false" ><i class="fa fa-gear"></i> More Actions</button>
+                                        <ul class="dropdown-menu dropdown-menu-2">
+                                            <li><a href="#" onclick="change_lead_status()">Change Lead Status</a></li>
+                                            <li><a href="#" onclick="change_lead_active_inactive()">Set Active In-Active</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -69,6 +78,7 @@
                             <table class="table table-vertical-align-middle table-bordered" style="margin-bottom: 0px">
                                 <thead>
                                 <tr>
+                                    <th width="8px"><input type="checkbox" id="select_all"/></th>
                                     <th>
                                         Status
                                     </th>
@@ -86,9 +96,10 @@
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="table-form">
                                 {% for lead in leads %}
                                 <tr>
+                                    <td class="text-center"><input type="checkbox" class="checkbox" name="case" value="{{lead.id|safe}}"/></td>
                                     <td width="70px">
                                         {% if lead.status|safe == 'New' %}
                                             <span class="label label-accent">{{lead.status|safe}}</span>
@@ -106,7 +117,7 @@
                                             
                                             <span class="col-md-4" style="border:1px solid #444444;padding:0px;">
                                                 <img alt="image" class="img image-md" src="{% static 'images/a2.jpg' %}">
-                                                <span style="color:#f6a821">{{aasign|safe}}</span>
+                                                <span style="color:#f6a821">{{aasign.first_name|safe|title}} {{aasign.last_name|safe|title}}</span>
                                             </span>
                                             {% endfor %}
                                         </div>
@@ -160,4 +171,201 @@
         </div>
     </section>
     <!-- End main content-->
+
+    <!-- MODAL LEAD STATUS -->
+
+    <div class="modal" id="modal-lead-status" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.7)">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-lead-status-form" action="" method="post">
+                            {% csrf_token %}
+                    <h4 class="m-t-none">EDIT/SET LEAD STATUS</h4>
+                    <p>Uncheck records that you don't want to be set. Select the Status from the dropdrown and press the submit button</p>
+                    <div class="row">
+                        <div class="col-md-5">
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="lead_status" class="form-control" id="lead_status_select">
+                                {{lead_status|safe}}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <table class="table m-t-md table-bordered">
+                        <thead style="background-color:#fd9f11">
+                        <tr>
+                            <th><input type="checkbox" id="select_all_status_modal"/></th>
+                            <th>Company Name</th>
+                            <th>Status</th>
+                            <th>Active</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-accent" onclick="submit_status_form()">Save changes</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- MODAL LEAD STATUS END-->
+
+    <!-- MODAL LEAD ACTIVE -->
+
+    <div class="modal" id="modal-lead-active" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.7)">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-lead-active-form" action="" method="post">
+                            {% csrf_token %}
+                    <h4 class="m-t-none">EDIT/SET LEAD STATUS</h4>
+                    <p>Uncheck records that you don't want to be set. Select the Status from the dropdrown and press the submit button</p>
+                    <div class="row">
+                        <div class="col-md-5">
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="lead_active" class="form-control" id="lead_active_select">
+                                <option value="">--Select--</option>
+                                <option value="1">ACTIVE</option>
+                                <option value="0">IN-ACTIVE</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <table class="table m-t-md table-bordered">
+                        <thead style="background-color:#fd9f11">
+                        <tr>
+                            <th><input type="checkbox" id="select_all_active_modal"/></th>
+                            <th>Company Name</th>
+                            <th>Status</th>
+                            <th>Active</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-accent" onclick="submit_active_form()">Save changes</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- MODAL LEAD ACTIVE END-->
+
+<SCRIPT language="javascript">
+    $(document).ready(function(){
+
+        $("#select_all, #select_all_status_modal, #select_all_active_modal").change(function(){  //"select all" change 
+            var status = this.checked; // "select all" checked status
+            $('.checkbox').each(function(){ //iterate all listed checkbox items
+                this.checked = status; //change ".checkbox" checked status
+            });
+        });
+
+        $('.checkbox').change(function(){ //".checkbox" change 
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+
+            if(this.checked == false){ //if this item is unchecked
+                $("#select_all")[0].checked = false; //change "select all" checked status to false
+                $("#select_all_status_modal")[0].checked = false; //change "select all" checked status to false
+                $("#select_all_active_modal")[0].checked = false; //change "select all" checked status to false
+            }
+            
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length ){ 
+                $("#select_all")[0].checked = true; //change "select all" checked status to true
+                $("#select_all_status_modal")[0].checked = true; //change "select all" checked status to true
+                $("#select_all_active_modal")[0].checked = true; //change "select all" checked status to true
+            }
+        });
+    });
+
+    function change_lead_status(){
+        feed_data("table-form", "select_all_status_modal", "modal-lead-status");
+    }
+
+    function change_lead_active_inactive(){
+        feed_data("table-form", "select_all_active_modal", "modal-lead-active");
+    }
+
+
+
+    function feed_data(table_id = "", checkbox_id = "", modal_id = ""){
+        if($('.checkbox:checked').length > 0){
+            data = '';
+            $("#"+table_id+" .checkbox").each(function(i,v){
+                if($(this).prop("checked")){
+                    console.log($(this).val());
+                    
+                    first_td = $(this).parent().next()
+
+                    data += '<tr>';
+                    data += '<td width="65px"><input type="checkbox" class="checkbox" name="case" value="'+$(this).val()+'" checked/></td>';
+                    data += '<td>'+$(first_td).next().html()+'</td>';
+                    data += '<td>'+$(first_td).html()+'</td>';
+                    data += '<td>'+$(first_td).next().next().next().html()+'</td>';
+                    data += '</tr>';                    
+                }
+            });
+            
+            $("#"+checkbox_id).prop("checked", true);
+            $("#"+modal_id).find("table").find("tbody").empty().append(data);
+
+            $("#"+modal_id).modal('show');
+
+        }else{
+            alert("No records selected. Can not perform operation");
+        }
+    }
+
+    function submit_status_form(){
+        if($("#lead_status_select").val() !=0){
+            $.post("/{% current_user_link user.id %}/leads/lead_multiple_status_set/",$("#modal-lead-status-form").serialize(),function(data){
+                if(data!=0){
+                    alert("Operation Successful!");
+                }else{
+                    alert("Operation Failed. Unknown Error!");
+                }
+                location.reload();
+            });
+        }else{
+            alert("No status selected. Can not perform operation!");
+        }
+    }
+
+    function submit_active_form(){
+        if($("#lead_status_select").val() !=""){
+            $.post("/{% current_user_link user.id %}/leads/lead_multiple_active_set/",$("#modal-lead-active-form").serialize(),function(data){
+                if(data!=0){
+                    alert("Operation Successful!");
+                }else{
+                    alert("Operation Failed. Unknown Error!");
+                }
+                location.reload();
+            });
+        }else{
+            alert("No status selected. Can not perform operation!");
+        }
+    }
+
+
+</SCRIPT>
+
+
 {% endblock %}

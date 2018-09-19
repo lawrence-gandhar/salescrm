@@ -199,7 +199,7 @@ def add_lead(request, usertype = None):
 #*******************************************************************************
 # ADD LEAD STEP - 2
 #*******************************************************************************    
-
+#
 @login_required
 def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None):
 
@@ -456,7 +456,6 @@ def manage_leads(request, usertype = None):
 
     page = request.GET.get('page')
 
-    
     try:
         if page is None:
             page = 1
@@ -511,8 +510,9 @@ def fetch_lead_details(request, usertype = None):
         except Lead_questionnaire_model.DoesNotExist:
             return HttpResponse(0)
 
-#
+#*******************************************************************************  
 #   LEAD ASSIGNMENTS
+#*******************************************************************************  
 #
 @login_required
 def lead_assignments(request, usertype = None):
@@ -523,17 +523,29 @@ def lead_assignments(request, usertype = None):
 
     data_dict["js_files"] = []
 
+    data_dict["lead_status"] = lead_status()
+
     leads = Leads_tbl.objects
-    submit = request.POST.get('submit', False)
 
     if request.POST:
-        leads = leads.filter(company_name__icontains=request.POST['company_name'])
+        company_name = request.POST.get('company_name', False)
+        lead_status_id = request.POST.get('lead_status', '0')
+        
+        if company_name:
+            leads = leads.filter(company_name__icontains = company_name)
+
+        if lead_status_id != '0':
+            leads = leads.filter(status_id = int(lead_status_id))
+
+        if request.POST["active_inactive"] !="2": 
+            active_inactive = request.POST.get('active_inactive', True)  
+
+            leads = leads.filter(active = active_inactive)
+
     else:
         leads = leads.all()
 
     leads = leads.prefetch_related('assigned_to')
-    
-    #values('id', 'company_name', 'status__name', 'active', 'creation_date',)
     
     paginator = Paginator(leads, 25) # Show 25 contacts per page
 
@@ -556,8 +568,9 @@ def lead_assignments(request, usertype = None):
     return render(request, template, data_dict)
 
 
-#
+#*******************************************************************************  
 #   LEAD ASSIGNMENTS
+#*******************************************************************************  
 #
 @login_required
 def lead_assignments_edit(request, usertype = None, id = None):
@@ -569,20 +582,14 @@ def lead_assignments_edit(request, usertype = None, id = None):
     data_dict["js_files"] = []
 
     users_present = Leads_tbl.objects.get(pk = int(id))
-
     users_present_now = users_present.assigned_to.all().values_list('id', flat = True)
-
     users_present_list = users_present.assigned_to.all().values('id', 'first_name', 'last_name', 'email')
-
     data_dict["users_present_list"] = users_present_list
 
     try:
         user_type = Usertype.objects.get(name__iexact = 'Agent')
-
         agents = User_usertype.objects.filter(usertype_id = user_type.id).values_list('user_id', flat= True)
-        
         users = User.objects.filter(id__in = agents).exclude(id__in = users_present_now).values('id', 'first_name', 'last_name', 'email')
-
         data_dict["users"] = users
 
     except Usertype.DoesNotExist:
@@ -592,18 +599,42 @@ def lead_assignments_edit(request, usertype = None, id = None):
     if request.POST:
 
         user_list = request.POST.getlist('users_list[]')
-
         user = User.objects.filter(id__in = user_list)
 
         lead = Leads_tbl.objects.get(pk = int(id))
+
+        removed_users = list(set(users_present_now) - (set(list(map(lambda x: int(x), user_list)))))
+        
+
         lead.assigned_to.set(user)
         lead.save()
+
+        log = ['Lead Assignment Performed']
+        
+        log.append('<br/>')
+        for u in user:
+            log.append('<br/><small style="font-size:80%;color:#f5a212">Added : '+u.first_name +" "+ u.last_name+'</small>')
+
+        if len(user) == 0:
+            log.append('<br/><small style="font-size:80%;color:#f5a212">Agents unassigned or a blank submission done</small>')
+
+        if len(removed_users) > 0:
+            for i in removed_users:
+                rem = User.objects.get(pk = int(i))
+                log.append('<br/><small style="font-size:80%;color:#f5a212">Removed : '+rem.first_name +" "+ rem.last_name+'</small>')
+
+        log.append('<br/>')
+
+        add_lead_logs(id, request.session["user_id"], ''.join(log))
+
+        return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/edit-assignment/' + str(id) +'/', True)
 
     return render(request, template, data_dict)
 
 
-#
+#*******************************************************************************  
 #   LEAD LOG, PROGRESS AND TIMELINE
+#*******************************************************************************  
 #
 @login_required
 def timeline(request, usertype = None, id = None):
@@ -620,3 +651,52 @@ def timeline(request, usertype = None, id = None):
     data_dict['lead_logs'] = lead_logs
 
     return render(request, template, data_dict)
+
+#*******************************************************************************  
+#   LEAD MULTIPLE STATUS SET
+#*******************************************************************************  
+#
+@login_required
+def lead_multiple_status_set(request, usertype = None):
+    if request.is_ajax():
+
+        ids = request.POST.getlist('case')
+
+        for id in ids:
+            try:
+                lead = Leads_tbl.objects.get(pk = int(id))
+                lead.status_id = int(request.POST["lead_status"])
+                lead.save()
+
+                log = ['Lead Status Modified']
+                log.append('<br/><small style="font-size:80%;color:#f5a212">Status Set : '+lead.status.name+'</small>')
+                add_lead_logs(id, request.session["user_id"], ''.join(log))
+            except:
+                return HttpResponse(0)
+        return HttpResponse(1)
+
+#*******************************************************************************  
+#   LEAD MULTIPLE CTIVE IN-ACTIVE SET
+#*******************************************************************************  
+#
+@login_required
+def lead_multiple_active_set(request, usertype = None):
+    if request.is_ajax():
+
+        ids = request.POST.getlist('case')
+    
+        for id in ids:
+            try:
+                lead = Leads_tbl.objects.get(pk = int(id))
+                lead.active = int(request.POST["lead_active"])
+                lead.save()
+
+                log = ['Lead Active/In-Active Modified']
+                if int(request.POST["lead_active"]) == 1: 
+                    log.append('<br/><small style="font-size:80%;color:#f5a212">Lead Set to ACTIVE</small>')
+                else:
+                    log.append('<br/><small style="font-size:80%;color:#f5a212">Lead Set to IN-ACTIVE</small>')
+                add_lead_logs(id, request.session["user_id"], ''.join(log))
+            except:
+                return HttpResponse(0)
+        return HttpResponse(1)
