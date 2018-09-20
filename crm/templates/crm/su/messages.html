@@ -1,0 +1,118 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-mail-open"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3>Messages And Comments</h3>
+                            <small>
+                                Lead Mesaages
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            Lead ID : {{lead_id|safe}}
+                            <button class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target="#modal-add_message">Add Message/Comment</button>
+                        </div>
+                        <div class="panel-body">
+                            {% if not lead_messages %} 
+                                <div class="col-md-12">
+                                    <div class="panel panel-filled panel-c-danger">
+                                        <div class="panel-body" style="padding:5px 15px 5px 15px">
+                                            No Messages or comments aaded for this lead
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="v-timeline vertical-container">
+                                {% for message in lead_messages %}                               
+                                <div class="vertical-timeline-block">
+                                    <div class="vertical-timeline-icon" style="border-radius:0%">
+                                        <img alt="image" style="width:38px;height:38px;" class="image-md" src="{% static 'images/a1.jpg' %}">
+                                    </div>
+                                    <div class="vertical-timeline-content">
+                                        <div class="row" style="padding:10px 20px">
+                                            <p style="margin:0px;">{{message.message|safe}}</p>                                            
+                                        </div>
+                                        <div class="row">
+                                            <span class="pull-left" style="color:#f6a821;margin-left:10px;padding:10px">{{message.user__first_name|title}} {{message.user__last_name|title}}</span>
+                                            <span class="pull-right" style="color:#f6a821;margin-right:30px;padding:10px"> {{message.creation_date|date:"M d, Y"}} <small>{{message.creation_date|date:"H:i:s"}}</small></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %} 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End main content-->
+
+    <!-- MODAL LEAD ACTIVE -->
+
+    <div class="modal" id="modal-add_message" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.7)">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body" style="padding-bottom: 10px;">
+                        <form id="modal-lead-message-form" action="" method="post">
+                        {% csrf_token %}
+                        <h4 class="m-t-none">ADD MESSAGE/COMMENT</h4>
+                        <div class="row">
+                            <input type="hidden" value="{{lead_id|safe}}" name="lead_id" readonly>
+                            <textarea name="message" id="message" class="form-control" required></textarea>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-accent" onclick="submit_form()">Save changes</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    
+        <!-- MODAL LEAD ACTIVE END-->
+
+<script>
+    $(document).ready(function () {
+
+        //$('.summernote').summernote({height: 150,});
+
+    });
+
+    
+    function submit_form(){
+        $.post("/{% current_user_link user.id %}/leads/lead_message_add/",$("form#modal-lead-message-form").serialize(),function(data){
+            if(data == 1){
+                alert("Message Added");
+                location.reload();
+            }else alert('Error Occurred! Try later or contact administrator.')
+        })
+    }
+
+
+</script>
+        
+{% endblock %}

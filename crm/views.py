@@ -65,6 +65,8 @@ def index(request):
                 usertype = User_usertype.objects.get(user_id = int(user.id))
                 usertype_id = usertype.usertype_id
 
+                request.session["usertype_id"] = usertype.usertype_id
+
                 try:
                     target_link = Usertype.objects.get(pk = int(usertype_id))
                     url_link = target_link.sub_link
@@ -355,7 +357,7 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 
             try:
                 lead_present.save()
-                add_lead_logs(id, 'Lead Modified')
+                add_lead_logs(id, request.session["user_id"], 'Lead Modified')
                 messages.error(request, 'Data Saved')
                 return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/'+slug+'/'+step+'/' + str(id) +'/')
             except:
@@ -447,8 +449,16 @@ def manage_leads(request, usertype = None):
 
     if submit:
         leads = leads.filter(company_name__icontains=request.POST['company_name'])
+
+        if request.session["usertype_id"] == 2:
+            leads = leads.filter(assigned_to = request.session["user_id"])
+        else:
+            leads = leads.all()
     else:
-        leads = leads.all()
+        if request.session["usertype_id"] == 2:
+            leads = leads.filter(assigned_to = request.session["user_id"])
+        else:
+            leads = leads.all()
 
     leads = leads.values('id', 'company_name', 'contact_title', 'contact_firstname', 'contact_lastname', 'address', 'country', 'contact_details', 'contact_designation', 'phone', 'fax', 'extension', 'phone', 'email', 'website', 'fte', 'annual','creation_date', 'last_updated', 'status__name', 'line_of_business__name', 'lead_type__name', 'payment_type__name', 'probability__name')
     
@@ -674,6 +684,7 @@ def lead_multiple_status_set(request, usertype = None):
             except:
                 return HttpResponse(0)
         return HttpResponse(1)
+    return HttpResponse(0)
 
 #*******************************************************************************  
 #   LEAD MULTIPLE CTIVE IN-ACTIVE SET
@@ -700,3 +711,62 @@ def lead_multiple_active_set(request, usertype = None):
             except:
                 return HttpResponse(0)
         return HttpResponse(1)
+    return HttpResponse(0)
+
+#*******************************************************************************  
+#   LEAD MESSAGES
+#*******************************************************************************  
+#
+@login_required
+def lead_messages(request, usertype = None, id = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/messages.html'
+
+    data_dict = {}
+    data_dict["css_files"] = ["vendor/summernote/dist/summernote.css"]
+
+    data_dict["js_files"] = ['vendor/summernote/dist/summernote.min.js']
+
+    lead_messages = Lead_message.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'message', 'user__first_name', 'user__last_name').order_by('creation_date')
+
+    data_dict['lead_id'] = id
+    data_dict['lead_messages'] = lead_messages
+
+    return render(request, template, data_dict)        
+
+#*******************************************************************************  
+#   LEAD MESSAGE ADD
+#*******************************************************************************  
+#     
+@login_required
+def lead_message_add(request, usertype = None):
+    if request.is_ajax():
+        if request.POST["message"].strip() !="":
+            try:
+                lead = Leads_tbl.objects.get(pk = int(request.POST["lead_id"]))
+                
+                lead_message = Lead_message(
+                    lead_id = lead.id,
+                    message = request.POST["message"],
+                    user_id = request.session["user_id"]
+                )
+                lead_message.save()
+
+                users = lead.assigned_to.all().values_list('id', flat = True)
+                
+                for user in users:
+                    if int(user) != int(request.session["user_id"]):
+                        lead_messsage_log = Lead_message_log(
+                            message_id = lead_message.id,
+                            user_id = int(user)
+                        )
+
+                        lead_messsage_log.save()
+
+                log = ['Lead Message Added']
+                log.append('<br/><small style="font-size:80%;color:#f5a212">'+request.POST["message"]+'</small>')
+                add_lead_logs(id, request.session["user_id"], ''.join(log))    
+            except:
+                return HttpResponse(0)
+            return HttpResponse(1)
+        return HttpResponse(0)
+    return HttpResponse(0)

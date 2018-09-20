@@ -1,0 +1,437 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+<!-- Main content-->
+
+<style>
+label.control-label{font-size:90%;}
+</style>
+
+{% ifequal error '' %}
+
+    {% ifnotequal error_2 '' %}
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="alert alert-danger">{{error_2|safe}}</div>
+                    </div>
+                </div>
+            </div>
+        </section> 
+    {% endifnotequal %}
+
+    <section class="content">
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-filled">
+                        <div class="panel-heading">
+                            ADD LEAD
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" action="" method="post">
+                                {% csrf_token %}
+                                <div class="tabs-container">
+                                    <div class="tabs-left">
+                                        <ul class="nav nav-tabs">
+                                            <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">Step 1</a></li>
+                                            <li class="active"><a data-toggle="tab" href="#tab-7" aria-expanded="true">Step 2</a></li>
+                                        </ul>
+                                        <div class="tab-content ">
+                                            <div id="tab-6" class="tab-pane">
+                                                <div class="panel-body">
+                                                    <div class="col-md-12" style="margin-top: -70px">
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Select Lead type</label>
+                                                            <div class="col-md-10">
+                                                                <select class="form-control" id="inputEmail3" name = "lead_type" required>
+                                                                    {{lead_type|safe}}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Company Name</label>
+                                                            <div class="col-md-10">
+                                                                <input type="text" class="form-control" id="inputEmail3" value="{{company_name|safe}}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Contact Name</label>
+                                                            <div class="col-sm-10">
+                                                                <div class="col-sm-2" style="padding-left:0px;padding-right:5px;">
+                                                                    <select class=" form-control input-sm">
+                                                                        <option {% ifequal contact_title|safe 'Mr' %} selected {% endifequal %}>Mr</option>
+                                                                        <option {% ifequal contact_title|safe 'Ms' %} selected {% endifequal %}>Ms</option>
+                                                                        <option {% ifequal contact_title|safe 'Mrs' %} selected {% endifequal %}>Mrs</option>
+                                                                    </select>
+                                                                    <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Title</span>
+                                                                </div>
+                                                                <div class="col-sm-5" style="padding-left:0px;padding-right:5px;">
+                                                                    <input type="text" class="form-control input-sm" id="" value="{{contact_firstname|safe}}">
+                                                                    <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Firstname</span>
+                                                                </div>
+                                                                <div class="col-sm-5" style="padding-left:0px;padding-right:0px;">
+                                                                    <input type="text" class="form-control input-sm" id="" value="{{contact_lastname|safe}}">
+                                                                    <span class="text-center" style="display:block;font-size:11px;margin-top:3px;">Lastname</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Details Contact Info</label>
+                                                            <div class="col-sm-10">
+                                                                <textarea class="form-control input-sm" id="">{{contact_details|safe}}</textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                                <label for="inputEmail3" class="col-md-2 control-label">Designation</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{contact_designation|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                                <label for="inputEmail3" class="col-md-2 control-label">Address</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{contact_address|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Country</label>
+                                                            <div class="col-sm-10">
+                                                                <select class="form-control input-sm" id="get_country" name="country">
+                                                                    {{country_list|safe}}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Phone</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{phone|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Extension</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{extension|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Fax</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{fax|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Email</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{email|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Website</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{website|safe}}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">L.O.B</label>
+                                                            <div class="col-md-10">
+                                                                <select class="form-control" id="inputEmail3" name="lead_line_of_business" required>
+                                                                    {{lead_line_of_business|safe}}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Payment type</label>
+                                                            <div class="col-md-10">
+                                                                <select class="form-control" id="inputEmail3" name="payment_type" required>
+                                                                    {{lead_payment_type|safe}}
+                                                                </select>
+                                                            </div>
+                                                        </div>   
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Probability</label>
+                                                            <div class="col-md-10">
+                                                                <select class="form-control" id="inputEmail3" name="probability" required>
+                                                                    {{lead_probability|safe}}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">FTE</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{fte|safe}}">
+                                                            </div>
+                                                        </div> 
+                                                        <div class="form-group" style="margin-bottom:5px;">
+                                                            <label for="inputEmail3" class="col-md-2 control-label">Annual $</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control input-sm" id="" value="{{annual|safe}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="margin-top:20px">
+                                                        <input type="submit" name="submit" value="SUBMIT" class="btn btn-w-md btn-success pull-right">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="tab-7" class="tab-pane active">
+                                                <div class="panel-body" style="font-size: 90%">
+                                                    <div class="col-md-12" style="margin-top: -70px">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                Does your program require inbound calls, outbound calls, or both?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    {{lead_program_requirement|safe}}   
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                How many inbound or outbound calls do you estimate per month?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group" style="margin-bottom:5px;">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Inbound</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" required name="inbound_per_month" value="{{inbound_per_month|safe}}">
+                                                                        </div>
+                                                                    </div> 
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Outbound</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" required name="outbound_per_month"  value="{{outbound_per_month|safe}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                What is the anticipated length of the call (in minutes)?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group" style="margin-bottom:5px;">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Inbound m/call</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" required name="inbound_mins_per_call"   value="{{inbound_mins_per_call|safe}}">
+                                                                        </div>
+                                                                    </div> 
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Outbound m/call</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" required name="outbound_mins_per_call"   value="{{outbound_mins_per_call|safe}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                What is the purpose of the call?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    {{lead_call_purpose|safe}}   
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                Will call contact be with Businesses or Consumers?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="radio radio-success col-md-3">
+                                                                        <input type="radio" id="singleRadio1" value="None" name="call_contact" {% ifequal call_contact|safe 'None' %} checked="" {% endifequal %}>
+                                                                        <label for="singleRadio1">None</label>
+                                                                    </div>
+                                                                    <div class="radio radio-success col-md-3">
+                                                                        <input type="radio" id="singleRadio2" value="B2B" name="call_contact" {% ifequal call_contact|safe 'B2B' %} checked="" {% endifequal %}>
+                                                                        <label for="singleRadio2">B2B</label>
+                                                                    </div>
+                                                                    <div class="radio radio-success col-md-3">
+                                                                        <input type="radio" id="singleRadio3" value="B2C" name="call_contact" {% ifequal call_contact|safe 'B2C' %} checked="" {% endifequal %}>
+                                                                        <label for="singleRadio3">B2C</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                Anticipated Start Date?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Begin</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="date" class="form-control" id="inputEmail3" name="anticipated_date" value="{{anticipated_date|safe}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                What product or service do you provide to your customers?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label"></label>
+                                                                        <div class="col-md-10">
+                                                                            <Textarea class="form-control" name="product_service_description">{{product_service_description|safe}}</Textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Area Of Operation</label>
+                                                                        <div class="col-md-10">
+                                                                            <select class="form-control input-sm" id="get_country" name="area_of_operation"  multiple>
+                                                                                {{area_of_operation|safe}}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Work Hours</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" name="work_hours" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Center Interested</label>
+                                                                        <div class="col-md-10">
+                                                                            <select class="form-control input-sm" id="get_country" name="centers_interested" multiple>
+                                                                                {{centers_interested|safe}}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                What product or service do you provide to your customers?
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    {{lead_pricing_model|safe}} 
+                                                                </div>
+                                                                <div class="col-md-12" style="margin-top:10px;">
+                                                                    <div class="form-group" style="">
+                                                                        <label for="inputEmail3" class="col-md-2 control-label">Pricing</label>
+                                                                        <div class="col-md-10">
+                                                                            <input type="text" class="form-control" id="inputEmail3" name="pricing" value="{{pricing|safe}}">
+                                                                        </div>
+                                                                    </div> 
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12" style="">
+                                                        <div class="panel panel-c-accent">
+                                                            <div class="panel-heading">
+                                                                <div class="panel-tools">
+                                                                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                                </div>
+                                                                Please provide us with any additional comments you feel is important about your company
+                                                            </div>
+                                                            <div class="panel-body" style= "margin:0px; width:100%;">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group" style="">
+                                                                        <div class="col-md-12">
+                                                                            <Textarea class="form-control" name="comments">{{comments|safe}}</Textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                    <div class="col-md-12" style="margin-top:20px">
+                                                        <input type="submit" name="submit" value="SUBMIT" class="btn btn-w-md btn-success pull-right">
+                                                    </div>
+                                                </div>  
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>        
+                </div>
+            </div>    
+        </div>
+    </section>    
+
+    <script>
+    
+        $(document).ready(function(){
+            $("div#tab-6 input, div#tab-6 select, div#tab-6 textarea").prop("disabled",true);
+
+            {% ifequal done True %}
+                $("div#tab-7 input, div#tab-6 select, div#tab-6 textarea").prop("disabled",true);
+            {% endifequal %}
+
+        });
+    
+    </script>
+
+{% else %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="alert alert-danger">{{error|safe}}</div>
+            </div>
+        </div>
+    </div>
+</section>                
+
+{% endifequal %}
+
+
+{% endblock %}    

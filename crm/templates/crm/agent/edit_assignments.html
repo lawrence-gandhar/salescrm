@@ -1,0 +1,179 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+
+<style>
+div.highlighted-div{background-color:rgba(255,0,0,0.7)}
+</style>
+
+<!-- Main content-->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="view-header">
+                    <div class="pull-right text-right" style="line-height: 14px">
+                        
+                    </div>
+                    <div class="header-icon">
+                        <i class="pe page-header-icon pe-7s-users"></i>
+                    </div>
+                    <div class="header-title">
+                        <h3>Lead Assignment</h3>
+                        <small>
+                            List Of Participates
+                        </small>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel" style="margin-bottom:0px;">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-8" style="height:380px !important; overflow-y: auto;">
+                                <div class="panel">
+                                    {% for user in users %}
+                                    <div data-boxtype="dont-drop-on-me" class="col-md-6" id="drag{{user.id|safe}}" draggable="true" ondragstart="drag(event)">
+                                        <input type="hidden" disabled value="{{user.id}}">
+                                        <div class="panel panel-filled ">
+                                            <div class="panel-body">
+                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a2.jpg' %}">
+                                                <h5 class="m-b-none"><a href="#"> {{user.first_name|safe|title}} {{user.last_name|safe|title}}</a></h5>
+                                                <div class="m-b-xs c-white small">{{user.email|safe}}</div>
+                                                <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    
+                                </div>
+                            </div>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                            <div class="col-md-4">
+                                <div class="panel panel-filled" >
+                                    <div class="panel-heading" style="background-color:#f6a821">
+                                        Drop in this area
+                                        <button class="btn btn-success pull-right btn-xs" style="background-color: #1c201c;color:#ffffff">SAVE</button>
+                                    </div>
+                                    
+                                    <div style="height:330px !important;overflow-y:auto" data-boxtype="drop-on-me" class="panel-body" id="drop-point" ondrop="drop_element(event)" ondragover="allowDrop(event)">
+                                        {% for user_present in users_present_list %}
+                                            <div data-boxtype="dont-drop-on-me" class="row" id="drag{{user_present.id|safe}}" draggable="false" ondragstart="drag(event)">
+                                                <div class="table" style="margin-bottom:0px;" data-boxtype="dont-drop-on-me">
+                                                    <table class="table-responsive" style="width:100%" data-boxtype="dont-drop-on-me">
+                                                        <tbody data-boxtype="dont-drop-on-me">
+                                                            <tr data-boxtype="dont-drop-on-me">
+                                                                <td style="padding:5px; width:65px;" data-boxtype="dont-drop-on-me">
+                                                                    <img alt="image" class="img-rounded image-lg" src="/static/images/a2.jpg" data-boxtype="dont-drop-on-me">
+                                                                </td>
+                                                                <td style="padding:5px" data-boxtype="dont-drop-on-me">
+                                                                    <i onclick="remove_me($(this))" class="fa fa-fw fa-trash pull-right" style="color:#f6a821;cursor:pointer;" data-boxtype="dont-drop-on-me"></i>
+                                                                    <i onclick="undo_me($(this))" class="fa fa-fw fa-undo pull-right hide" style="color:#ffffff;cursor:pointer;" data-boxtype="dont-drop-on-me"></i>
+                                                                    <input type="hidden" value="{{user_present.id|safe}}" name="users_list[]" data-boxtype="dont-drop-on-me">
+                                                                    <h5 class="m-b-none" data-boxtype="dont-drop-on-me">
+                                                                        <a href="#" data-boxtype="dont-drop-on-me"> {{user_present.first_name|safe}} {{user_present.last_name|safe}}</a>
+                                                                    </h5>
+                                                                    <div class="m-b-xs c-white small" data-boxtype="dont-drop-on-me">{{user_present.email|safe}}</div>
+                                                                    <small data-boxtype="dont-drop-on-me">
+                                                                        <i class="fa fa-clock-o" data-boxtype="dont-drop-on-me"></i>  Last active in: 24.05.2017
+                                                                    </small>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+
+    $(document).ready(function(){})
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+    
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+
+        if(ev.target.getAttribute('data-boxtype') != document.getElementById(data).getAttribute('data-boxtype')){
+            ev.target.appendChild(document.getElementById(data));
+            return data
+        }else return false;
+    }
+
+    function drop_element(event){
+        id = drop(event);
+        
+        if(id !==false){
+            input = $("#"+id).find("input").val();
+            participate_image = $("#"+id).find("img").attr("src");
+            participate_name = $("#"+id).find("h5 > a").text();
+            participate_city = $("#"+id).find("div.m-b-xs").text(); 
+            participate_last_activity = $("#"+id).find("small").text();
+
+            html = '<div class="table" style="margin-bottom:0px;"><table class="table-responsive" style="width:100%"><tr>';
+            html += '<td style="padding:5px; width:65px;"><img alt="image" class="img-rounded image-lg" src="'+participate_image+'"></td>';
+            html += '<td style="padding:5px">';
+            html += '<i onclick="remove_me($(this))" class="fa fa-fw fa-trash pull-right" style="color:#f6a821;cursor:pointer;"></i>';
+            html += '<i onclick="undo_me($(this))" class="fa fa-fw fa-undo pull-right hide" style="color:#ffffff;cursor:pointer;"></i>';
+            html += '<input type="hidden" value="'+input+'" name="users_list[]">';
+            html += '<h5 class="m-b-none"><a href="#"> '+participate_name+'</a></h5>';
+            html += '<div class="m-b-xs c-white small">'+participate_city+'</div>';
+            html += '<small><i class="fa fa-clock-o"></i> '+participate_last_activity+'</small>';
+            html += '</td>';
+            html += '</tr></table></div>';
+
+
+            $("#"+id).prop('draggable',null).prop('ondragstart',null).empty().removeClass('col-md-6').addClass('row').append(html);
+            $("#"+id).find('*').attr('data-boxtype','dont-drop-on-me');
+
+            $("#drop-point").scrollTop($("#drop-point")[0].scrollHeight);
+        }
+    }
+
+    function remove_me(elem){
+        $(elem).removeClass("show").addClass("hide");
+        $(elem).closest("div.table").addClass("highlighted-div");
+        $(elem).closest("div.table").find("input").prop("disabled", true);
+        $(elem).closest("div.table").find("i.fa-undo").removeClass("hide").addClass("show");
+    }
+
+    function undo_me(elem){
+        $(elem).removeClass("show").addClass("hide");
+        $(elem).closest("div.table").removeClass("highlighted-div");
+        $(elem).closest("div.table").find("input").prop("disabled", false);
+        $(elem).closest("div.table").find("i.fa-trash").removeClass("hide").addClass("show");
+    }
+
+
+
+
+    
+</script>
+
+
+{% endblock %}

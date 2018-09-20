@@ -12,10 +12,12 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/manage/', views.manage_leads, name = 'manage-leads'),
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'), 
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/timeline/(?P<id>[\d]+)/$', views.timeline), 
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/messages/(?P<id>[\d]+)/$', views.lead_messages),
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/assignments/$', views.lead_assignments,),  
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/edit-assignment/(?P<id>[\d]+)/$', views.lead_assignments_edit),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set),       
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),       
     ]
 
 except ImportError:
@@ -30,8 +32,10 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/manage/', views.manage_leads, name = 'manage-leads'),    
         url(r'^(?P<usertype>[\w.@+-]+)/leads/fetch-lead-details/$', views.fetch_lead_details, name = 'fetch-lead-details'),    
         url(r'^(?P<usertype>[\w.@+-]+)/leads/timeline/(?P<id>[\d]+)/$', views.timeline),  
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/messages/(?P<id>[\d]+)/$', views.lead_messages),  
         url(r'^(?P<usertype>[\w.@+-]+)/leads/assignments/$', views.lead_assignments,), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/edit-assignment/(?P<id>[\d]+)/$', views.lead_assignments_edit),    
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set), 
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),  
     ]

@@ -254,3 +254,33 @@ class Lead_logs(models.Model):
 		db_table = 'lead_logs'
 		ordering = ['pk']
 		verbose_name_plural = 'Lead Logs Table'
+
+#************************************************************************************************************			
+#	LEAD MESSAGE
+#************************************************************************************************************			
+
+class Lead_message(models.Model):
+	lead = models.ForeignKey('Leads_tbl', on_delete = models.CASCADE, db_index = True,)
+	message = models.TextField(blank = True, null = True, )
+	user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL)
+	creation_date = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True,)
+
+	class Meta:	
+		db_table = 'lead_message'
+		ordering = ['pk']
+		verbose_name_plural = 'Lead Messages Table'
+
+#************************************************************************************************************			
+#	LEAD MESSAGE LOG
+#************************************************************************************************************			
+
+class Lead_message_log(models.Model):
+	message = models.ForeignKey('Lead_message', on_delete = models.CASCADE, db_index = True,)
+	user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL)
+	read = models.BooleanField(default = False, db_index = True,)
+	read_date = models.DateTimeField(null = True, db_index = True,)
+
+	class Meta:	
+		db_table = 'lead_message_log'
+		ordering = ['pk']
+		verbose_name_plural = 'Lead Messages Log Table'		
