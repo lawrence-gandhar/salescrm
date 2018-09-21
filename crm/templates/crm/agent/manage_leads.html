@@ -88,11 +88,11 @@
                                         <td>{{lead.last_updated|date:"M d, Y"}}</td>
                                         <td class="text-center" style="width:150px">
                                             <i title="SHOW MORE" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-down" onclick="show_more({{lead.id|safe}}, $(this))"></i>
+                                            <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="show_less({{lead.id|safe}}, $(this))"></i>
                                             <a title="EDIT" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/edit/1/{{lead.id|safe}}/"><i class="fa fa-fw fa-pencil"></i></a>
                                             <i style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-trash"></i>
-                                            <i title="SHOW LESS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-level-up hide" onclick="show_less({{lead.id|safe}}, $(this))"></i>
                                             <a href="/{% current_user_link user.id %}/leads/edit-assignment/{{lead.id}}"><i title="ASSIGNMENTS" style="cursor:pointer;color:#f6a821" class="fa fa-fw fa-user"></i></a>
-                                            <a title="PROGRESS" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/timeline/{{lead.id|safe}}/"><i class="fa fa-fw fa-flash"></i></a>
+                                            <a title="LOGS" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/timeline/{{lead.id|safe}}/"><i class="fa fa-fw fa-flash"></i></a>
                                             <a title="MESSAGES" style="cursor:pointer;color:#f6a821" href="/{% current_user_link user.id %}/leads/messages/{{lead.id|safe}}/"><i class="fa fa-fw fa-envelope"></i></a>
                                         </td>
                                     </tr>

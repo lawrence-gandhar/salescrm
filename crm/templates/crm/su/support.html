@@ -1,0 +1,277 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-news-paper"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3>Documentation</h3>
+                            <small>
+                                A user's guide for Sales CRM - Fusion BPO Services
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+
+                    <div class="panel panel-filled">
+
+                        <div class="panel-body">
+
+                            <h3>Support </h3>
+
+                            <p>
+                                Fill the form and find answer to your question or contact with us on support email.
+                            </p>
+
+                            <div class="form-group">
+                                <input class="form-control" placeholder="What are you looking for ?">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-md-3">
+
+                    <div class="panel-group">
+
+                        <ul class="list-unstyled">
+                            <li class="panel panel-filled support-question active">
+                                <a href="#answer1" data-toggle="tab">
+                                    <div class="panel-body">
+                                        <p class="font-bold c-white">Administrators Section</p>
+                                        <p>
+                                            Various sections are present in the Administrators Section and all are documented here
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+                <div class="col-md-9">
+
+                    <div class="panel">
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="answer1" class="tab-pane active">
+                                    <h3>
+                                        Administrator's Section
+                                    </h3>
+                                    <p>Index</p>
+                                    <ul>
+                                        <li><a href="#dashboard">Dashboard</a></li>
+                                        <li>
+                                            <a href="#leads_management">Leads Management</a>
+                                            <ul>
+                                                <li><a href="#add_leads">Add Leads</a></li>
+                                                <li>
+                                                    <a href="#manage_leads">Manage Leads</a>
+                                                    <ul>
+                                                        <li><a href="#edit_form2">Edit "STEP 2" Form</a></li>
+                                                        <li><a href="#messages_comments">Add Messages/Comments</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#leads_assingment">Leads Assignment</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+
+                                    <!-- DASH BOARD -->
+                                    <div class="panel" id="dashboard">
+                                        <div class="panel-body">
+                                            <h3>Dashboard</h3>
+                                            <p>
+                                                Under Construction
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- DASHBOARD END -->
+                                    <!-- LEADS MANAGEMENT -->
+
+                                    <div class="panel" id="leads_management">
+                                        <div class="panel-body">
+                                            <h3>Leads Management</h3>
+                                            <div class="row">
+                                                <p class="col-md-12">
+                                                    This section manages the lead. In this section you can do the following: 
+                                                </p>
+                                                <p class="col-md-12">
+                                                    <ul>
+                                                        <li>Lead addition</li>
+                                                        <li>Assigning leads to agents</li>
+                                                        <li>Tracking the changes made on the leads</li>
+                                                        <li>Deactivating and activating leads</li>
+                                                        <li>Adding Comments and messages for leads</li>
+                                                        <li>Changing lead status</li>
+                                                    </ul>
+                                                </p>
+                                                <p class="col-md-12">
+                                                    All of the above are explained below in detail.
+                                                </p>
+                                            </div>
+                                            <div class="row" id="add_leads">
+                                                <div class="col-md-12">
+                                                    <h4>Add Leads</h4>
+
+                                                    <p>
+                                                        This part is divided into two parts, "Step 1" and "Step 2". 
+                                                        <br/>
+                                                        "Step 1" has the basic details of the lead that is to be added. For initial, 
+                                                        all fields are mandatory. Unless "Step 1" form is completely filled and submitted, 
+                                                        you won't be able to proceed to "Step 2".
+
+                                                        <img src="{% static 'documentation_images/add_lead_1.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                        
+                                                        <br/>
+                                                        Form in "Step 1". Please select the needed from the dropdown lists. "L.O.B" means "Line Of Bussiness"
+
+                                                        <img src="{% static 'documentation_images/add_lead_2.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+
+                                                        <br/>
+                                                        Form in "Step 2". Please select the needed from the dropdown lists. A form with test data is shown below for your convenience.
+
+                                                        <img src="{% static 'documentation_images/add_lead_3.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="manage_leads">
+                                                <div class="col-md-12">
+                                                    <h4>Manage Leads</h4>
+                                                    <img src="{% static 'documentation_images/manage_leads_1.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                    <br/>
+                                                    Each Icon or button in the "Actions" column shown in the above image is explained with their respective output images below.
+                                                
+                                                    <table class="table table-bordered table-responsive" style="margin:10px 0px;">
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-level-down"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">SHOWS LEAD DETAILS</span>
+                                                                <img src="{% static 'documentation_images/lead_details.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-level-up"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">HIDE LEAD DETAILS</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-pencil"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">EDIT STEP 1 FORM</span>
+                                                                You will be navigated to a page where you can edit only "STEP 1". After editing the form submit it. 
+                                                                <br/>"STEP 2" form edit is discussed later in this guide.
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-trash"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">DEACTIVATES THE LEAD</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-user"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">REDIRECT TO ASSIGNMENT PAGE</span>
+                                                                You can assign agents to this lead on the page that you will be redirected to. 
+                                                                This section is also explained in detail in the guide.
+                                                                <img src="{% static 'documentation_images/lead_assignment.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-flash"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">REDIRECT TO LOGS PAGE</span>
+                                                                You can check logs of operations performed on the lead here. 
+                                                                This section is also explained in detail in the guide.
+                                                                <img src="{% static 'documentation_images/logs.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50px" class="text-center" style="color:#ffa500">
+                                                                <i class="fa fa-fw fa-envelope"></i>
+                                                            </td>
+                                                            <td>
+                                                                <span style="color:#ffa500;display:block">REDIRECT TO LOG MESSAGES/COMMENTS PAGE</span>
+                                                                You can add and read the messages or comments for the leads. 
+                                                                This section is also explained in detail in the guide.
+                                                                <img src="{% static 'documentation_images/messages.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>  
+                                            <div class="row" id="edit_form2">
+                                                <div class="col-md-12">
+                                                    <h4>Edit "STEP 2" Form</h4>
+                                                    <p>
+                                                        This form is "Lead Questionnaire Form". In the Manage section, on clicking 
+                                                        the "SHOW LEAD DETAILS" the "Edit Questionnaire" button appears. On clicking it, you will be redirected 
+                                                        to the "STEP 2" form for edit. The image below shows the button to redirect. 
+                                                        <img src="{% static 'documentation_images/edit_form2.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="messages_comments">
+                                                <div class="col-md-12">
+                                                    <h4>Add Messages/Comments</h4>
+                                                    <p>
+                                                        After redirection to the message page, on clicking the "Add Message/Comment" a form will appear. 
+                                                        Add the message there and submit. 
+                                                        <img src="{% static 'documentation_images/message_add.png'%}" class="img-responsive" style="margin:10px 0px;"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End main content-->
+
+{% endblock %}

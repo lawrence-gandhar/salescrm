@@ -17,7 +17,8 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/edit-assignment/(?P<id>[\d]+)/$', views.lead_assignments_edit),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set),       
-        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),       
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),   
+        re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),      
     ]
 
 except ImportError:
@@ -38,4 +39,5 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),  
+        url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),  
     ]

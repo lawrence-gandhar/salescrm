@@ -90,10 +90,33 @@ def index(request):
     return render(request, 'crm/login.html', {})
 
 
+
+#*******************************************************************************
+# DECORATOR FOR CHECKING URL AUTHENTICATION  
+#******************************************************************************* 
+#
+def user_access_check(function=None):
+    
+    def check_me(*args, **kwargs):
+        try:
+            target_link = Usertype.objects.get(pk = int(args[0].session["usertype_id"]))
+            url_link = target_link.sub_link
+
+            if url_link != kwargs["usertype"]:
+                logout(args[0])
+                return HttpResponseRedirect('/')
+        except User_usertype.DoesNotExist:
+            logout(args[0])
+            return HttpResponseRedirect('/')
+        return function(args[0], **kwargs)
+    return check_me
+
+
 #*******************************************************************************
 # LOGOUT  
 #*******************************************************************************   
-
+#
+@user_access_check
 @login_required
 def user_logout(request, usertype = None):
     logout(request)
@@ -102,8 +125,9 @@ def user_logout(request, usertype = None):
 
 #*******************************************************************************
 # PASSWORD CHANGE
-#*******************************************************************************    
-
+#*******************************************************************************  
+#   
+@user_access_check
 @login_required
 def change_password(request):
     if request.is_ajax():
@@ -113,7 +137,8 @@ def change_password(request):
 #*******************************************************************************
 # DASHBOARD
 #*******************************************************************************    
-
+#
+@user_access_check
 @login_required
 def dashboard(request,  usertype = None):
 
@@ -136,7 +161,8 @@ def dashboard(request,  usertype = None):
 #*******************************************************************************
 # ADD LEAD STEP - 1
 #*******************************************************************************    
-
+#   
+@user_access_check
 @login_required
 def add_lead(request, usertype = None):
 
@@ -201,7 +227,8 @@ def add_lead(request, usertype = None):
 #*******************************************************************************
 # ADD LEAD STEP - 2
 #*******************************************************************************    
-#
+#   
+@user_access_check
 @login_required
 def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None):
 
@@ -432,6 +459,7 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 # MANAGE LEAD
 #*******************************************************************************   
 #   
+@user_access_check   
 @login_required
 def manage_leads(request, usertype = None):
     template = 'crm/'+current_user_url(request.session["user_id"])+'/manage_leads.html'
@@ -486,6 +514,7 @@ def manage_leads(request, usertype = None):
 # FETCH LEAD QUESTIONNAIRE DETAILS
 #*******************************************************************************  
 #   
+@user_access_check  
 @login_required
 def fetch_lead_details(request, usertype = None):
     if request.is_ajax():
@@ -523,7 +552,8 @@ def fetch_lead_details(request, usertype = None):
 #*******************************************************************************  
 #   LEAD ASSIGNMENTS
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def lead_assignments(request, usertype = None):
     template = 'crm/'+current_user_url(request.session["user_id"])+'/projects.html'
@@ -581,7 +611,8 @@ def lead_assignments(request, usertype = None):
 #*******************************************************************************  
 #   LEAD ASSIGNMENTS
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def lead_assignments_edit(request, usertype = None, id = None):
     template = 'crm/'+current_user_url(request.session["user_id"])+'/edit_assignments.html'
@@ -645,7 +676,8 @@ def lead_assignments_edit(request, usertype = None, id = None):
 #*******************************************************************************  
 #   LEAD LOG, PROGRESS AND TIMELINE
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def timeline(request, usertype = None, id = None):
     template = 'crm/'+current_user_url(request.session["user_id"])+'/timeline.html'
@@ -665,7 +697,8 @@ def timeline(request, usertype = None, id = None):
 #*******************************************************************************  
 #   LEAD MULTIPLE STATUS SET
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def lead_multiple_status_set(request, usertype = None):
     if request.is_ajax():
@@ -689,7 +722,8 @@ def lead_multiple_status_set(request, usertype = None):
 #*******************************************************************************  
 #   LEAD MULTIPLE CTIVE IN-ACTIVE SET
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def lead_multiple_active_set(request, usertype = None):
     if request.is_ajax():
@@ -716,7 +750,8 @@ def lead_multiple_active_set(request, usertype = None):
 #*******************************************************************************  
 #   LEAD MESSAGES
 #*******************************************************************************  
-#
+#   
+@user_access_check
 @login_required
 def lead_messages(request, usertype = None, id = None):
     template = 'crm/'+current_user_url(request.session["user_id"])+'/messages.html'
@@ -736,7 +771,8 @@ def lead_messages(request, usertype = None, id = None):
 #*******************************************************************************  
 #   LEAD MESSAGE ADD
 #*******************************************************************************  
-#     
+#   
+@user_access_check    
 @login_required
 def lead_message_add(request, usertype = None):
     if request.is_ajax():
@@ -770,3 +806,19 @@ def lead_message_add(request, usertype = None):
             return HttpResponse(1)
         return HttpResponse(0)
     return HttpResponse(0)
+
+#*******************************************************************************  
+#   LEAD MESSAGE ADD
+#*******************************************************************************  
+#   
+@user_access_check     
+@login_required
+def documentation(request, usertype = None):
+    template = 'crm/'+current_user_url(request.session["user_id"])+'/support.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    return render(request, template, data_dict)        
