@@ -96,7 +96,6 @@ def index(request):
 #******************************************************************************* 
 #
 def user_access_check(function=None):
-    
     def check_me(*args, **kwargs):
         try:
             target_link = Usertype.objects.get(pk = int(args[0].session["usertype_id"]))
@@ -105,7 +104,7 @@ def user_access_check(function=None):
             if url_link != kwargs["usertype"]:
                 logout(args[0])
                 return HttpResponseRedirect('/')
-        except User_usertype.DoesNotExist:
+        except:
             logout(args[0])
             return HttpResponseRedirect('/')
         return function(args[0], **kwargs)
@@ -687,7 +686,7 @@ def timeline(request, usertype = None, id = None):
 
     data_dict["js_files"] = []
 
-    lead_logs = Lead_logs.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'notes', 'user__first_name', 'user__last_name').order_by('creation_date')
+    lead_logs = Lead_logs.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'notes', 'user__first_name', 'user__last_name').order_by('-creation_date')
 
     data_dict['lead_id'] = id
     data_dict['lead_logs'] = lead_logs
@@ -761,7 +760,7 @@ def lead_messages(request, usertype = None, id = None):
 
     data_dict["js_files"] = ['vendor/summernote/dist/summernote.min.js']
 
-    lead_messages = Lead_message.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'message', 'user__first_name', 'user__last_name').order_by('creation_date')
+    lead_messages = Lead_message.objects.filter(lead_id = id).values('lead_id', 'creation_date', 'message', 'user__first_name', 'user__last_name').order_by('-creation_date')
 
     data_dict['lead_id'] = id
     data_dict['lead_messages'] = lead_messages
