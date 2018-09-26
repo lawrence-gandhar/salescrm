@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.html import mark_safe
+from django.conf import settings
 # Create your models here.
 
 #
@@ -26,3 +28,21 @@ class User_usertype(models.Model):
 
     class Meta:
         db_table = 'user_usertype'   
+
+
+#
+# 
+#
+class User_profile(models.Model):
+    user = models.OneToOneField(User, on_delete = models.CASCADE, db_index = True, null = True, blank = True,)
+    photo = models.ImageField(null = True, blank=True,)
+
+    def get_photo(self):
+        if self.photo is not None:
+            return mark_safe('<img src="'+settings.MEDIA_URL+str(self.photo)+'" height="50px" width="50px">')
+
+    get_photo.short_description = 'Image'
+    get_photo.allow_tags = True
+
+    class Meta:
+        db_table = 'user_profile'

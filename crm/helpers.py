@@ -187,3 +187,4 @@ def add_lead_logs(lead_id = None, user = None, notes = None):
 
     except:
         return False
+

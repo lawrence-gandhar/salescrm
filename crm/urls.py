@@ -1,4 +1,6 @@
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 try:
     from django.urls import path, re_path
@@ -19,7 +21,7 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),   
         re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),      
-    ]
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 except ImportError:
     from django.conf.urls import url
@@ -40,4 +42,4 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),  
         url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),  
-    ]
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,6 @@
 {% load static %}
 {% load navigation %}
+{% load userdata %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,7 +66,7 @@
                     <li class=" profil-link">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="true">
                             <span class="profile-address" style="text-transform:none">{{user.first_name|title}} {{user.last_name|title}}</span>
-                            <img src="{% static 'images/profile.jpg' %}" class="img-circle" alt="">
+                            <img src="{% user_profile_pic user.id %}" class="img-circle">
                         </a>
                         <ul class="dropdown-menu" style="background-color: rgba(68, 70, 79)">
                             <li>

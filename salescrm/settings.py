@@ -122,3 +122,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 PAGE_TITLE = 'SalesCRM | FUSION BPO SERVICES'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -96,3 +96,8 @@ class Lead_questionnaire_modelAdmin(admin.ModelAdmin):
 	search_fields = ('lead_id',)
 	list_filter = ('creation_date',)
 	list_per_page = 50	
+
+@admin.register(User_profile)	
+class User_profileAdmin(admin.ModelAdmin):
+	list_display = ('id', 'user', 'get_photo')
+	list_per_page = 50	

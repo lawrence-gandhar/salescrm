@@ -116,7 +116,7 @@
                                             {% for aasign in lead.assigned_to.all %}
                                             
                                             <span class="col-md-4" style="border:1px solid #444444;padding:0px;">
-                                                <img alt="image" class="img image-md" src="{% static 'images/a2.jpg' %}">
+                                                <img alt="image" class="img image-md" src="{% user_profile_pic aasign.id %}">
                                                 <span style="color:#f6a821">{{aasign.first_name|safe|title}} {{aasign.last_name|safe|title}}</span>
                                             </span>
                                             {% endfor %}
