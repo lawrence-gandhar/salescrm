@@ -147,11 +147,48 @@ def dashboard(request,  usertype = None):
     data_dict["css_files"] = []
 
     data_dict["js_files"] = [
-                                "vendor/sparkline/index.js",
-                                "vendor/flot/jquery.flot.min.js",
-                                "vendor/flot/jquery.flot.resize.min.js",
-                                "vendor/flot/jquery.flot.spline.js",
+                                "vendor/d3/d3.min.js",
+                                "vendor/topojson/topojson.min.js",
+                                "vendor/datamaps/datamaps.world.min.js",
                             ]
+
+    leads = Leads_tbl.objects.all()
+    
+    with open(settings.BASE_DIR+'/crm/static/scripts/country_codes_2.json') as json_file:  
+        country_codes = json.load(json_file)
+
+    data_dict["lead_status"] = {"Others":0}
+    data_dict["lead_active"] = {"Active":0, "Inactive":0}
+    leads_generated_from_countries = {}
+
+    for lead in leads:
+
+        if lead.status.name in data_dict["lead_status"].keys():
+            if lead.status.name in ["New", "Closed", "Reject"]:
+                data_dict["lead_status"][lead.status.name] += 1 
+        else:
+            if lead.status.name in ["New", "Closed", "Reject"]:
+                data_dict["lead_status"][lead.status.name] = 1
+            else:
+                data_dict["lead_status"]["Others"] += 1
+        
+        if lead.active == 1:
+            data_dict["lead_active"]["Active"] += 1
+        else:
+            data_dict["lead_active"]["Inactive"] += 1
+        
+
+        if country_codes[lead.country]["alpha-3"] in leads_generated_from_countries:
+            leads_generated_from_countries[country_codes[lead.country]["alpha-3"]]["counter"] += 1
+        else:
+            leads_generated_from_countries[country_codes[lead.country]["alpha-3"]] = {"counter":1, 
+                                        "name":country_codes[lead.country]["name"], 
+                                        "centered":country_codes[lead.country]["alpha-3"],
+                                        "fillKey":"active",
+                                        }
+    
+    data_dict["leads_generated_from_countries"] = leads_generated_from_countries
+
 
 
     return render(request, template, data_dict)
