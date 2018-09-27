@@ -32,7 +32,6 @@
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_status.New|safe}}</h2>
                                     <div class="small">New Leads</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">10:22pm</span>  </div>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +40,6 @@
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_status.Closed|safe}}</h2>
                                     <div class="small">Closed Leads</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">9:10am</span> </div>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +48,6 @@
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_status.Reject|safe}}</h2>
                                     <div class="small">Rejected Leads</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">05:42pm</span> </div>
                                 </div>
                             </div>
                         </div>
@@ -58,8 +55,7 @@
                             <div class="panel panel-filled">
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_status.Others|safe}}</h2>
-                                    <div class="small">Others</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">04:00am</span> </div>
+                                    <div class="small">Other Leads</div>
                                 </div>
                             </div>
                         </div>
@@ -69,7 +65,6 @@
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_active.Active|safe}}</h2>
                                     <div class="small">Active Leads</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">04:00am</span> </div>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +74,6 @@
                                 <div class="panel-body">
                                     <h2 class="m-b-none">{{lead_active.Inactive|safe}}</h2>
                                     <div class="small">In-Active Leads</div>
-                                    <div class="slight m-t-sm"><i class="fa fa-clock-o"> </i> Last Lead: <span class="c-white">04:00am</span> </div>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +92,7 @@
                     <!-- Table Data -->
                     <div class="col-lg-4">
                         <div class="panel panel-filled">
-                            <div class="panel-heading" style="color:#F8A900">
+                            <div class="panel-heading" style="color:#F8A900" id="panel_heading">
                                 Leads Generated From Different Countries
                             </div>
                             <div class="panel-body">
@@ -109,7 +103,10 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="panel-heading" style="color:#F8A900; text-align: right;" id="leads_generated_from_countries_total_leads"></div>
+                            <div class="panel-heading" style="color:#F8A900; text-align: right;" id="leads_generated_from_countries_total_leads">
+                                <span id="text-span"></span>
+                                <span id="value-span"></span>
+                            </div>
                         </div>
                     </div>
                     <!-- Table Data End -->
@@ -120,10 +117,47 @@
 
 <script>
 
-    var leads_generated_from_countries = {{leads_generated_from_countries|safe}};
+    
 
     $(document).ready(function () {
-      
+
+        var leads_generated_from_countries = {{leads_generated_from_countries|safe}};
+        var leads_centers_interested = {{leads_centers_interested|safe}};
+        var leads_area_of_operation = {{leads_area_of_operation|safe}};
+
+        var dataset = [{}];
+        x = 2;
+
+        setInterval(function(){ 
+            if(x == 2){
+                $("#panel_heading").text("Leads Generated From Different Countries");
+                dataset = leads_generated_from_countries;
+                $("#text-span").text("Total Leads : ");
+                x = 1;
+            } 
+            else if(x == 1){
+                $("#panel_heading").text("Centers Interested In");
+                dataset = leads_centers_interested;
+                $("#text-span").text("Total Centers : ");
+                x = 2;
+            }
+            else{ 
+                $("#panel_heading").text("Areas Of Operation");
+                dataset = leads_area_of_operation;
+                $("#text-span").text("Total Areas Of Operation : ");
+            }
+
+            $('#serverMap').empty();
+            call_map(dataset);
+            call_data(dataset);
+            x = 2 - x;
+        }, 3000);
+        
+        
+
+    });
+
+    function call_map(dataset){
         var bubble_map = new Datamap({
             element: document.getElementById("serverMap"),
             responsive: true,
@@ -139,13 +173,15 @@
                 defaultFill: "#3B3D46",
                 active: "#F8A900"
             },
-            data: leads_generated_from_countries,
+            data: dataset,
         });
+    }
 
+    function call_data(dataset){
         leads_generated_from_countries_total_leads = 0;
         leads_generated_from_countries_html = '';
 
-        $.each(leads_generated_from_countries,function(i,v){
+        $.each(dataset,function(i,v){
             leads_generated_from_countries_html += '<tr>';
             leads_generated_from_countries_html += '<td>'+v.name+'</td>';
             leads_generated_from_countries_html += '<td>'+v.counter+'</td>';
@@ -154,10 +190,9 @@
             leads_generated_from_countries_total_leads += v.counter;
         });
 
-        $("#leads_generated_from_countries_total_leads").text("Total Leads : "+leads_generated_from_countries_total_leads);
+        $("#value-span").text(leads_generated_from_countries_total_leads);
         $("tbody#leads_generated_from_countries_data").empty().append(leads_generated_from_countries_html);
-
-    });
+    }
 </script>
 
 {% endblock %}

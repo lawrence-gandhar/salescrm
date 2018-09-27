@@ -160,6 +160,8 @@ def dashboard(request,  usertype = None):
     data_dict["lead_status"] = {"Others":0}
     data_dict["lead_active"] = {"Active":0, "Inactive":0}
     leads_generated_from_countries = {}
+    leads_centers_interested = {}
+    leads_area_of_operation = {}
 
     for lead in leads:
 
@@ -176,7 +178,34 @@ def dashboard(request,  usertype = None):
             data_dict["lead_active"]["Active"] += 1
         else:
             data_dict["lead_active"]["Inactive"] += 1
-        
+
+        try:
+            lead_questionnaire_model = Lead_questionnaire_model.objects.get(lead_id = lead.id)
+            centers = lead_questionnaire_model.centers_interested.split(",")
+            area_of_operation = lead_questionnaire_model.area_of_operation.split(",")
+
+
+            for i in centers:
+                if country_codes[i]["alpha-3"] in leads_centers_interested:
+                    leads_centers_interested[country_codes[i]["alpha-3"]]["counter"] += 1
+                else:
+                    leads_centers_interested[country_codes[i]["alpha-3"]] = {"counter":1, 
+                                                "name":country_codes[i]["name"], 
+                                                "centered":country_codes[i]["alpha-3"],
+                                                "fillKey":"active",}
+
+            for i in area_of_operation:
+                if country_codes[i]["alpha-3"] in leads_area_of_operation:
+                    leads_area_of_operation[country_codes[i]["alpha-3"]]["counter"] += 1
+                else:
+                    leads_area_of_operation[country_codes[i]["alpha-3"]] = {"counter":1, 
+                                                "name":country_codes[i]["name"], 
+                                                "centered":country_codes[i]["alpha-3"],
+                                                "fillKey":"active",}
+        except:
+            pass
+
+
 
         if country_codes[lead.country]["alpha-3"] in leads_generated_from_countries:
             leads_generated_from_countries[country_codes[lead.country]["alpha-3"]]["counter"] += 1
@@ -184,12 +213,13 @@ def dashboard(request,  usertype = None):
             leads_generated_from_countries[country_codes[lead.country]["alpha-3"]] = {"counter":1, 
                                         "name":country_codes[lead.country]["name"], 
                                         "centered":country_codes[lead.country]["alpha-3"],
-                                        "fillKey":"active",
-                                        }
-    
+                                        "fillKey":"active",}                                
+
+
+
     data_dict["leads_generated_from_countries"] = leads_generated_from_countries
-
-
+    data_dict["leads_centers_interested"] = leads_centers_interested
+    data_dict["leads_area_of_operation"] = leads_area_of_operation
 
     return render(request, template, data_dict)
 
