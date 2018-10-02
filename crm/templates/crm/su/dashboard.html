@@ -28,58 +28,57 @@
                 <!-- Header End -->
                 <!-- Data -->
                 <div class="row">
-
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_status.New|safe}}</h2>
-                                    <div class="small">New Leads</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_status.Closed|safe}}</h2>
-                                    <div class="small">Closed Leads</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_status.Reject|safe}}</h2>
-                                    <div class="small">Rejected Leads</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_status.Others|safe}}</h2>
-                                    <div class="small">Other Leads</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_active.Active|safe}}</h2>
-                                    <div class="small">Active Leads</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-2 col-xs-6">
-                            <div class="panel panel-filled">
-                                <div class="panel-body">
-                                    <h2 class="m-b-none">{{lead_active.Inactive|safe}}</h2>
-                                    <div class="small">In-Active Leads</div>
-                                </div>
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_status.New|safe}}</h2>
+                                <div class="small">New Leads</div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_status.Closed|safe}}</h2>
+                                <div class="small">Closed Leads</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_status.Reject|safe}}</h2>
+                                <div class="small">Rejected Leads</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_status.Others|safe}}</h2>
+                                <div class="small">Other Leads</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_active.Active|safe}}</h2>
+                                <div class="small">Active Leads</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-xs-6">
+                        <div class="panel panel-filled">
+                            <div class="panel-body">
+                                <h2 class="m-b-none">{{lead_active.Inactive|safe}}</h2>
+                                <div class="small">In-Active Leads</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Data End -->
                 <!-- Datamap -->
                 <div class="row">
@@ -113,6 +112,45 @@
                     </div>
                     <!-- Table Data End -->
                 </div>
+                <!-- DATAMap End-->
+
+                <div class="row" style="border-top: 1px solid #3d404c;" >
+
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <p class="small">
+                                    <span class="c-white">Monitoring view provide real time</span>
+                                    data from geographically distributed servers. Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                    scrambled it to make a type specimen book.
+                                </p>
+                            </div>
+                            <div class="panel-body">
+                                <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                                    <canvas id="barOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <p class="small">
+                                    <span class="c-white">Monitoring view provide real time</span>
+                                    data from geographically distributed servers. Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                    scrambled it to make a type specimen book.
+                                </p>
+                            </div>
+                            <div class="panel-body">
+                                <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                                    <canvas id="lineOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
     </section>
     <!-- End main content-->
@@ -196,5 +234,105 @@
         $("tbody#leads_generated_from_countries_data").empty().append(leads_generated_from_countries_html);
     }
 </script>
+
+<script>
+        $(document).ready(function () {
+    
+    
+            /**
+             * Options for Line chart
+             */
+    
+            var globalOptions = {
+                responsive: true,
+                legend: {
+                    labels:{
+                        fontColor:"#90969D"
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            fontColor: "#90969D"
+                        },
+                        gridLines: {
+                            color: "#37393F"
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            fontColor: "#90969D"
+                        },
+                        gridLines: {
+                            color: "#37393F"
+                        }
+                    }]
+                }
+            };
+    
+            var lineData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+    
+                    {
+                        label: "Rejected",
+                        backgroundColor: 'transparent',
+                        borderColor: "#f6a821",
+                        pointBorderWidth: 0,
+                        pointRadius: 2,
+                        pointBorderColor: '#f6a821',
+                        borderWidth: 1,
+                        data: [16, 32, 18, 26, 42, 33, 44]
+                    },
+                    {
+                        label: "Closed",
+                        backgroundColor: 'transparent',
+                        borderColor: "#676B73",
+                        pointBorderWidth: 0,
+                        pointRadius: 2,
+                        pointBorderColor: '#676B73',
+                        borderWidth: 1,
+                        data: [22, 44, 67, 43, 76, 45, 12]
+                    }
+                ]
+            };
+    
+            var c1 = document.getElementById("lineOptions").getContext("2d");
+            new Chart(c1, {type: 'line', data: lineData, options: globalOptions});
+    
+            
+            /**
+             * Data for Bar chart
+             */
+            var barData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: "Assigned Leads",
+                        backgroundColor: '#2fef6a',
+                        borderColor: "#2fef6a",
+                        borderWidth: 1,
+                        data: [9, 8, 5, 6, 3, 2, 16]
+                    },
+                    {
+                        label: "Unassigned Leads",
+                        backgroundColor: '#56a5f5',
+                        borderColor: "#56a5f5",
+                        borderWidth: 1,
+                        data: [5, 5, 5, 4, 5, 2, 23]
+                    }
+                ]
+            };
+    
+            var c3 = document.getElementById("barOptions").getContext("2d");
+            new Chart(c3, {type: 'bar', data: barData, options: globalOptions});
+    
+            /**
+             * Options for Bar chart
+             */
+    
+    
+        });
+    </script>
 
 {% endblock %}
