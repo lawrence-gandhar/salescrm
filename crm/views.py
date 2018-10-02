@@ -150,6 +150,7 @@ def dashboard(request,  usertype = None):
                                 "vendor/d3/d3.min.js",
                                 "vendor/topojson/topojson.min.js",
                                 "vendor/datamaps/datamaps.world.min.js",
+                                "vendor/chart.js/dist/Chart.min.js",
                             ]
 
     leads = Leads_tbl.objects.all()
