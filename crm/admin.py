@@ -59,7 +59,7 @@ class Lead_probabilityAdmin(admin.ModelAdmin):
 
 @admin.register(Lead_status)	
 class Lead_statusAdmin(admin.ModelAdmin):
-	list_display = ('id','name', 'active')
+	list_display = ('id','name', 'previous_status', 'active')
 	list_display_links = ('id', 'name')
 	search_fields = ('name',)
 	list_filter = ('active',)

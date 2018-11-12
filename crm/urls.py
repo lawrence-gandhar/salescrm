@@ -20,6 +20,7 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),   
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/stats/$', views.lead_stats),   
         re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),      
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -41,5 +42,6 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),  
+        url(r'^(?P<usertype>[\w.@+-]+)/leads/stats/$', views.lead_stats),  
         url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),  
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

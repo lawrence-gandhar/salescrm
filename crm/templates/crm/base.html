@@ -27,36 +27,69 @@
 
     {% load_css_files css_files %}
 
-    <style>
-        .dropdown-menu {padding:0px;}
-        .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus{
-            background-color:#000000;
-        }
-    </style>
-
-    
 <style>
-    /* width */
-    ::-webkit-scrollbar {
-        width: 5px;
-    }
-    
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1; 
-    }
-        
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background:rgb(248, 169, 0)
-    }
-    
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555; 
-    }
-    </style>
+.dropdown-menu {padding:0px;}
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus{
+    background-color:#000000;
+}
 
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+    
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background:rgb(248, 169, 0)
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+div#right-nav{
+    position:fixed;
+    right:0;
+    height:100%;
+    background-color: #F8A900;
+    width:40px;
+    min-height: 90px;
+    z-index:1000;
+    -webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+    transition: width 2s;
+}
+
+div.trans-right-nav{
+    height: 100px;
+    background: red;
+    bottom:0;
+}
+
+ul.nav-list{
+    list-style:none;
+    margin:0px;
+    padding:0px;
+}
+.nav-list li{
+    text-align: center;
+    padding:5px 0px;
+}
+
+.nav-list a{
+    font-size: 20px;
+    font-weight:bold;
+    color:#ffffff;
+    cursor:pointer;
+    display:block;
+}
+
+</style>
 
 </head>
 <body>
@@ -75,7 +108,7 @@
                         </a>
                     </div>
                 </div>
-                <a class="navbar-brand" href="#" style="padding:20px 10px;letter-spacing:0px">Sales CRM <small style="margin-left:10px;"> ver 1.0</small></a>
+                <a class="navbar-brand" href="#" style="padding:20px 10px;letter-spacing:0px">TSM CRM <small style="margin-left:10px;"> ver 1.0</small></a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <div class="left-nav-toggle">
@@ -120,8 +153,14 @@
     <!-- Navigation-->
     {% include user.id|menu_template %}
     <!-- Navigation -->
+
+    <!-- Navigation-->
+    {% include 'crm/right_menu.html' %}
+    <!-- Navigation -->
     
     <!-- Start main content-->
+
+
 
     {% block content %}
     {% endblock %}
