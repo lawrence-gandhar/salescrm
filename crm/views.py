@@ -881,27 +881,23 @@ def lead_message_add(request, usertype = None):
 @user_access_check
 @login_required
 def lead_stats(request, usertype = None):
-    template = 'crm/'+current_user_url(request.session["user_id"])+'/messages.html'
+    template = 'crm/leads_stats.html'
 
     data_dict = {}
-    data_dict["css_files"] = ["vendor/summernote/dist/summernote.css"]
-    data_dict["js_files"] = ['vendor/summernote/dist/summernote.min.js']
+    data_dict["css_files"] = []
+    data_dict["js_files"] = ['vendor/select2/dist/js/select2.js']
 
+    lead_status = request.POST.getlist("lead_status")
     lead_status_order = Lead_status.objects.filter(active = True)
+
+    lead_status_list = Lead_status.objects.filter(active = True)
+
+    if len(lead_status) > 0:
+        lead_status_order = lead_status_order.filter(id__in = lead_status)
     
-    d = dict()
-    for item in lead_status_order:
-        if item.previous_status_id is None:
-            d[item.id] = dict({'id':item.id, 'name':item.name})
-        else:
-            new_list = list()
-            if item.previous_status_id in d.keys():
-                new_list.append(d[item.previous_status_id])       
-                new_list.append({'id':item.id, 'name':item.name})
-                d[item.previous_status_id] = new_list
-            else:
-                d[item.id] = dict({'id':item.id, 'name':item.name})
-    data_dict["lead_status_order"] = d
+    data_dict["lead_status_order"] = lead_status_order
+    data_dict["lead_status_list"] = lead_status_list
+
     return render(request, template, data_dict) 
 
 

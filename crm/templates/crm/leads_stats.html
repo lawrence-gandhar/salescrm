@@ -1,0 +1,60 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+<!-- Main content-->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="panel panel-filled">
+                <div class="panel-heading" style="padding-bottom:0px;">
+                    <div class="row" style="padding-bottom:0px;margin-bottom: 0px;">
+                        <label class="col-md-3" style="line-height:40px"><strong>LEAD STATS</strong></label>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="col-md-8">
+                                <select name="lead_status" class="select2_demo_3 form-control select2-hidden-accessible col-md-10" multiple="" style="width: 100%" tabindex="-1" aria-hidden="true" multiple>
+                                    {% for item in lead_status_list %}
+                                    <option value="{{item.id}}">{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="">
+                                <button class="btn btn-default" type="submit">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table row" style="margin-bottom:0px;overflow-x:auto">
+                        <table class="table table-bordered" style="margin-bottom:0px;">
+                            <tr>
+                                {% for item in lead_status_order %}
+                                <td style="min-width:300px;max-width:300px;padding:0px;">
+                                    <div style="margin-bottom:0px;">
+                                        <div class="text-center" style="padding:10px 0px;display:block; background-color:{{item.color}};color:#000000;background-image: linear-gradient(to bottom right,#ffffff,{{item.color}})">
+                                            <span style="font-size:2rem;  display:block;font-weight:bold;">$ 122776</span>
+                                            <span style="display:block;font-weight:bold;">{{item.name|safe}}</span>
+                                        </div>
+                                        <hr style="padding:0px;margin:0px;">
+                                        <div style="display:block; padding:10px 5px">
+                                             fkgnsd, kfgsdjkfgjsdfklg kfgsdfsd sdfkghsdfkj;gsdflg sdflghsdkfjgsdl; ksdfgsd.
+                                        </div>
+                                    </div>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                        </table>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function() { 
+        $(".select2_demo_3").select2({
+            placeholder: "Show All Lead Statuses",
+            allowClear: true
+        }); 
+    });
+</script>
+{% endblock %}    

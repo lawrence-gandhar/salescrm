@@ -72,14 +72,20 @@ class Lead_type(models.Model):
 	
 
 class Lead_status(models.Model):
-	
 	name = models.CharField(db_index = True, max_length = 100,unique = True,)
+	previous_status = models.ForeignKey('self', db_index = True, on_delete = models.SET_NULL, null = True, blank= True,)
+	color = models.CharField(db_index = True, null = True, blank = True, max_length = 7,)
 	active = models.BooleanField(db_index = True, default = True,)
 	creation_date = models.DateTimeField(auto_now_add = True,auto_now = False, db_index = True,)
 	last_updated = models.DateTimeField(auto_now_add = False,auto_now = True, db_index = True,)
 	
 	def __str__(self):
 		return self.name
+
+	def color_denoter(self):
+		if self.color is not None:
+			return mark_safe(u'<span style="display:block;width:20px; height:20px; border-radius:100%; background-color:'+self.color+'"></span>')
+		return ''	
 	
 	class Meta:	
 		db_table = 'lead_status'

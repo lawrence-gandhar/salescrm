@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from .models import *
 from django import forms 
+from .form import Lead_statusForm
 
 # Register your models here.
 
@@ -59,7 +60,8 @@ class Lead_probabilityAdmin(admin.ModelAdmin):
 
 @admin.register(Lead_status)	
 class Lead_statusAdmin(admin.ModelAdmin):
-	list_display = ('id','name', 'previous_status', 'active')
+	form = Lead_statusForm
+	list_display = ('id','name', 'previous_status', 'active', 'color_denoter')
 	list_display_links = ('id', 'name')
 	search_fields = ('name',)
 	list_filter = ('active',)
