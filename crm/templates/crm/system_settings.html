@@ -1,0 +1,140 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load static %}
+
+<style>
+.colored-td{background-color: #F8A900;}
+</style>
+
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-news-paper"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3>System Settings</h3>
+                            <small>
+                                Settings - Fusion BPO Services
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-filled">
+                        <div class="panel-body">
+                            <div class="table">
+                                <table class="table table-responsive table-bordered table-stripped" style="background:transparent">
+                                <form action="" method="post" id="dashboard-settings-form">
+                                    {% csrf_token %}
+                                    <tr>
+                                        <td colspan="2" class="colored-td" style="padding:0px 8px;">
+                                            <h5>Dashboard</h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display counters 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="counters" id="counters" class="styled" type="checkbox" value="1" {% if counters %}checked=""{% endif %}>
+                                                <label for="counters" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display Line/Spline Charts 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="line_charts" id="line_charts" class="styled" type="checkbox" value="1" {% if line_charts %}checked=""{% endif %}>
+                                                <label for="line_charts" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display Bar Graphs 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="bar_graphs" id="bar_graphs" class="styled" type="checkbox" value="1" {% if bar_graphs %}checked=""{% endif %}>
+                                                <label for="bar_graphs" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display location or geographical vise datamap or graphical represtation for leads activities 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="geo_graph" id="geo_graph" class="styled" type="checkbox" value="1" {% if geo_graph %}checked=""{% endif %}>
+                                                <label for="geo_graph" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display location or geographical vise data list for leads activities 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="geo_list" id="geo_list" class="styled" type="checkbox" value="1" {% if geo_list %}checked=""{% endif %}>
+                                                <label for="geo_list" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Display location or geographical vise data list filters for leads activities 
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="geo_list_filters" id="geo_list_filters" class="styled" type="checkbox" value="1" {% if geo_list_filters %}checked=""{% endif %}>
+                                                <label for="geo_list_filters" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <button type="button" onclick="dashboard_settings_save()" class="btn btn-default btn-sm pull-right">SAVE</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                </table>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+
+$(document).ready(function(){
+
+});
+
+function dashboard_settings_save(){
+    $.post("/{% current_user_link user.id %}/dashboard_settings/", $("#dashboard-settings-form").serialize(), function(data){
+        if(data == 1) location.reload();
+        else alert('Unknown Error Occurred!')
+    });
+
+}
+    
+</script>
+{% endblock %}

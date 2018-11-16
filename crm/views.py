@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 from django.conf import settings	
 
 # Condition operators for models
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
 from django.core.exceptions import ObjectDoesNotExist
 
 # Other imports
@@ -90,7 +90,6 @@ def index(request):
     return render(request, 'crm/login.html', {})
 
 
-
 #*******************************************************************************
 # DECORATOR FOR CHECKING URL AUTHENTICATION  
 #******************************************************************************* 
@@ -137,6 +136,7 @@ def change_password(request):
 # DASHBOARD
 #*******************************************************************************    
 #
+
 @user_access_check
 @login_required
 def dashboard(request,  usertype = None):
@@ -152,6 +152,24 @@ def dashboard(request,  usertype = None):
                                 "vendor/datamaps/datamaps.world.min.js",
                                 "vendor/chart.js/dist/Chart.min.js",
                             ]
+
+    #
+    #   Check System Settings
+    #
+    data_dict["show_counters"] = False
+
+    try:
+        dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
+    except:
+        pass
+
+    data_dict["show_counters"] = dashboard_settings.counters
+    data_dict["show_bar_graphs"] = dashboard_settings.bar_graphs
+    data_dict["show_line_charts"] = dashboard_settings.line_charts
+    data_dict["show_geo_graph"] = dashboard_settings.geo_graph
+    data_dict["show_geo_list"] = dashboard_settings.geo_list
+    data_dict["show_geo_list_filters"] = dashboard_settings.geo_list_filters
+
 
     leads = Leads_tbl.objects.all()
     
@@ -762,7 +780,7 @@ def timeline(request, usertype = None, id = None):
     return render(request, template, data_dict)
 
 #*******************************************************************************  
-#   LEAD MULTIPLE STATUS SET
+#   LEAD MULTIPLE/SINGLE STATUS SET
 #*******************************************************************************  
 #   
 @user_access_check
@@ -787,7 +805,7 @@ def lead_multiple_status_set(request, usertype = None):
     return HttpResponse(0)
 
 #*******************************************************************************  
-#   LEAD MULTIPLE CTIVE IN-ACTIVE SET
+#   LEAD MULTIPLE ACTIVE IN-ACTIVE SET
 #*******************************************************************************  
 #   
 @user_access_check
@@ -894,12 +912,24 @@ def lead_stats(request, usertype = None):
 
     if len(lead_status) > 0:
         lead_status_order = lead_status_order.filter(id__in = lead_status)
+        leads = Leads_tbl.objects.filter(status__in = lead_status, active = 1).values()
+        counters = Leads_tbl.objects.filter(status__in = lead_status, active = 1).values('status_id').annotate(counters = Count('status_id'),  total = Sum('annual')).order_by()
+
+    else:
+        leads = Leads_tbl.objects.filter(active = 1).values()
+        counters = Leads_tbl.objects.filter(active = 1).values('status_id').annotate(counters = Count('status_id'),  total = Sum('annual')).order_by()
+
+    data_dict["status_array"] = []
+    for item in lead_status_list:
+        data_dict["status_array"].append(item.id)
+    
     
     data_dict["lead_status_order"] = lead_status_order
     data_dict["lead_status_list"] = lead_status_list
+    data_dict["leads"] = leads
+    data_dict["status_array"] = (counters, data_dict["status_array"])
 
     return render(request, template, data_dict) 
-
 
 
 #*******************************************************************************  
@@ -917,3 +947,78 @@ def documentation(request, usertype = None):
     data_dict["js_files"] = []
 
     return render(request, template, data_dict)        
+
+#*******************************************************************************
+#   SYSTEM SETTINGS
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def system_settings(request, usertype = None):
+    template = 'crm/system_settings.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    try:
+        dashboard_settings_data = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
+
+        data_dict["counters"] = dashboard_settings_data.counters
+        data_dict["line_charts"] = dashboard_settings_data.line_charts
+        data_dict["bar_graphs"] = dashboard_settings_data.bar_graphs
+        data_dict["geo_graph"] = dashboard_settings_data.geo_graph
+        data_dict["geo_list"] = dashboard_settings_data.geo_list
+        data_dict["geo_list_filters"] = dashboard_settings_data.geo_list_filters
+        
+    except:
+        data_dict["counters"] = False
+        data_dict["line_charts"] = False
+        data_dict["bar_graphs"] = False
+        data_dict["geo_graph"] = False
+        data_dict["geo_list"] = False
+        data_dict["geo_list_filters"] = False
+    
+    return render(request, template, data_dict)    
+
+#
+#   DASHBOARD SETTINGS
+#
+#
+@user_access_check     
+@login_required
+def dashboard_settings(request, usertype = None):
+ 
+    if request.is_ajax():
+
+        counters = request.POST.get("counters", False)
+        line_charts = request.POST.get("line_charts", False)
+        bar_graphs = request.POST.get("bar_graphs", False)
+        geo_graph = request.POST.get("geo_graph", False)
+        geo_list = request.POST.get("geo_list", False)
+        geo_list_filters = request.POST.get("geo_list_filters", False)
+
+        try:
+            dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
+
+            dashboard_settings.user_id = int(request.session["user_id"])
+            dashboard_settings.counters = counters
+            dashboard_settings.line_charts = line_charts
+            dashboard_settings.bar_graphs = bar_graphs
+            dashboard_settings.geo_graph = geo_graph
+            dashboard_settings.geo_list = geo_list
+            dashboard_settings.geo_list_filters = geo_list_filters
+        except:
+            dashboard_settings = Dashboard_Settings(
+                user_id = int(request.session["user_id"]),
+                counters = counters,
+                line_charts = line_charts,
+                bar_graphs = bar_graphs,
+                geo_graph = geo_graph,
+                geo_list = geo_list,
+                geo_list_filters = geo_list_filters,
+            )
+        dashboard_settings.save()
+        return HttpResponse(1)   
+    return HttpResponse(0)   

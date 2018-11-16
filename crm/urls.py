@@ -20,8 +20,11 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_status_set/$', views.lead_multiple_status_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set),       
         re_path(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),   
-        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/stats/$', views.lead_stats),   
-        re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),      
+        re_path(r'^(?P<usertype>[\w.@+-]+)/leads/stats/$', views.lead_stats),  
+        re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation), 
+        re_path(r'^(?P<usertype>[\w.@+-]+)/system_settings/$', views.system_settings), 
+        re_path(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),
+
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 except ImportError:
@@ -43,5 +46,7 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_multiple_active_set/$', views.lead_multiple_active_set), 
         url(r'^(?P<usertype>[\w.@+-]+)/leads/lead_message_add/$', views.lead_message_add),  
         url(r'^(?P<usertype>[\w.@+-]+)/leads/stats/$', views.lead_stats),  
-        url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation),  
+        url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation), 
+        url(r'^(?P<usertype>[\w.@+-]+)/system_settings/$', views.system_settings),  
+        url(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),  
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

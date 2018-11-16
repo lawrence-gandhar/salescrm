@@ -1,5 +1,8 @@
 {% extends 'crm/base.html' %}
 {% block content %}
+{% load navigation %}
+{% load common_filters %}
+
 <!-- Main content-->
 <section class="content">
     <div class="container-fluid">
@@ -18,7 +21,7 @@
                                 </select>
                             </div>
                             <div class="">
-                                <button class="btn btn-default" type="submit">Submit</button>
+                                <button class="btn btn-default btn-sm" type="submit">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -28,15 +31,50 @@
                         <table class="table table-bordered" style="margin-bottom:0px;">
                             <tr>
                                 {% for item in lead_status_order %}
-                                <td style="min-width:300px;max-width:300px;padding:0px;">
+                                <td style="min-width:300px;max-width:300px;padding:0px;background-color:#24262d" ondrop="drop_element(event)" ondragover="allowDrop(event)" id="drop_point{{item.id}}">
                                     <div style="margin-bottom:0px;">
                                         <div class="text-center" style="padding:10px 0px;display:block; background-color:{{item.color}};color:#000000;background-image: linear-gradient(to bottom right,#ffffff,{{item.color}})">
-                                            <span style="font-size:2rem;  display:block;font-weight:bold;">$ 122776</span>
+                                            <span style="font-size:2rem;  display:block;font-weight:bold;">
+                                                {{item.id|leads_counter:status_array}}
+                                            </span>
                                             <span style="display:block;font-weight:bold;">{{item.name|safe}}</span>
                                         </div>
                                         <hr style="padding:0px;margin:0px;">
                                         <div style="display:block; padding:10px 5px">
-                                             fkgnsd, kfgsdjkfgjsdfklg kfgsdfsd sdfkghsdfkj;gsdflg sdflghsdkfjgsdl; ksdfgsd.
+                                            {% for lead in leads %}
+                                                {% ifequal lead.status_id item.id %}
+                                                    
+                                                    <table data-boxtype="dont-drop-on-me" id="tab-{{lead.id}}" draggable="true" ondragstart="drag(event)" class="table table-responsive" style="cursor:pointer; margin-bottom:0px; font-size: 80%; background-color:transparent; border:none">
+                                                        <tr data-boxtype="dont-drop-on-me">
+                                                            <td data-boxtype="dont-drop-on-me" width="70px" style="border: none; padding:0px 5px; font-weight:bold;">Company</td>
+                                                            <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px">: {{lead.company_name|title|safe}}</td>
+                                                        </tr>
+                                                        <tr data-boxtype="dont-drop-on-me">
+                                                            <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px; font-weight:bold;">Contact</td>
+                                                            <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px">
+                                                                : {{lead.contact_title|title|safe}} {{lead.contact_firstname|title|safe}} {{lead.contact_lastname|title|safe}} ({{lead.contact_designation|title|safe}})
+                                                                {% if lead.contact_details %}
+                                                                <br/>
+                                                                &nbsp;&nbsp;{{lead.contact_details|title|safe}}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                        <tr data-boxtype="dont-drop-on-me">
+                                                            <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px; font-weight:bold;">Adrress</td>
+                                                            <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px">
+                                                                {% if lead.address %}
+                                                                : {{lead.address|title|safe}} 
+                                                                <br/>
+                                                                &nbsp;&nbsp;{{lead.country|upper|safe}}
+                                                                {% else %}
+                                                                : {{lead.country|upper|safe}}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <hr data-boxtype="dont-drop-on-me" id="hr-{{lead.id}}">
+                                                {% endifequal %}
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </td>
@@ -56,5 +94,42 @@
             allowClear: true
         }); 
     });
+    
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+    
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        
+        if(ev.target.getAttribute('data-boxtype') != document.getElementById(data).getAttribute('data-boxtype')){
+            ev.target.appendChild(document.getElementById(data));
+            $("#hr-"+data.replace("tab-","")).remove();
+            $("#tab-"+data.replace("tab-","")).after('<hr data-boxtype="dont-drop-on-me" id="hr-'+data.replace("tab-","")+'">');
+            
+            //console.log($("#"+data).parent("td").attr("id"));
+            drop_point = ($("#"+data).parent("td").attr("id")).replace("drop_point","");
+
+            
+            $.post("/{% current_user_link user.id %}/leads/lead_multiple_status_set/",{'case':parseInt(data.replace("tab-","")), 'lead_status':parseInt(drop_point), 'csrfmiddlewaretoken': '{{ csrf_token }}'},function(data){
+                if(data==1){
+                    location.reload();
+                }
+                else alert("Error Occurred");
+
+            });
+            
+
+            return data
+        }else return false;
+    }
+
+    
 </script>
 {% endblock %}    
