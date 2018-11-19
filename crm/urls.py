@@ -24,6 +24,7 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation), 
         re_path(r'^(?P<usertype>[\w.@+-]+)/system_settings/$', views.system_settings), 
         re_path(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),
+        re_path(r'^(?P<usertype>[\w.@+-]+)/counters_customization/$', views.counters_customization),
 
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -49,4 +50,5 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/documentation/$', views.documentation), 
         url(r'^(?P<usertype>[\w.@+-]+)/system_settings/$', views.system_settings),  
         url(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),  
+        url(r'^(?P<usertype>[\w.@+-]+)/counters_customization/$', views.counters_customization),
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

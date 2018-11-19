@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.html import mark_safe
 from django.conf import settings
+from crm.models import *
 
 
 class Dashboard_Settings(models.Model):
@@ -16,4 +17,12 @@ class Dashboard_Settings(models.Model):
     class Meta:
         db_table = 'dashboard_settings'
     
-    
+
+class Counters_Settings(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE, db_index = True, null = True, blank = True,)
+    counters_customization = models.BooleanField(default = True, db_index = True,)
+    lead_status = models.ForeignKey(Lead_status, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
+    filters = models.BooleanField(db_index = True, default = True,)
+
+    class Meta:
+        db_table = 'counters_settings'

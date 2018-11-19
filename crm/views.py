@@ -170,7 +170,6 @@ def dashboard(request,  usertype = None):
     data_dict["show_geo_list"] = dashboard_settings.geo_list
     data_dict["show_geo_list_filters"] = dashboard_settings.geo_list_filters
 
-
     leads = Leads_tbl.objects.all()
     
     with open(settings.BASE_DIR+'/crm/static/scripts/country_codes_2.json') as json_file:  
@@ -962,6 +961,9 @@ def system_settings(request, usertype = None):
 
     data_dict["js_files"] = []
 
+    #*******************************************
+    #   Dashboard Settings
+    #*******************************************
     try:
         dashboard_settings_data = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
 
@@ -979,12 +981,31 @@ def system_settings(request, usertype = None):
         data_dict["geo_graph"] = False
         data_dict["geo_list"] = False
         data_dict["geo_list_filters"] = False
+
+    #*******************************************
+    #   Counter Settings
+    #*******************************************
+    counters_settings_data = Counters_Settings.objects.filter(user_id = int(request.session["user_id"])).values()
+
+    data_dict["counters_settings_data"] = dict({"counters_customization":False})
+    lead_status = {}
+    for item in counters_settings_data:
+        data_dict["counters_settings_data"]["counters_customization"] = item["counters_customization"]
+        lead_status[item["lead_status_id"]] = item["filters"]
+        
+    data_dict["counters_settings_data"]["lead_status"] = lead_status
+
+    #*******************************************
+    #   Lead Status List
+    #*******************************************
+    data_dict["lead_status_list"] = Lead_status.objects.filter(active = 1).values('id','name')    
     
     return render(request, template, data_dict)    
 
-#
+
+#*******************************************************************************
 #   DASHBOARD SETTINGS
-#
+#*******************************************************************************
 #
 @user_access_check     
 @login_required
@@ -1022,3 +1043,36 @@ def dashboard_settings(request, usertype = None):
         dashboard_settings.save()
         return HttpResponse(1)   
     return HttpResponse(0)   
+
+#
+# COUNTER CUSTOMIZATION
+#
+#
+@user_access_check     
+@login_required
+def counters_customization(request, usertype = None):
+    if request.is_ajax():
+
+        Counters_Settings.objects.filter(user_id = int(request.session["user_id"])).delete()
+
+        customize_counters = request.POST.get('customize_counters', False)
+        lead_status = request.POST.getlist('lead_status[]')
+        filters = request.POST.getlist('lead_status_active[]') 
+
+        main_tup = [] 
+        for id in lead_status:
+            if id in filters:
+                main_tup.append((id,1))
+            else:
+                main_tup.append((id,0))
+
+        for i,j in main_tup:
+            counters = Counters_Settings( 
+                user_id = int(request.session["user_id"]),
+                counters_customization = int(customize_counters),
+                lead_status_id = int(i),
+                filters = int(j)
+            )
+            counters.save()    
+        return HttpResponse(1)
+    return HttpResponse(0)

@@ -113,7 +113,63 @@
                                         </td>
                                     </tr>
                                 </form>
-                                </table>                                
+                                </table>              
+                            </div>
+                            <div class="table">
+                                <table class="table table-responsive table-bordered table-stripped" style="background:transparent">
+                                <form action="" method="post" id="counter-settings-form">
+                                    {% csrf_token %}
+                                    <tr>
+                                        <td colspan="2" class="colored-td" style="padding:0px 8px;">
+                                            <h5>Counter Customizations</h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Do you want to customize counters? By default you can see all the lead types present and their respective counters in dashboard.
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="customize_counters" id="customize_counters" class="styled" type="checkbox" value="1" {% if counters_settings_data.counters_customization %}checked=""{% endif %}>
+                                                <label for="customize_counters" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="show_customize_counters" style="display:none">
+                                        <td colspan="2">
+                                            Select Lead Types to view their counters?
+                                            <div class="container-fluid" style="margin-top:10px; padding-left:30px;">
+                                                {% for item in lead_status_list %}
+                                                    
+                                                    <div class="col-md-4">
+                                                        <div class="col-md-7">
+                                                            <div class="checkbox checkbox-success checkbox-inline" style="padding:0px; margin:0px;">
+                                                                <input name="lead_status[]" id="lead_status_{{item.id|safe}}" class="styled" type="checkbox" value="{{item.id|safe}}" 
+                                                                {% for i in counters_settings_data.lead_status %}
+                                                                {% if i == item.id %}checked=""{% endif %}{% endfor %}>
+                                                                <label for="lead_status_{{item.id|safe}}">{{item.name|safe}}</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div class="checkbox checkbox-warning checkbox-inline" style="padding:0px; margin:0px;">
+                                                                <input name="lead_status_active[]" id="lead_status_active_{{item.id|safe}}" class="styled" type="checkbox" value="{{item.id|safe}}" 
+                                                                {% for i,j in counters_settings_data.lead_status.items %}
+                                                                {% if i == item.id and j == True %}checked=""{% endif %}{% endfor %}>
+                                                                <label for="lead_status_active_{{item.id|safe}}">Active</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <button type="button" onclick="counter_settings_save()" class="btn btn-default btn-sm pull-right">SAVE</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -126,14 +182,33 @@
 
 $(document).ready(function(){
 
+    if($("#customize_counters").prop("checked") == true){
+        $("tr#show_customize_counters").show();
+    }
+
+
+    $("#customize_counters").click(function(){
+        if($(this).prop("checked") == true){
+            $("tr#show_customize_counters").show();
+        }
+        else if($(this).prop("checked") == false){
+            $("tr#show_customize_counters").hide();
+        }
+    });
 });
 
 function dashboard_settings_save(){
     $.post("/{% current_user_link user.id %}/dashboard_settings/", $("#dashboard-settings-form").serialize(), function(data){
         if(data == 1) location.reload();
-        else alert('Unknown Error Occurred!')
+        else alert('Unknown Error Occurred!');
     });
+}
 
+function counter_settings_save(){
+    $.post("/{% current_user_link user.id %}/counters_customization/", $("#counter-settings-form").serialize(), function(data){
+        if(data == 1) alert(data);//location.reload();
+        else alert('Unknown Error Occurred!');
+    });
 }
     
 </script>
