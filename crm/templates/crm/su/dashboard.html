@@ -3,8 +3,8 @@
 
 
 <!-- Main content-->
-    <section class="content">
-            <div class="container-fluid">
+    <section class="content" >
+            <div class="container-fluid" style="padding-right: 30px">
                 <!-- Header -->
                 <div class="row">
                     <div class="col-lg-12">
@@ -22,7 +22,6 @@
                                 </small>
                             </div>
                         </div>
-                        <hr>
                     </div>
                 </div>
                 <!-- Header End -->
@@ -30,91 +29,120 @@
 
                 <!-- COUNTERS -->
                 {% if show_counters %}
-                <div class="row">
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
-                            <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_status.New|safe}}</h2>
-                                <div class="small">New Leads</div>
+                    {% if show_custom_counters %}
+                        <div class="row">
+                            <div class="panel panel-filled">
+                                <div class="panel-heading" style="background-color: #F8A900">Counters</div>
+                                <div class="panel-body">
+                                    {% for name,value in lead_status.items %}
+                                    <div class="col-lg-2 col-xs-6">
+                                        <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                            <div class="panel-body">
+                                                <h2 class="m-b-none">{{value|safe}}</h2>
+                                                <div class="small">{{name}} Leads</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
+                    {% else %}
+                        <div class="row">
+                            <div class="panel panel-filled">
+                            <div class="panel-heading" style="background-color: #F8A900">Counters</div>
                             <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_status.Closed|safe}}</h2>
-                                <div class="small">Closed Leads</div>
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_status.New|safe}}</h2>
+                                            <div class="small">New Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_status.Closed|safe}}</h2>
+                                            <div class="small">Closed Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_status.Reject|safe}}</h2>
+                                            <div class="small">Rejected Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_status.Others|safe}}</h2>
+                                            <div class="small">Other Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_active.Active|safe}}</h2>
+                                            <div class="small">Active Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="col-lg-2 col-xs-6">
+                                    <div class="panel panel-filled"  style="margin-bottom:0px;">
+                                        <div class="panel-body">
+                                            <h2 class="m-b-none">{{lead_active.Inactive|safe}}</h2>
+                                            <div class="small">In-Active Leads</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>    
                         </div>
-                    </div>
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
-                            <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_status.Reject|safe}}</h2>
-                                <div class="small">Rejected Leads</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
-                            <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_status.Others|safe}}</h2>
-                                <div class="small">Other Leads</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
-                            <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_active.Active|safe}}</h2>
-                                <div class="small">Active Leads</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-xs-6">
-                        <div class="panel panel-filled">
-                            <div class="panel-body">
-                                <h2 class="m-b-none">{{lead_active.Inactive|safe}}</h2>
-                                <div class="small">In-Active Leads</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    {% endif %}
                 {% endif %}
                 <!-- Data End -->
 
                 <!-- Datamap -->
                 {% if show_geo_graph %}
                 <div class="row">
-                    <div class="col-lg-8">    
-                        <div class="panel">
-                            <div class="panel-body">    
-                                <Label style="color:#F8A900">Geographical Activity</label>
-                                <div id="serverMap"></div>
+                    <div class="panel" style="border:1px solid #2f323b">
+                    <div class="panel-heading" style="background-color: rgb(43, 43, 43)">Location Activity</div>
+                    <div class="panel-body" style="background-color: rgb(43, 43, 43)">
+                        <div class="col-lg-8">    
+                            <div class="panel">
+                                <div class="panel-body">   
+                                    <div id="serverMap"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Table Data -->
+                        <div class="col-lg-4">
+                            <div class="panel panel-filled">
+                                <div class="panel-heading" style="color:#F8A900" id="panel_heading">
+                                    Leads Generated From Different Countries
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" style="height: 300px !important;overflow-y:auto;">
+                                        <table class="table" style="margin-bottom:0px;">
+                                            <thead><tr><th>Country</th><th>Leads</th></tr></thead>
+                                            <tbody id="leads_generated_from_countries_data"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="panel-heading" style="color:#F8A900; text-align: right;" id="leads_generated_from_countries_total_leads">
+                                    <span id="text-span"></span>
+                                    <span id="value-span"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Table Data -->
-                    <div class="col-lg-4">
-                        <div class="panel panel-filled">
-                            <div class="panel-heading" style="color:#F8A900" id="panel_heading">
-                                Leads Generated From Different Countries
-                            </div>
-                            <div class="panel-body">
-                                <div class="table-responsive" style="height: 300px !important;overflow-y:auto;">
-                                    <table class="table" style="margin-bottom:0px;">
-                                        <thead><tr><th>Country</th><th>Leads</th></tr></thead>
-                                        <tbody id="leads_generated_from_countries_data"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="panel-heading" style="color:#F8A900; text-align: right;" id="leads_generated_from_countries_total_leads">
-                                <span id="text-span"></span>
-                                <span id="value-span"></span>
-                            </div>
-                        </div>
                     </div>
                     <!-- Table Data End -->
                 </div>
@@ -123,40 +151,30 @@
 
                 {% if show_line_charts %}
                 <div class="row">
-
-                    <div class="col-md-6">
-                        <div class="panel">
-                            <div class="panel-heading">
-                                <p class="small">
-                                    <span class="c-white">Monitoring view provide real time</span>
-                                    data from geographically distributed servers. Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                    scrambled it to make a type specimen book.
-                                </p>
+                    <div class="panel panel-filled">
+                    <div class="panel-heading" style="background-color: #F8A900">Graphs</div>
+                    <div class="panel-body">
+                        <div class="col-md-6">
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                                        <canvas id="barOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="panel-body">
-                                <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-                                    <canvas id="barOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                                        <canvas id="lineOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="panel">
-                            <div class="panel-heading">
-                                <p class="small">
-                                    <span class="c-white">Monitoring view provide real time</span>
-                                    data from geographically distributed servers. Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                    scrambled it to make a type specimen book.
-                                </p>
-                            </div>
-                            <div class="panel-body">
-                                <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-                                    <canvas id="lineOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div> 
                 </div>
                 {% endif %}
             </div>
@@ -201,8 +219,6 @@
             x = 2 - x;
         }, 3000);
         
-        
-
     });
 
     function call_map(dataset){

@@ -206,7 +206,7 @@ function dashboard_settings_save(){
 
 function counter_settings_save(){
     $.post("/{% current_user_link user.id %}/counters_customization/", $("#counter-settings-form").serialize(), function(data){
-        if(data == 1) alert(data);//location.reload();
+        if(data == 1) location.reload();
         else alert('Unknown Error Occurred!');
     });
 }

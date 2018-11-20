@@ -156,52 +156,87 @@ def dashboard(request,  usertype = None):
     #
     #   Check System Settings
     #
-    data_dict["show_counters"] = False
+    data_dict["show_counters"] = True
+    data_dict["show_bar_graphs"] = True
+    data_dict["show_line_charts"] = True
+    data_dict["show_geo_graph"] = True
+    data_dict["show_geo_list"] = True
+    data_dict["show_geo_list_filters"] = True
+    data_dict["show_custom_counters"] = False
 
     try:
         dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
+        data_dict["show_counters"] = dashboard_settings.counters
+        data_dict["show_bar_graphs"] = dashboard_settings.bar_graphs
+        data_dict["show_line_charts"] = dashboard_settings.line_charts
+        data_dict["show_geo_graph"] = dashboard_settings.geo_graph
+        data_dict["show_geo_list"] = dashboard_settings.geo_list
+        data_dict["show_geo_list_filters"] = dashboard_settings.geo_list_filters
     except:
         pass
 
-    data_dict["show_counters"] = dashboard_settings.counters
-    data_dict["show_bar_graphs"] = dashboard_settings.bar_graphs
-    data_dict["show_line_charts"] = dashboard_settings.line_charts
-    data_dict["show_geo_graph"] = dashboard_settings.geo_graph
-    data_dict["show_geo_list"] = dashboard_settings.geo_list
-    data_dict["show_geo_list_filters"] = dashboard_settings.geo_list_filters
+    
+    data_dict["lead_status"] = {"Others":0}
+    data_dict["lead_active"] = {"Active":0, "Inactive":0}
 
-    leads = Leads_tbl.objects.all()
+    if data_dict["show_counters"] :
+        counters = Counters_Settings.objects.filter(user_id =  int(request.session["user_id"]))
+
+        if counters.count() > 0:
+            data_dict["show_custom_counters"] = True
+            data_dict["lead_status"] = {}
+            for counter in counters:
+
+                leads = Leads_tbl.objects.filter(status_id = int(counter.lead_status_id)).values('status_id')
+                if counter.filters:
+                    leads = leads.filter(active = 1)
+                leads = leads.annotate(total = Count('status_id')).order_by()
+                
+                try:
+                    status = Lead_status.objects.get(pk = int(counter.lead_status_id)) 
+                    data_dict["lead_status"][status.name] = 0  
+
+                    for lead in leads:
+                        if lead["total"]:
+                            data_dict["lead_status"][status.name] = lead["total"]
+                except:
+                    pass
+        else:
+            leads = Leads_tbl.objects.all()
+            for lead in leads:
+
+                if lead.status.name in data_dict["lead_status"].keys():
+                    if lead.status.name in ["New", "Closed", "Reject"]:
+                        data_dict["lead_status"][lead.status.name] += 1 
+                else:
+                    if lead.status.name in ["New", "Closed", "Reject"]:
+                        data_dict["lead_status"][lead.status.name] = 1
+                    else:
+                        data_dict["lead_status"]["Others"] += 1
+                
+                if lead.active == 1:
+                    data_dict["lead_active"]["Active"] += 1
+                else:
+                    data_dict["lead_active"]["Inactive"] += 1
+
+    
+
+    leads_for_countries = Leads_tbl.objects.all()
     
     with open(settings.BASE_DIR+'/crm/static/scripts/country_codes_2.json') as json_file:  
         country_codes = json.load(json_file)
 
-    data_dict["lead_status"] = {"Others":0}
-    data_dict["lead_active"] = {"Active":0, "Inactive":0}
+    
     leads_generated_from_countries = {}
     leads_centers_interested = {}
     leads_area_of_operation = {}
 
-    for lead in leads:
-
-        if lead.status.name in data_dict["lead_status"].keys():
-            if lead.status.name in ["New", "Closed", "Reject"]:
-                data_dict["lead_status"][lead.status.name] += 1 
-        else:
-            if lead.status.name in ["New", "Closed", "Reject"]:
-                data_dict["lead_status"][lead.status.name] = 1
-            else:
-                data_dict["lead_status"]["Others"] += 1
-        
-        if lead.active == 1:
-            data_dict["lead_active"]["Active"] += 1
-        else:
-            data_dict["lead_active"]["Inactive"] += 1
+    for lead in leads_for_countries:
 
         try:
             lead_questionnaire_model = Lead_questionnaire_model.objects.get(lead_id = lead.id)
             centers = lead_questionnaire_model.centers_interested.split(",")
             area_of_operation = lead_questionnaire_model.area_of_operation.split(",")
-
 
             for i in centers:
                 if country_codes[i]["alpha-3"] in leads_centers_interested:
@@ -1044,9 +1079,9 @@ def dashboard_settings(request, usertype = None):
         return HttpResponse(1)   
     return HttpResponse(0)   
 
-#
+#*******************************************************************************
 # COUNTER CUSTOMIZATION
-#
+#*******************************************************************************
 #
 @user_access_check     
 @login_required
@@ -1059,20 +1094,39 @@ def counters_customization(request, usertype = None):
         lead_status = request.POST.getlist('lead_status[]')
         filters = request.POST.getlist('lead_status_active[]') 
 
-        main_tup = [] 
-        for id in lead_status:
-            if id in filters:
-                main_tup.append((id,1))
-            else:
-                main_tup.append((id,0))
+        if customize_counters:
+            main_tup = [] 
+            for id in lead_status:
+                if id in filters:
+                    main_tup.append((id,1))
+                else:
+                    main_tup.append((id,0))
 
-        for i,j in main_tup:
-            counters = Counters_Settings( 
-                user_id = int(request.session["user_id"]),
-                counters_customization = int(customize_counters),
-                lead_status_id = int(i),
-                filters = int(j)
-            )
-            counters.save()    
+            for i,j in main_tup:
+                counters = Counters_Settings( 
+                    user_id = int(request.session["user_id"]),
+                    counters_customization = int(customize_counters),
+                    lead_status_id = int(i),
+                    filters = int(j)
+                )
+                counters.save()    
         return HttpResponse(1)
     return HttpResponse(0)
+
+#*******************************************************************************
+# CONTACTS
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def contacts(request, usertype = None):
+
+    template = 'crm/contacts.html'
+
+    data_dict = {}
+    data_dict["css_files"] = []
+
+    data_dict["js_files"] = []
+
+    return render(request, template, data_dict)  
+
