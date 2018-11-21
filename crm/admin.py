@@ -103,3 +103,13 @@ class Lead_questionnaire_modelAdmin(admin.ModelAdmin):
 class User_profileAdmin(admin.ModelAdmin):
 	list_display = ('id', 'user', 'get_photo')
 	list_per_page = 50	
+
+@admin.register(Contacts)
+class ContactsAdmin(admin.ModelAdmin):
+	list_display = ('id', 'company_name', 'contact_person_name', 'job_title_name', 'address', 'contact_phone', 'contact_email', 'contact_website', 'comment', 'created_on')
+	list_per_page = 50
+
+@admin.register(Contacts_meeting)
+class Contacts_meetingAdmin(admin.ModelAdmin):
+	list_display = ('contact', 'scheduled_by', 'meeting_schedule', 'created_on')
+	list_per_page = 50

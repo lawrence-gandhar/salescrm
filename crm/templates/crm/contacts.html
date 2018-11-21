@@ -2,6 +2,7 @@
 {% block content %}
 {% load navigation %}
 {% load userdata %}
+{% load common_filters %}
 {% load static %}
 
     <section class="content">
@@ -24,25 +25,79 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-8">
                     <div class="panel panel-filled">
-                        gdfg
+                        <div class="panel-body" style="padding:5px 0px 0px 0px;">
+                        {% for contact in contacts %}
+                            <div class="col-md-6" style="margin-bottom:5px; padding-left:5px; padding-right:5px;">
+                            <div class="panel panel-filled" style="margin-bottom:0px;">
+                                <div class="panel-body">
+                                    <span class="text-center" style="cursor:pointer; position:absolute; right:8px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
+                                        <i class="pe-7s-tools" style="margin-top:8px;color:#F8A900"></i>
+                                    </span>
+                                    <span class="text-center" style="position:absolute; right:40px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
+                                        <i class="pe-7s-stopwatch" style="margin-top:8px;{% if contact.id|contacts_meeting_at_hand:contacts_meeting %}color:#F8A900{% endif %}"></i>
+                                    </span>
+                                    <table style="font-size:80%">
+                                        <tr>
+                                            <td style="font-weight: bold;color:#ffffff; text-align:right; vertical-align:top;">Company</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.company_name|upper|safe}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color:#ffffff; text-align:right; vertical-align:top;">Contact</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.contact_title|upper|safe}}. {{contact.contact_person|upper|safe}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color:#ffffff; text-align:right; vertical-align:top;">Design</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.job_title|upper|safe}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color:#ffffff; text-align:right; vertical-align:top;">Phone</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.contact_phone|safe}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color:#ffffff; text-align:right; vertical-align:top;">Email</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.contact_email|safe}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold; color:#ffffff; text-align:right; vertical-align:top;">Website</td>
+                                            <td style="padding:0px 2px; vertical-align:top;"><strong style="color:#ffffff">:</strong></td><td>{{contact.contact_website|safe}}</td>
+                                        </tr>
+                                    </table>                                    
+                                </div>                                
+                            </div>
+                            </div>
+                        {% endfor %}
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-4">
                     <div class="panel panel-filled">
                         <div class="panel-heading" style="background-color:#F8A900">
                                 ADD CONTACT
                         </div>
                         <div class="panel-body">
+                            <form action="" method="post">
+                            {% csrf_token %}
                             <div class="row form-group" style="margin-bottom:2px;">
-                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Company Name</label>
+                                <label for="company_name" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Company Name</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="company_name" required>
+                                    <input  autocomplete="off" type="text" class="form-control input-sm" id="company_name" name="company_name" required>
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
-                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Contact Person</label>
+                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Title</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="contact_title">
+                                        <option>Mr</option>
+                                        <option>Mrs</option>
+                                        <option>Miss</option>
+                                        <option>Dr</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group" style="margin-bottom:2px;">
+                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Person's Name</label>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_person" required>
                                 </div>
@@ -50,41 +105,70 @@
                             <div class="row form-group" style="margin-bottom:2px;">
                                 <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Job Title</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="job_title" required>
+                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="job_title">
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
                                 <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Address</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="address" required>
+                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="address">
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
-                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Contact Number</label>
+                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Phone Number</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_number" required>
+                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_phone" required>
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
                                 <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Email Address</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="email" required>
+                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_email" required>
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
                                 <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Website</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="website" required>
+                                    <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_website">
+                                </div>
+                            </div>
+                            <div class="row form-group" style="margin-bottom:5px;">
+                                <label for="inputEmail3" class="col-md-4 control-label" style="text-align:right; line-height:30px; font-size:80%">Comments</label>
+                                <div class="col-md-8">
+                                    <textarea class="form-control" name="comment"></textarea>
                                 </div>
                             </div>
                             <div class="row form-group" style="margin-bottom:2px;">
                                 <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;">SAVE</button>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>    
         </div>
     </section>
+
+<script>
+
+$(document).ready(function(){
+
+    company_names = {{company_names|safe}};
+
+    $('#company_name').typeahead({source: company_names});
+
+    $('#company_name').blur(function(e){
+        e.preventDefault();
+
+        if($.inArray($(this).val().toLowerCase(),company_names)>-1){
+            alert('Company is already present in contacts');
+        }
+        return false;
+    });
+
+
+});
+
+</script> 
 
 {% endblock %}

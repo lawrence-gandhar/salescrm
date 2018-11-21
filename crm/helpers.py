@@ -17,6 +17,7 @@ from .models import Usertype, User_usertype
 from crm.models.users import *
 from crm.models.leads import * 
 from crm.models.system_settings import * 
+from crm.models.contacts import * 
 
 
 # system related imports

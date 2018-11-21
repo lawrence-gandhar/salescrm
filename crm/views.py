@@ -1126,7 +1126,32 @@ def contacts(request, usertype = None):
     data_dict = {}
     data_dict["css_files"] = []
 
-    data_dict["js_files"] = []
+    data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
 
+    data_dict["contacts"] = Contacts.objects.all()
+
+    startdate = datetime.datetime.now()
+    enddate = startdate + datetime.timedelta(days=7)
+    data_dict["contacts_meeting"] = Contacts_meeting.objects.filter(meeting_schedule__range=[startdate, enddate])
+    
+    data_dict["company_names"] = list()
+    for item in data_dict["contacts"]:
+        data_dict["company_names"].append(item.company_name.lower())
+
+    if request.POST:
+        contacts = Contacts(
+            company_name = request.POST["company_name"],
+            contact_title = request.POST["contact_title"],
+            contact_person = request.POST["contact_person"],
+            job_title = request.POST["job_title"],
+            address = request.POST["address"],
+            contact_phone = request.POST["contact_phone"],
+            contact_email = request.POST["contact_email"],
+            contact_website = request.POST["contact_website"],
+            comment = request.POST["comment"],
+        )
+        
+        contacts.save()
+        return redirect("/"+ current_user_url(request.session["user_id"]) + "/contacts/")
     return render(request, template, data_dict)  
 

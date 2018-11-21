@@ -35,3 +35,11 @@ def leads_counter(id, arr):
             return "$"+str(item["total"])
     else:
         return "$0"
+
+@register.filter
+def contacts_meeting_at_hand(id, arr):
+    for item in arr:
+        if id == item.contact_id:
+            return True
+    else:
+        return False
