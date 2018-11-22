@@ -31,6 +31,7 @@ from crm.helpers import *
 
 # system imports
 import sys, os, csv, json, datetime
+from django.utils import timezone
 
 #
 from django.contrib.auth.models import User
@@ -1121,7 +1122,7 @@ def counters_customization(request, usertype = None):
 @login_required
 def contacts(request, usertype = None):
 
-    template = 'crm/contacts.html'
+    template = 'crm/contacts_list.html'
 
     data_dict = {}
     data_dict["css_files"] = []
@@ -1130,7 +1131,7 @@ def contacts(request, usertype = None):
 
     data_dict["contacts"] = Contacts.objects.all()
 
-    startdate = datetime.datetime.now()
+    startdate = timezone.now()
     enddate = startdate + datetime.timedelta(days=7)
     data_dict["contacts_meeting"] = Contacts_meeting.objects.filter(meeting_schedule__range=[startdate, enddate])
     

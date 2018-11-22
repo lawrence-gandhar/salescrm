@@ -1,0 +1,157 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load userdata %}
+{% load common_filters %}
+
+<section class="content">
+    <div class="container-fluid" style="padding-right: 30px">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="view-header">
+                    <div class="header-icon">
+                        <i class="pe page-header-icon pe-7s-users"></i>
+                    </div>
+                    <div class="header-title">
+                        <h3>Contacts</h3>
+                        <small>
+                            List of all contacts
+                        </small>
+                        <button type="button" class="pull-right btn btn-default" style="margin-top: -20px;" data-toggle="modal" data-target="#modal-add-contact">Add Contact</button>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body" style="padding:0px;">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" style="background-color:none;font-size:80%">
+                                        <thead>
+                                            <th>Company</th>
+                                            <th>Contact</th>
+                                            <th>Job Title</th>
+                                            <th>Address</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Website</th>
+                                            <th>Comments</th>
+                                            <th>Action</th>
+                                        </thead>
+                                        <tbody style="font-size:75%">
+                                            {% for contact in contacts %}
+                                            <tr>
+                                                <td>{{contact.company_name|upper|safe}}</td>
+                                                <td>{{contact.contact_title|upper|safe}}. {{contact.contact_person|upper|safe}}</td>
+                                                <td>{{contact.job_title|upper|safe}}</td>
+                                                <td>{{contact.address|safe}}</td>
+                                                <td>{{contact.contact_phone|safe}}</td>
+                                                <td>{{contact.contact_email|safe}}</td>
+                                                <td>{{contact.contact_website|safe}}</td>
+                                                <td>{{contact.comment|safe}}</td>
+                                                <td>
+                                                    <i title="Settings/Edit" class="pe-7s-tools" style="cursor:pointer; margin-top:8px;color:#F8A900"></i>
+                                                    <i  class="pe-7s-stopwatch" 
+                                                        {% if contact.id|contacts_meeting_at_hand:contacts_meeting %} 
+                                                            style = "cursor:pointer; margin-left:5px; margin-top:8px;color:#F8A900"
+                                                            title = "Meeting Scheduled within next 7 days"
+                                                            onclick = "view_meeting_details({{contact.id|safe}})" 
+                                                        {% else %}
+                                                            style="margin-left:5px; margin-top:8px;"
+                                                            title="Meeting Scheduled not within next 7 days"
+                                                        {% endif %}
+                                                    ></i>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>   
+
+<!-- MODAL LEAD ACTIVE -->
+
+<div class="modal" id="modal-add-contact" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.8)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 15px 10px 10px 10px; ">
+                <h4 class="m-t-none">Add Contact</h4>
+                <hr style="margin:0px">
+                <form action="" method="post">
+                {% csrf_token %}
+                <div class="row form-group" style="margin-bottom:2px;margin-top:5px;">
+                    <label for="company_name" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Company Name</label>
+                    <div class="col-md-9">
+                        <input  autocomplete="off" type="text" class="form-control input-sm" id="company_name" name="company_name" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Title</label>
+                    <div class="col-md-9">
+                        <select class="form-control" name="contact_title">
+                            <option>Mr</option>
+                            <option>Mrs</option>
+                            <option>Miss</option>
+                            <option>Dr</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Person's Name</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_person" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Job Title</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="job_title">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Address</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="address">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Phone Number</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_phone" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Email Address</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_email" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Website</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="inputEmail3" name="contact_website">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:5px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Comments</label>
+                    <div class="col-md-9">
+                        <textarea class="form-control" name="comment"></textarea>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;">SAVE</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
