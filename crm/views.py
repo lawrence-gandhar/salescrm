@@ -9,7 +9,7 @@ from django.db import IntegrityError, connection
 from django.core.serializers.json import DjangoJSONEncoder 
 from django.core.serializers import serialize
 
-from django.http import HttpResponse, Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 
 # Paginator class import
 from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnInteger
@@ -1120,12 +1120,16 @@ def counters_customization(request, usertype = None):
 #
 @user_access_check     
 @login_required
-def contacts(request, usertype = None):
+def contacts(request, usertype = None, view_type = None):
 
-    template = 'crm/contacts_list.html'
+    if view_type == 'list':
+        template = 'crm/contacts_list.html'
+    if view_type == 'grid':
+        template = 'crm/contacts.html'
 
     data_dict = {}
     data_dict["css_files"] = []
+    data_dict["view_type"] = view_type
 
     data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
 
@@ -1153,6 +1157,101 @@ def contacts(request, usertype = None):
         )
         
         contacts.save()
-        return redirect("/"+ current_user_url(request.session["user_id"]) + "/contacts/")
+        return redirect("/"+ current_user_url(request.session["user_id"]) + "/contacts/"+view_type+"/")
+
+    # pagination 
+    #
+    paginator = Paginator(data_dict["contacts"], 10) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+
+    try:
+        if page is None:
+            page = 1
+        data_dict["contacts"] = paginator.get_page(page)
+        check = paginator.page(page)
+    except InvalidPage:
+        return render(request,'crm/error.html',{})
+    except PageNotAnInteger:
+            return render(request,'crm/error.html',{})
+    except EmptyPage:
+        return render(request,'crm/error.html',{}) 
+
     return render(request, template, data_dict)  
 
+
+#*******************************************************************************
+# CONTACTS EDIT
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def contacts_save_data(request, usertype = None):
+    if request.is_ajax():
+
+        company_name = request.POST.get('company_name','')
+        contact_title = request.POST.get('contact_title','')
+        contact_person = request.POST.get('contact_person','')
+        job_title = request.POST.get('job_title','')
+        address = request.POST.get('address','')
+        contact_phone = request.POST.get('contact_phone','')
+        contact_email = request.POST.get('contact_email','')
+        contact_website = request.POST.get('contact_website','')
+        comment = request.POST.get('comment','')
+
+        try:
+            contacts = Contacts.objects.get(pk = int(request.POST["id"]))
+            contacts.company_name = company_name
+            contacts.contact_title = contact_title
+            contacts.contact_person = contact_person
+            contacts.job_title = job_title
+            contacts.address = address
+            contacts.contact_email = contact_email
+            contacts.contact_website = contact_website
+            contacts.comment = comment
+            contacts.save()
+
+            return HttpResponse(1) 
+        except:
+            return HttpResponse(0)     
+    return HttpResponse(0)
+
+
+#*******************************************************************************
+# CONTACTS GET DATA
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def contacts_get_data(request, usertype = None):
+    if request.is_ajax():
+
+        try:
+            contacts = Contacts.objects.get(pk = int(request.POST["id"]))
+            
+            data = dict({
+                    "company_name":contacts.company_name, 
+                    "contact_title" : contacts.contact_title, 
+                    "contact_person" : contacts.contact_person,
+                    "job_title" : contacts.job_title,
+                    "address" : contacts.address, 
+                    "contact_phone" : contacts.contact_phone, 
+                    "contact_email" : contacts.contact_email,
+                    "contact_website" : contacts.contact_website,
+                    "comment" : contacts.comment, 
+                })
+            return HttpResponse(json.dumps(data))
+        except:
+            return HttpResponse(0)
+    return HttpResponse(0)
+
+
+
+#*******************************************************************************
+# MEETING SCHEDULED
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def meetings_scheduled(request, usertype = None):
+    return HttpResponse(1)

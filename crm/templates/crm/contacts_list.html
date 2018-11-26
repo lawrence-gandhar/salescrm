@@ -17,17 +17,22 @@
                         <small>
                             List of all contacts
                         </small>
-                        <button type="button" class="pull-right btn btn-default" style="margin-top: -20px;" data-toggle="modal" data-target="#modal-add-contact">Add Contact</button>
+                        <div class="btn-group pull-right" style="margin-top: -20px;">
+                            <a href="/{% current_user_link user.id %}/contacts/list/" type="button" class="btn btn-warning"><i class="pe page-header-icon pe-7s-menu"></i> List View</a>
+                            <a href="/{% current_user_link user.id %}/contacts/grid/" type="button" class="btn btn-warning"><i class="pe page-header-icon pe-7s-keypad"></i> Grid View</a>
+                            <button type="button" class="pull-right btn btn-warning" data-toggle="modal" data-target="#modal-add-contact">Add Contact</button>
+                        </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel">
+                        <div class="panel" style="margin-bottom:0px">
                             <div class="panel-body" style="padding:0px;">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" style="background-color:none;font-size:80%">
+                                    <table class="table table-bordered table-hover" style="font-size:80%">
                                         <thead>
+                                            <th>ID</th>
                                             <th>Company</th>
                                             <th>Contact</th>
                                             <th>Job Title</th>
@@ -41,6 +46,7 @@
                                         <tbody style="font-size:75%">
                                             {% for contact in contacts %}
                                             <tr>
+                                                <td>{{contact.id|safe}}</td>
                                                 <td>{{contact.company_name|upper|safe}}</td>
                                                 <td>{{contact.contact_title|upper|safe}}. {{contact.contact_person|upper|safe}}</td>
                                                 <td>{{contact.job_title|upper|safe}}</td>
@@ -49,11 +55,12 @@
                                                 <td>{{contact.contact_email|safe}}</td>
                                                 <td>{{contact.contact_website|safe}}</td>
                                                 <td>{{contact.comment|safe}}</td>
-                                                <td>
-                                                    <i title="Settings/Edit" class="pe-7s-tools" style="cursor:pointer; margin-top:8px;color:#F8A900"></i>
+                                                <td width="70px">
+                                                    <a href="/{% current_user_link user.id %}/meeting/schedule/{{contact.id|safe}}"><i title="Schedule Meeting" class="pe-7s-date" style="cursor:pointer; margin-top:8px; color:#F8A900"></i></a>
+                                                    <i title="Settings/Edit" class="pe-7s-tools" style="cursor:pointer; margin-left:5px; margin-top:8px; color:#F8A900" onclick="edit_modal({{contact.id|safe}})"></i>
                                                     <i  class="pe-7s-stopwatch" 
                                                         {% if contact.id|contacts_meeting_at_hand:contacts_meeting %} 
-                                                            style = "cursor:pointer; margin-left:5px; margin-top:8px;color:#F8A900"
+                                                            style = "cursor:pointer; margin-left:5px; margin-top:8px; color:#F8A900"
                                                             title = "Meeting Scheduled within next 7 days"
                                                             onclick = "view_meeting_details({{contact.id|safe}})" 
                                                         {% else %}
@@ -69,6 +76,30 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="pull-right">
+                            <ul class="pagination pagination-sm">
+                                {% if contacts.has_previous %}
+                                    <li><a href="?page=1">&laquo; First</a></li>
+                                    <li><a href="?page={{ contacts.previous_page_number }}">Previous</a></li>
+                                {% else %}    
+                                    <li class="disabled"><a href="#">Previous {{contacts.num_pages}}</a></li>
+                                {% endif %}
+                
+                                {% for i in contacts.paginator.page_range %}
+                                    <li {% ifequal contacts.number i  %} class="active" {% endifequal %}>
+                                        <a href="?page={{i|safe}}">{{i|safe}}</a>
+                                    </li>
+                                {% endfor %}    
+                
+                                {% if leads.has_next %}
+                                    <li><a href="?page={{ contacts.next_page_number }}">Next</a></li>
+                                    <li><a href="?page={{ contacts.paginator.num_pages }}">Last &raquo;</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="pull-left" style="margin-top:20px;color:#f6a821">
+                            <span class="pull-left">Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}</span>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -84,7 +115,7 @@
             <div class="modal-body" style="padding: 15px 10px 10px 10px; ">
                 <h4 class="m-t-none">Add Contact</h4>
                 <hr style="margin:0px">
-                <form action="" method="post">
+                <form action="/{% current_user_link user.id %}/contacts/list/" method="post">
                 {% csrf_token %}
                 <div class="row form-group" style="margin-bottom:2px;margin-top:5px;">
                     <label for="company_name" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Company Name</label>
@@ -145,8 +176,9 @@
                         <textarea class="form-control" name="comment"></textarea>
                     </div>
                 </div>
-                <div class="row form-group" style="margin-bottom:2px;">
-                    <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;">SAVE</button>
+                <div class="row form-group" style="margin-bottom:0px; margin-top:10px;">
+                    <button class="btn btn-sm btn-danger pull-right" style="margin-right:10px;" data-dismiss="modal">CANCEL</button>
+                    <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;">SAVE</button>                    
                 </div>
                 </form>
             </div>
@@ -154,4 +186,134 @@
     </div>
 </div>
 
+
+<!-- MODAL LEAD ACTIVE -->
+
+<div class="modal" id="modal-edit-contact" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.8)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 15px 10px 10px 10px; ">
+                <h4 class="m-t-none">Edit Contact</h4>
+                <hr style="margin:0px">
+                <form method="post" id="edit_modal">
+                {% csrf_token %}
+                <input id="edit_modal_input" readonly type="hidden" name="id">
+                <div class="row form-group" style="margin-bottom:2px;margin-top:5px;">
+                    <label for="company_name_edit" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Company Name</label>
+                    <div class="col-md-9">
+                        <input  autocomplete="off" type="text" class="form-control input-sm" id="company_name_edit" name="company_name" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Title</label>
+                    <div class="col-md-9">
+                        <select class="form-control" name="contact_title" id="contact_title_edit">
+                            <option>Mr</option>
+                            <option>Mrs</option>
+                            <option>Miss</option>
+                            <option>Dr</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Person's Name</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="contact_person_edit" name="contact_person" required>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Job Title</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="job_title_edit" name="job_title">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Address</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="address_edit" name="address">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Phone Number</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="contact_phone_edit" name="contact_phone">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Email Address</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="contact_email_edit" name="contact_email">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:2px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Website</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control input-sm" id="contact_website_edit" name="contact_website">
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:5px;">
+                    <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Comments</label>
+                    <div class="col-md-9">
+                        <textarea class="form-control" name="comment" id="comment_edit"></textarea>
+                    </div>
+                </div>
+                <div class="row form-group" style="margin-bottom:0px; margin-top:10px;">
+                    <button class="btn btn-sm btn-danger pull-right" style="margin-right:10px;" data-dismiss="modal">CANCEL</button>
+                    <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;" type="button" onclick="edit_modal_submit()">SAVE</button>                    
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+$(document).ready(function(){
+
+    company_names = {{company_names|safe}};
+
+    $('#company_name,#company_name_edit').typeahead({source: company_names});
+
+    $('#company_name,company_name_edit').blur(function(e){
+        e.preventDefault();
+
+        if($.inArray($(this).val().toLowerCase(),company_names)>-1){
+            alert('Company is already present in contacts');
+        }
+        return false;
+    });
+
+});
+
+function edit_modal(id){
+    $("#modal-edit-contact").modal("show");
+    $("#edit_modal_input").val(id);
+    $.post("/{% current_user_link user.id %}/contacts/get_data/",{id:id, csrfmiddlewaretoken: '{{ csrf_token }}'},function(data){
+        data = $.parseJSON(data);
+
+        console.log(data);
+
+        $("#company_name_edit").val(data.company_name);
+        $("#contact_title_edit").val(data.contact_title);
+        $("#contact_person_edit").val(data.contact_person);
+        $("#job_title_edit").val(data.job_title).change();
+        $("#address_edit").val(data.address);
+        $("#contact_phone_edit").val(data.contact_phone);
+        $("#contact_email_edit").val(data.contact_email);
+        $("#contact_website_edit").val(data.contact_website);
+        $("#comment_edit").val(data.comment);
+    });
+}
+
+function edit_modal_submit(){
+    //alert($("#edit_modal").serialize());
+    $.post("/{% current_user_link user.id %}/contacts/save_data/",$("#edit_modal").serialize(),function(data){
+        if(data == 1) location.reload();
+        else alert('Error Occurred! Please contact Administrator');
+    });
+}
+
+</script> 
 {% endblock %}
