@@ -1122,11 +1122,6 @@ def counters_customization(request, usertype = None):
 @login_required
 def contacts(request, usertype = None, view_type = None):
 
-    if view_type == 'list':
-        template = 'crm/contacts_list.html'
-    if view_type == 'grid':
-        template = 'crm/contacts.html'
-
     data_dict = {}
     data_dict["css_files"] = []
     data_dict["view_type"] = view_type
@@ -1134,6 +1129,13 @@ def contacts(request, usertype = None, view_type = None):
     data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
 
     data_dict["contacts"] = Contacts.objects.all()
+
+    if view_type == 'list':
+        template = 'crm/contacts_list.html'
+        paginator = Paginator(data_dict["contacts"], 10) # Show 25 contacts per page
+    if view_type == 'grid':
+        template = 'crm/contacts.html'
+        paginator = Paginator(data_dict["contacts"], 15) # Show 25 contacts per page
 
     startdate = timezone.now()
     enddate = startdate + datetime.timedelta(days=7)
@@ -1161,7 +1163,6 @@ def contacts(request, usertype = None, view_type = None):
 
     # pagination 
     #
-    paginator = Paginator(data_dict["contacts"], 10) # Show 25 contacts per page
 
     page = request.GET.get('page')
 
@@ -1206,6 +1207,7 @@ def contacts_save_data(request, usertype = None):
             contacts.contact_person = contact_person
             contacts.job_title = job_title
             contacts.address = address
+            contacts.contact_phone = contact_phone
             contacts.contact_email = contact_email
             contacts.contact_website = contact_website
             contacts.comment = comment
@@ -1248,10 +1250,14 @@ def contacts_get_data(request, usertype = None):
 
 
 #*******************************************************************************
-# MEETING SCHEDULED
+# MEETING SCHEDULE
 #*******************************************************************************
 #
 @user_access_check     
 @login_required
-def meetings_scheduled(request, usertype = None):
+def meetings_scheduled(request, usertype = None, contact_id = None):
+
+    if contact_id is not None:
+        pass
+
     return HttpResponse(1)

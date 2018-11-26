@@ -36,10 +36,10 @@
                             <div class="col-md-4" style="margin-bottom:5px; padding-left:5px; padding-right:5px;">
                             <div class="panel panel-filled" style="margin-bottom:0px;">
                                 <div class="panel-body">
-                                    <span class="text-center" style="cursor:pointer; position:absolute; right:8px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
-                                        <i class="pe-7s-date" style="margin-top:8px;color:#F8A900"></i>
+                                    <span class="text-center" style="cursor:pointer; position:absolute; right:40px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
+                                        <a href="/{% current_user_link user.id %}/meeting/schedule/{{contact.id|safe}}"><i title="Schedule Meeting" class="pe-7s-date" style="cursor:pointer; margin-top:8px; color:#F8A900"></i></a>
                                     </span>
-                                    <span class="text-center" style="position:absolute; right:40px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
+                                    <span class="text-center" style="position:absolute; right:8px; top:2px; border-radius: 100%; display:block; width:30px; height:30px; background-color:#24262d38;">
                                         <i class="pe-7s-stopwatch" style="margin-top:8px;{% if contact.id|contacts_meeting_at_hand:contacts_meeting %}color:#F8A900{% endif %}"></i>
                                     </span>
                                     <table style="font-size:80%">
