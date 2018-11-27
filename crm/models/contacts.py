@@ -35,6 +35,7 @@ class Contacts_meeting(models.Model):
     contact = models.ForeignKey('Contacts', db_index = True, null = True, on_delete = models.SET_NULL, )
     scheduled_by = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )
     meeting_schedule = models.DateTimeField(db_index = True, null = True, blank = True, )
+    agenda = models.TextField(null = True, blank = True,)
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )
     
     class Meta:

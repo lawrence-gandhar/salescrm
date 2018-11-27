@@ -730,7 +730,7 @@ def lead_assignments(request, usertype = None):
 
 
 #*******************************************************************************  
-#   LEAD ASSIGNMENTS
+#   LEAD ASSIGNMENTS EDIT
 #*******************************************************************************  
 #   
 @user_access_check
@@ -1267,10 +1267,16 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
     data_dict = {}
     data_dict["css_files"] = []
 
-    data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
+    data_dict["js_files"] = ['vendor/select2/dist/js/select2.js']
 
     data_dict["back_link"] = '/'+current_user_url(request.session["user_id"]) + '/contacts/list/'
     data_dict["company_name"] = ''
+    data_dict["contact_id"] = contact_id
+
+    #
+    #   GET USER LIST WITH PICTURES
+    #
+    data_dict["user_lists"] = User.objects.filter(is_active = True, is_superuser = False).values('id', 'username', 'first_name', 'last_name')
 
     contact = None
     if contact_id is not None:
@@ -1283,4 +1289,30 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
         if contact is not None:
             data_dict["company_name"] = contact.company_name
 
+    #
+    #   MEETING SCHEDULE ADD
+    #
+    if request.POST:
+
+        meetings_sch = Contacts_meeting(
+            contact_id = int(request.POST["id"]),
+            scheduled_by_id = int(request.session["user_id"]),
+            meeting_schedule = request.POST["meeting_time"] +" "+request.POST["meeting_time"]+":00"
+        )
+
+        meetings_sch.save()
+
+        attendees = request.POST.getlist('attendees') 
+
+        if len(attendees) > 0:
+            for user in attendees:
+                meeting_attendees = Meeting_attendees(
+                    meeting_id = meetings_sch.id,
+                    user_id = user
+                )
+
+                meeting_attendees.save()
+
+        return redirect("/"+ current_user_url(request.session["user_id"]) + "/meeting/schedule/"+contact_id)
     return render(request, template, data_dict)  
+

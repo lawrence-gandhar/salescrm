@@ -111,5 +111,5 @@ class ContactsAdmin(admin.ModelAdmin):
 
 @admin.register(Contacts_meeting)
 class Contacts_meetingAdmin(admin.ModelAdmin):
-	list_display = ('contact', 'scheduled_by', 'meeting_schedule', 'created_on')
+	list_display = ('contact', 'scheduled_by', 'meeting_schedule', 'agenda', 'created_on')
 	list_per_page = 50
