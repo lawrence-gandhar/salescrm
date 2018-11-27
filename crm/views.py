@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 from django.conf import settings	
 
 # Condition operators for models
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Count, Sum, Prefetch
 from django.core.exceptions import ObjectDoesNotExist
 
 # Other imports
@@ -1277,6 +1277,7 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
     #   GET USER LIST WITH PICTURES
     #
     data_dict["user_lists"] = User.objects.filter(is_active = True, is_superuser = False).values('id', 'username', 'first_name', 'last_name')
+    data_dict["meeting_schedules"] = None
 
     contact = None
     if contact_id is not None:
@@ -1289,15 +1290,53 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
         if contact is not None:
             data_dict["company_name"] = contact.company_name
 
+            #
+            #
+            contacts_meeting = Contacts_meeting.objects.filter(contact = contact.id).select_related('scheduled_by')
+
+            data_dict["meetings"] = {}
+            meetings_list = list()
+            i = 0
+            for meeting in contacts_meeting:
+
+                meetings_list.append({
+                    'meeting_id' : meeting.id,
+                    'contact_id' : meeting.contact_id,
+                    'scheduled_by_id' : meeting.scheduled_by_id,
+                    'scheduled_by' : meeting.scheduled_by.first_name +" "+ meeting.scheduled_by.last_name,
+                    'meeting_schedule' : meeting.meeting_schedule,
+                    'agenda' : meeting.agenda,
+                    'meeting_created_on' : meeting.created_on,
+                    'meeting_attendees' : list()
+                })  
+                
+
+                attendees = Meeting_attendees.objects.filter(meeting = meeting.id).select_related('user')
+
+                attend = list()
+                for members in attendees:
+                    attend.append({
+                        'id' : members.user.id,
+                        'name' : members.user.first_name +" "+members.user.last_name
+                    })
+                meetings_list[i]['meeting_attendees'] = attend
+                
+                pass
+
+                i += 1 
+            data_dict["meetings"] = meetings_list
+
+            print(data_dict["meetings"])
     #
     #   MEETING SCHEDULE ADD
     #
     if request.POST:
 
         meetings_sch = Contacts_meeting(
+            agenda = request.POST["agenda"],
             contact_id = int(request.POST["id"]),
             scheduled_by_id = int(request.session["user_id"]),
-            meeting_schedule = request.POST["meeting_time"] +" "+request.POST["meeting_time"]+":00"
+            meeting_schedule = request.POST["meeting_date"] +" "+request.POST["meeting_time"]+":00"
         )
 
         meetings_sch.save()

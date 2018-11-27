@@ -23,16 +23,37 @@
                     </div>
                 </div>
                 <hr>
-                <hr>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel" style="margin-bottom:0px">
                             <div class="panel-body" style="padding:0px;">
-                                
+                                   
+                                {% if meeting_schedules is not None %}
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" style="font-size:80%"></table>
+                                    <table class="table table-bordered table-hover" style="font-size:80%">
+                                        <thead>
+                                            <th>Agenda</th>
+                                            <th>Scheduled By</th>
+                                            <th>Meeting Date</th>
+                                            <th>Attendees</th>
+                                            <th>Created On</th>
+                                        </thead>
+                                        {% for item in meeting_schedules %}
+                                        <tr>
+                                            <td>{{item.meeting_id.agenda|safe}}</td>
+                                            <td>{{meeting.scheduled_by.first_name|safe|title}}</td>
+                                            <td>{{meeting.meeting_schedule|date:'Y-m-d H:i'}}</td>
+                                            <td>
+                                                {% for x in meeting.meeting.all %}
+                                                    {{x}}
+                                                {% endfor %}
+                                            </td>
+                                            <td>{{meeting.created_on|date:'Y-m-d H:i'}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
                                 </div>
-                                
+                                {% endif %}
                             </div>
                         </div>
                     </div>
