@@ -1,0 +1,40 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load userdata %}
+{% load common_filters %}
+
+<section class="content">
+    <div class="container-fluid" style="padding-right: 30px">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="view-header">
+                    <div class="header-icon">
+                        <i class="pe page-header-icon pe-7s-users"></i>
+                    </div>
+                    <div class="header-title">
+                        <h3>Meetings</h3>
+                        <small>
+                            Schedules & Logs for : <strong style="color:#f6a821">{{company_name|safe|upper}}</strong>
+                        </small>
+                    </div>
+                </div>
+                <hr>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel" style="margin-bottom:0px">
+                            <div class="panel-body" style="padding:0px;">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" style="font-size:80%"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

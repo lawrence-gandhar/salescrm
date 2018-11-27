@@ -28,7 +28,7 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/get_data/$', views.contacts_get_data),
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/save_data/$', views.contacts_save_data),
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/(?P<view_type>[\w.@+-]+)/$', views.contacts),        
-        re_path(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d])/$', views.meetings_scheduled),        
+        re_path(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d]+)/$', views.meetings_scheduled),        
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 except ImportError:
@@ -57,5 +57,5 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/get_data/$', views.contacts_get_data),
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/save_data/$', views.contacts_save_data),
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/(?P<view_type>[\w.@+-]+)/$', views.contacts),   
-        url(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d])/$', views.meetings_scheduled),     
+        url(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d]+)/$', views.meetings_scheduled),     
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

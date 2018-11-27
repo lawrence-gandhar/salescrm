@@ -591,6 +591,7 @@ def manage_leads(request, usertype = None):
 
     data_dict["error"] = ""
     data_dict["country_json"] = country_json()
+    data_dict["back_link"] = 'crm/'+current_user_url(request.session["user_id"])+'/leads/manage/'
 
     leads = Leads_tbl.objects
     submit = request.POST.get('submit', False)
@@ -620,11 +621,11 @@ def manage_leads(request, usertype = None):
         leads = paginator.get_page(page)
         check = paginator.page(page)
     except InvalidPage:
-        return render(request,'crm/error.html',{})
+        return render(request,'crm/error.html',data_dict)
     except PageNotAnInteger:
-            return render(request,'crm/error.html',{})
+            return render(request,'crm/error.html',data_dict)
     except EmptyPage:
-        return render(request,'crm/error.html',{}) 
+        return render(request,'crm/error.html',data_dict) 
 
     data_dict["leads"] = leads
     
@@ -1125,17 +1126,20 @@ def contacts(request, usertype = None, view_type = None):
     data_dict = {}
     data_dict["css_files"] = []
     data_dict["view_type"] = view_type
+    data_dict["back_link"] = "/"+ current_user_url(request.session["user_id"]) + "/contacts/"+view_type+"/"
+
+    print(data_dict["back_link"])
 
     data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
 
-    data_dict["contacts"] = Contacts.objects.all()
+    data_dict["contacts"] = Contacts.objects.all().order_by('id')
 
     if view_type == 'list':
         template = 'crm/contacts_list.html'
-        paginator = Paginator(data_dict["contacts"], 10) # Show 25 contacts per page
+        paginator = Paginator(data_dict["contacts"], 10) # Show 10 contacts per page
     if view_type == 'grid':
         template = 'crm/contacts.html'
-        paginator = Paginator(data_dict["contacts"], 15) # Show 25 contacts per page
+        paginator = Paginator(data_dict["contacts"], 15) # Show 15 contacts per page
 
     startdate = timezone.now()
     enddate = startdate + datetime.timedelta(days=7)
@@ -1172,11 +1176,11 @@ def contacts(request, usertype = None, view_type = None):
         data_dict["contacts"] = paginator.get_page(page)
         check = paginator.page(page)
     except InvalidPage:
-        return render(request,'crm/error.html',{})
+        return render(request,'crm/error.html',data_dict)
     except PageNotAnInteger:
-            return render(request,'crm/error.html',{})
+            return render(request,'crm/error.html',data_dict)
     except EmptyPage:
-        return render(request,'crm/error.html',{}) 
+        return render(request,'crm/error.html', data_dict) 
 
     return render(request, template, data_dict)  
 
@@ -1257,7 +1261,26 @@ def contacts_get_data(request, usertype = None):
 @login_required
 def meetings_scheduled(request, usertype = None, contact_id = None):
 
-    if contact_id is not None:
-        pass
+    template = 'crm/meetings_schedule.html'
+    error_template = 'crm/error.html'
+    
+    data_dict = {}
+    data_dict["css_files"] = []
 
-    return HttpResponse(1)
+    data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
+
+    data_dict["back_link"] = '/'+current_user_url(request.session["user_id"]) + '/contacts/list/'
+    data_dict["company_name"] = ''
+
+    contact = None
+    if contact_id is not None:
+       
+        try:
+            contact = Contacts.objects.get(pk = int(contact_id))
+        except:
+            template =  error_template
+
+        if contact is not None:
+            data_dict["company_name"] = contact.company_name
+
+    return render(request, template, data_dict)  
