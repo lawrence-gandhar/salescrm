@@ -1292,7 +1292,7 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
 
             #
             #
-            contacts_meeting = Contacts_meeting.objects.filter(contact = contact.id).select_related('scheduled_by')
+            contacts_meeting = Contacts_meeting.objects.filter(contact = contact.id).select_related('scheduled_by').order_by('-meeting_schedule')
 
             data_dict["meetings"] = {}
             meetings_list = list()

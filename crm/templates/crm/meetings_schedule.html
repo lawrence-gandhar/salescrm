@@ -27,8 +27,8 @@
                     <div class="col-md-12">
                         <div class="panel" style="margin-bottom:0px">
                             <div class="panel-body" style="padding:0px;">
-                                   
-                                {% if meeting_schedules is not None %}
+                                
+                                {% if meetings is not None %}
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-hover" style="font-size:80%">
                                         <thead>
@@ -37,18 +37,28 @@
                                             <th>Meeting Date</th>
                                             <th>Attendees</th>
                                             <th>Created On</th>
+                                            <th>Action</th>
                                         </thead>
-                                        {% for item in meeting_schedules %}
+                                        {% for item in meetings %}
                                         <tr>
-                                            <td>{{item.meeting_id.agenda|safe}}</td>
-                                            <td>{{meeting.scheduled_by.first_name|safe|title}}</td>
-                                            <td>{{meeting.meeting_schedule|date:'Y-m-d H:i'}}</td>
+                                            <td>{{item.agenda|safe}}</td>
+                                            <td><img alt="image" class="img image-md" src="{% user_profile_pic item.scheduled_by_id %}"> {{item.scheduled_by|safe|title}}</td>
+                                            <td>{{item.meeting_schedule|date:'Y-m-d H:i'}}</td>
                                             <td>
-                                                {% for x in meeting.meeting.all %}
-                                                    {{x}}
+                                                {% for x in item.meeting_attendees %}
+                                                    <span style="display:block;padding:2px 0px">
+                                                        <img alt="image" class="img image-md" src="{% user_profile_pic x.id %}">
+                                                        {{x.name|safe|title}}
+                                                    </span>                                                    
                                                 {% endfor %}
                                             </td>
-                                            <td>{{meeting.created_on|date:'Y-m-d H:i'}}</td>
+                                            <td>{{item.meeting_created_on|date:'Y-m-d H:i'}}</td>
+                                            <td width="80px">
+                                                <i title="Edit Meeting" class="pe-7s-pen" style="color:#FFFFFF; cursor: pointer; font-size:110%"></i>
+                                                <i title="Add Meeting Details" class="pe-7s-note2" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
+                                                <i title="Cancel Meeting" class="pe-7s-close-circle" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
+                                            </td>
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </table>
