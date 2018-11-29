@@ -30,19 +30,20 @@ class Contacts(models.Model):
         return self.job_title.title()
 
 
-
 class Contacts_meeting(models.Model):
     contact = models.ForeignKey('Contacts', db_index = True, null = True, on_delete = models.SET_NULL, )
     scheduled_by = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )
     meeting_schedule = models.DateTimeField(db_index = True, null = True, blank = True, )
     agenda = models.TextField(null = True, blank = True,)
+    meeting_canceled = models.BooleanField(default = False, db_index = True,)
+    meeting_postponed = models.BooleanField(default = True, db_index = True, )
+    meeting_adjourned = models.BooleanField(default = True, db_index = True, )
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )
     
     class Meta:
         db_table = 'contacts_meeting_schedule'
         verbose_name_plural = 'Contacts Meeting Schedule'
 
-    
 
 class Meeting_attendees(models.Model):
     meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
@@ -64,3 +65,50 @@ class Meeting_logs(models.Model):
     class Meta:
         db_table = 'meeting_logs'
         verbose_name_plural = 'Meeting Logs'
+
+
+class Cancelled_meetings(models.Model):
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
+    reason = models.TextField(blank = True, null = True,)
+    reschedule = models.BooleanField(db_index = True, default = False,)
+    created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
+
+    class Meta:
+        db_table = 'cancelled_meetings'
+        verbose_name_plural = 'Cancelled Meetings'
+
+
+class Postponed_meetings(models.Model):    
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
+    reason = models.TextField(blank = True, null = True, )
+    postponed_to_date = models.DateField(db_index = True, null = True, blank = True, )     
+    created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
+
+    class Meta:
+        db_table = 'postponed_meetings'
+        verbose_name_plural = 'Postponed Meetings'
+
+
+class Adjourned_meetings(models.Model):    
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
+    reason = models.TextField(blank = True, null = True, )
+    adjourned_to_date = models.DateTimeField(db_index = True, null = True, blank = True, )     
+    created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
+
+    class Meta:
+        db_table = 'adjourned_meetings'
+        verbose_name_plural = 'Adjourned Meetings'
+
+
+class Rescheduled_meetings(models.Model):
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
+    rescheduled_to = models.DateTimeField(db_index = True, null = True, blank = True, )     
+    created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
+
+    class Meta:
+        db_table = 'rescheduled_meetings'
+        verbose_name_plural = 'rescheduled Meetings'
