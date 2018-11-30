@@ -56,7 +56,7 @@
                                             <td width="80px">
                                                 <i title="Edit Meeting" class="pe-7s-pen" style="color:#FFFFFF; cursor: pointer; font-size:110%"></i>
                                                 <i title="Add Meeting Details" class="pe-7s-note2" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
-                                                <i title="Cancel Meeting" class="pe-7s-close-circle" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
+                                                <i data-toggle="modal" data-target="#modal-operations" title="Operations" class="pe-7s-close-circle" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
                                             </td>
                                             </td>
                                         </tr>
@@ -73,7 +73,7 @@
     </div>
 </section>
 
-<!-- MODAL LEAD ACTIVE -->
+<!-- MODAL ADD SCHEDULE -->
 
 <div class="modal" id="modal-schedule" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.8)">
     <div class="modal-dialog">
@@ -125,13 +125,120 @@
     </div>
 </div>
 
+
+<!-- MODAL ADD SCHEDULE -->
+
+<div class="modal" id="modal-operations" tabindex="-1" role="dialog" style="background-color: rgba(242, 242, 242, 0.8)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 15px 10px 10px 10px; ">
+                <h4 class="m-t-none">Cancel/Postpone/Adjourn Meeting</h4>
+                <hr style="margin:0px">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="row form-group" style="margin-bottom:0px; margin-top:10px;">
+                        <label for="attendees" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Operation</label>
+                        <div class="col-md-9">
+                            <select class="form-control" required id="meeting_operation">
+                                <option value=""></option>
+                                <option value="0">Cancel Meeting</option>
+                                <option value="1">Postpone Meeting</option>
+                                <option value="2">Adjourn Meeting</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group" style="margin-bottom:10px; margin-top:5px;">
+                        <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Reason</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control input-sm" name="reason" required></textarea>
+                        </div>
+                    </div>
+                    <div  id="cancelled-div" style="display:none" class="close-me">
+                        <div class="row form-group" style="margin-bottom:10px; margin-top:5px;">
+                            <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; font-size:80%">Reschedule</label>
+                            <div class="col-md-9">
+                                <div class="radio radio-info radio-inline">
+                                    <input type="radio" id="inlineRadio1" value="1" name="radioInline" onclick="showme(1)">
+                                    <label for="inlineRadio1" onclick="showme(1)"> Yes </label>
+                                </div>
+                                <div class="radio radio-info radio-inline">
+                                    <input type="radio" id="inlineRadio2" value="0" name="radioInline" checked="" onclick="showme(0)">
+                                    <label for="inlineRadio2" onclick="showme(0)"> No </label>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+                    <div id="show-dates" style="display:none"  class="close-me">
+                        <div class="row form-group" style="margin-bottom:10px; margin-top:5px;">
+                            <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; font-size:80%">Meeting Date</label>
+                            <div class="col-md-4">
+                                <input type="date" class="form-control" name="meeting_date">
+                            </div>
+                            <label for="inputEmail3" class="col-md-2 control-label" style="text-align:right; font-size:80%">Meeting Time</label>
+                            <div class="col-md-3">
+                                <input type="time" class="form-control" name="meeting_time">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="postponed-div" style="display:none"  class="close-me">
+                        <div class="row form-group" style="margin-bottom:10px; margin-top:5px;">
+                            <label for="inputEmail3" class="col-md-3 control-label" style="text-align:right; font-size:80%">Set Meeting After</label>
+                            <div class="col-md-4">
+                                <input type="date" class="form-control" name="meeting_date" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group" style="margin-bottom:0px; margin-top:10px;">
+                        <button class="btn btn-sm btn-danger pull-right" style="margin-right:10px;" data-dismiss="modal">CANCEL</button>
+                        <button class="btn btn-sm btn-default pull-right" style="margin-right:10px;">SAVE</button>                    
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>  
+
+
 <script>
     $(document).ready(function() { 
         $(".select2_demo_3").select2({
             placeholder: "Show All Users",
             allowClear: true
         }); 
+
+
+        $("#meeting_operation").change(function(){
+            $(".close-me").css("display","none");
+            switch($(this).val()){
+                case '0':
+                    $("#cancelled-div").show();    
+                    $("#postponed-div").find('input').prop('disabled', true);             
+                    break;
+                case '1':
+                    $("#postponed-div").show(); 
+                    $("#cancelled-div").find('input').prop('disabled', true);  
+                    $("#show-dates").find('input').prop('disabled', true);  
+                    $("#postponed-div").find('input').prop('disabled', false);
+                    break;
+                case '2':
+                    $("#show-dates").find('input').prop('disabled', false);  
+                    $("#postponed-div").find('input').prop('disabled', true);
+                    $("#show-dates").show();
+                    break;
+            }
+        });
     });
+
+    function showme(e){
+        if(e == 1){
+            $("#show-dates").show();
+            $("#show-dates").find('input').prop('disabled', false);  
+        } 
+        else{
+            $("#show-dates").find('input').prop('disabled', true); 
+            $("#show-dates").hide();
+        } 
+    }
 </script>      
 
 {% endblock %}

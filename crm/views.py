@@ -1308,8 +1308,7 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
                     'agenda' : meeting.agenda,
                     'meeting_created_on' : meeting.created_on,
                     'meeting_attendees' : list()
-                })  
-                
+                })                  
 
                 attendees = Meeting_attendees.objects.filter(meeting = meeting.id).select_related('user')
 
@@ -1325,8 +1324,6 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
 
                 i += 1 
             data_dict["meetings"] = meetings_list
-
-            print(data_dict["meetings"])
     #
     #   MEETING SCHEDULE ADD
     #
@@ -1354,4 +1351,20 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
 
         return redirect("/"+ current_user_url(request.session["user_id"]) + "/meeting/schedule/"+contact_id)
     return render(request, template, data_dict)  
+
+#*******************************************************************************
+# MEETING OPERATIONS SAVE
+#*******************************************************************************
+@user_access_check     
+@login_required
+def save_meeting_opertions(request, usertype = None,):
+    if request.is_ajax():
+
+        
+
+        return HttpResponse(1)
+        
+
+
+
 
