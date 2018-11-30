@@ -23,6 +23,17 @@
                     </div>
                 </div>
                 <hr>
+
+                <div class="" style="background-color:#FF0000">
+                    {% if messages %}
+                    <ul class="messages" style="padding:0px;">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style-type:none;list-style-type: none; padding: 10px; color: #FFFFFF;">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel" style="margin-bottom:0px">
@@ -56,7 +67,7 @@
                                             <td width="80px">
                                                 <i title="Edit Meeting" class="pe-7s-pen" style="color:#FFFFFF; cursor: pointer; font-size:110%"></i>
                                                 <i title="Add Meeting Details" class="pe-7s-note2" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
-                                                <i data-toggle="modal" data-target="#modal-operations" title="Operations" class="pe-7s-close-circle" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
+                                                <i onclick="modal_operations_open({{item.meeting_id|safe}})" title="Operations" class="pe-7s-close-circle" style="color:#FFFFFF; cursor: pointer; margin-left:10px; font-size:110%"></i>
                                             </td>
                                             </td>
                                         </tr>
@@ -134,12 +145,13 @@
             <div class="modal-body" style="padding: 15px 10px 10px 10px; ">
                 <h4 class="m-t-none">Cancel/Postpone/Adjourn Meeting</h4>
                 <hr style="margin:0px">
-                <form action="" method="post">
+                <form action="/{% current_user_link user.id %}/meeting/operation/" method="post">                    
                     {% csrf_token %}
+                    <input name = "meeting_id" type="hidden" id="modal-operations-id">
                     <div class="row form-group" style="margin-bottom:0px; margin-top:10px;">
                         <label for="attendees" class="col-md-3 control-label" style="text-align:right; line-height:30px; font-size:80%">Operation</label>
                         <div class="col-md-9">
-                            <select class="form-control" required id="meeting_operation">
+                            <select class="form-control" required id="meeting_operation" name="meeting_operation">
                                 <option value=""></option>
                                 <option value="0">Cancel Meeting</option>
                                 <option value="1">Postpone Meeting</option>
@@ -227,7 +239,13 @@
                     break;
             }
         });
+
     });
+
+    function modal_operations_open(id){
+        $("input#modal-operations-id").val(id);
+        $("#modal-operations").modal('show');
+    }
 
     function showme(e){
         if(e == 1){

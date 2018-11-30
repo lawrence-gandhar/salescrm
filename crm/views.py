@@ -1358,11 +1358,102 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
 @user_access_check     
 @login_required
 def save_meeting_opertions(request, usertype = None,):
-    if request.is_ajax():
 
-        
+    if request.POST:
+        meeting = None
+        try:
+            meeting = Contacts_meeting.objects.get(pk = int(request.POST["meeting_id"]))
+        except:
+            return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ int(meeting.contact_id))
 
-        return HttpResponse(1)
+        meeting_operation = request.POST.get('meeting_operation','')
+        reason = request.POST.get('reason','')
+
+        if meeting is not None:
+            if meeting_operation == '0':
+
+                # cancel meeting
+                
+                try:
+                    radioInline = request.POST.get('radioInline', '0')
+                    reschedule = False
+
+                    if radioInline == '1':
+                        # if rescheduled the meeting
+                        meeting_date = request.POST.get('meeting_date','')
+                        meeting_time = request.POST.get('meeting_time','')
+                        reschedule = True
+
+                        res = Rescheduled_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            rescheduled_to = meeting_date + " " + meeting_time + ":00",
+                        )
+
+                        res.save()
+                    
+                    meeting.meeting_canceled = True
+                    meeting.save()
+
+                    cancelled = Cancelled_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            reason = reason,
+                            reschedule = reschedule,
+                        )
+                    cancelled.save()
+
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+                except:
+                    messages.add_message(request, messages.INFO, 'Operation Failed')
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+
+            elif meeting_operation == '1':
+                # postponed meeting
+                try:
+                    meeting.meeting_postponed = True
+                    meeting.save()
+
+                    meeting_date = request.POST.get('meeting_date','')
+
+                    postponed = Postponed_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            reason = reason,
+                            postponed_to_date = meeting_date,
+                        )
+                    postponed.save()
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+                except:
+                    messages.add_message(request, messages.INFO, 'Operation Failed')
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+
+            elif meeting_operation == '2':
+                # adjourned meeting 
+                try:
+                    meeting.meeting_adjourned = True
+                    meeting.save()
+
+                    meeting_date = request.POST.get('meeting_date','')
+                    meeting_time = request.POST.get('meeting_time','')
+
+                    adjourned = Adjourned_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            reason = reason,
+                            adjourned_to_date = meeting_date + " " + meeting_time + ":00",
+                        )
+                    adjourned.save()
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+                except:
+                    messages.add_message(request, messages.INFO, 'Operation Failed')
+                    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+            else:
+                messages.add_message(request, messages.INFO, 'Operation Failed')
+                return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+
+    messages.add_message(request, messages.INFO, 'Operation Failed')
+    return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
         
 
 

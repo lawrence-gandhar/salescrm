@@ -36,8 +36,8 @@ class Contacts_meeting(models.Model):
     meeting_schedule = models.DateTimeField(db_index = True, null = True, blank = True, )
     agenda = models.TextField(null = True, blank = True,)
     meeting_canceled = models.BooleanField(default = False, db_index = True,)
-    meeting_postponed = models.BooleanField(default = True, db_index = True, )
-    meeting_adjourned = models.BooleanField(default = True, db_index = True, )
+    meeting_postponed = models.BooleanField(default = False, db_index = True, )
+    meeting_adjourned = models.BooleanField(default = False, db_index = True, )
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )
     
     class Meta:
@@ -46,7 +46,7 @@ class Contacts_meeting(models.Model):
 
 
 class Meeting_attendees(models.Model):
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )
 
@@ -56,7 +56,7 @@ class Meeting_attendees(models.Model):
 
 
 class Meeting_logs(models.Model): 
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )   
     attended = models.BooleanField(db_index = True, default = False, )
     comments = models.TextField(null = True, blank = True, )    
@@ -68,7 +68,7 @@ class Meeting_logs(models.Model):
 
 
 class Cancelled_meetings(models.Model):
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
     reason = models.TextField(blank = True, null = True,)
     reschedule = models.BooleanField(db_index = True, default = False,)
@@ -80,7 +80,7 @@ class Cancelled_meetings(models.Model):
 
 
 class Postponed_meetings(models.Model):    
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
     reason = models.TextField(blank = True, null = True, )
     postponed_to_date = models.DateField(db_index = True, null = True, blank = True, )     
@@ -92,7 +92,7 @@ class Postponed_meetings(models.Model):
 
 
 class Adjourned_meetings(models.Model):    
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
     reason = models.TextField(blank = True, null = True, )
     adjourned_to_date = models.DateTimeField(db_index = True, null = True, blank = True, )     
@@ -104,7 +104,7 @@ class Adjourned_meetings(models.Model):
 
 
 class Rescheduled_meetings(models.Model):
-    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.SET_NULL, )
+    meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )    
     rescheduled_to = models.DateTimeField(db_index = True, null = True, blank = True, )     
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
