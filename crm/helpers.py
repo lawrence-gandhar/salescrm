@@ -22,6 +22,7 @@ from crm.models.contacts import *
 
 # system related imports
 import sys, os, csv, json, datetime, random, string
+from django.utils import timezone, safestring
 
 
 #******************************************************************************* 
@@ -191,12 +192,13 @@ def add_lead_logs(lead_id = None, user = None, notes = None):
 # MEETING LOGS
 #******************************************************************************* 
 #
-def meeting_logs(meeting_id = None, user_id = None, log = None):
+def meeting_logs(meeting_id = None, user_id = None, record_id = None, log = None):
     try:
         meeting = Meeting_logs(
             meeting_id = int(meeting_id),
             user_id = int(user_id),
-            log = log
+            log_type = log,
+            record_id = record_id,
         )
 
         meeting.save()

@@ -1312,7 +1312,7 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
                     'meeting_created_on' : meeting.created_on,
                     'meeting_attendees' : list()
                 })       
-
+                
                 attendees = Meeting_attendees.objects.filter(meeting = meeting.id).select_related('user')
 
                 attend = list()
@@ -1384,6 +1384,8 @@ def save_meeting_opertions(request, usertype = None,):
                             reschedule = False,
                         )
                         cancelled.save()
+                        meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), cancelled.id, 'CANCELLED')
+
                     else:                                            
                         cancelled = Cancelled_meetings(
                             meeting_id = int(request.POST["meeting_id"]),
@@ -1392,6 +1394,7 @@ def save_meeting_opertions(request, usertype = None,):
                             reschedule = True,
                         )
                         cancelled.save()
+                        meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), cancelled.id, 'CANCELLED')
 
                         meeting_date = request.POST.get('meeting_date','')
                         meeting_time = request.POST.get('meeting_time','')
@@ -1405,8 +1408,9 @@ def save_meeting_opertions(request, usertype = None,):
                             rescheduled_to = meeting_date + " " + meeting_time + ":00",
                         )
                         res.save()
-                    
+                        meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), res.id, 'RESCHEDULED')
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
+                
                 except:
                     messages.add_message(request, messages.INFO, 'Operation Failed')
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
@@ -1426,6 +1430,7 @@ def save_meeting_opertions(request, usertype = None,):
                             postponed_to_date = meeting_date,
                         )
                     postponed.save()
+                    meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), postponed.id, 'POSTPONED')
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
                 except:
                     messages.add_message(request, messages.INFO, 'Operation Failed')
@@ -1447,6 +1452,7 @@ def save_meeting_opertions(request, usertype = None,):
                             adjourned_to_date = meeting_date + " " + meeting_time + ":00",
                         )
                     adjourned.save()
+                    meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), adjourned.id, 'ADJOURNED')
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
                 except:
                     messages.add_message(request, messages.INFO, 'Operation Failed')
