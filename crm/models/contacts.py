@@ -58,7 +58,8 @@ class Meeting_attendees(models.Model):
 class Meeting_logs(models.Model): 
     meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )   
-    log = models.TextField(null = True, blank = True, )    
+    log_type = models.CharField(null = True, blank = True, db_index = True, max_length = 12, )  
+    record_id = models.BigIntegerField(null = True, default = 0, db_index = True, )  
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
 
     class Meta:
