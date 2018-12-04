@@ -1306,9 +1306,12 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
                     'scheduled_by' : meeting.scheduled_by.first_name +" "+ meeting.scheduled_by.last_name,
                     'meeting_schedule' : meeting.meeting_schedule,
                     'agenda' : meeting.agenda,
+                    'meeting_cancelled' : meeting.meeting_cancelled,
+                    'meeting_postponed' : meeting.meeting_postponed,
+                    'meeting_adjourned' : meeting.meeting_adjourned,
                     'meeting_created_on' : meeting.created_on,
                     'meeting_attendees' : list()
-                })                  
+                })       
 
                 attendees = Meeting_attendees.objects.filter(meeting = meeting.id).select_related('user')
 
@@ -1319,9 +1322,6 @@ def meetings_scheduled(request, usertype = None, contact_id = None):
                         'name' : members.user.first_name +" "+members.user.last_name
                     })
                 meetings_list[i]['meeting_attendees'] = attend
-                
-                pass
-
                 i += 1 
             data_dict["meetings"] = meetings_list
     #
@@ -1376,33 +1376,36 @@ def save_meeting_opertions(request, usertype = None,):
                 
                 try:
                     radioInline = request.POST.get('radioInline', '0')
-                    reschedule = False
+                    if radioInline == '0':
+                        cancelled = Cancelled_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            reason = reason,
+                            reschedule = False,
+                        )
+                        cancelled.save()
+                    else:                                            
+                        cancelled = Cancelled_meetings(
+                            meeting_id = int(request.POST["meeting_id"]),
+                            user_id = int(request.session["user_id"]), 
+                            reason = reason,
+                            reschedule = True,
+                        )
+                        cancelled.save()
 
-                    if radioInline == '1':
-                        # if rescheduled the meeting
                         meeting_date = request.POST.get('meeting_date','')
                         meeting_time = request.POST.get('meeting_time','')
-                        reschedule = True
-
+                        
+                        meeting.meeting_canceled = True
+                        meeting.save()
+                        
                         res = Rescheduled_meetings(
                             meeting_id = int(request.POST["meeting_id"]),
                             user_id = int(request.session["user_id"]), 
                             rescheduled_to = meeting_date + " " + meeting_time + ":00",
                         )
-
                         res.save()
                     
-                    meeting.meeting_canceled = True
-                    meeting.save()
-
-                    cancelled = Cancelled_meetings(
-                            meeting_id = int(request.POST["meeting_id"]),
-                            user_id = int(request.session["user_id"]), 
-                            reason = reason,
-                            reschedule = reschedule,
-                        )
-                    cancelled.save()
-
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
                 except:
                     messages.add_message(request, messages.INFO, 'Operation Failed')

@@ -47,6 +47,7 @@
                                             <th>Scheduled By</th>
                                             <th>Meeting Date</th>
                                             <th>Attendees</th>
+                                            <th>Overview</th>
                                             <th>Created On</th>
                                             <th>Action</th>
                                         </thead>
@@ -62,6 +63,9 @@
                                                         {{x.name|safe|title}}
                                                     </span>                                                    
                                                 {% endfor %}
+                                            </td>
+                                            <td>
+                                                
                                             </td>
                                             <td>{{item.meeting_created_on|date:'Y-m-d H:i'}}</td>
                                             <td width="80px">

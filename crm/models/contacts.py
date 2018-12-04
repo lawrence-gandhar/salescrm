@@ -35,7 +35,7 @@ class Contacts_meeting(models.Model):
     scheduled_by = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )
     meeting_schedule = models.DateTimeField(db_index = True, null = True, blank = True, )
     agenda = models.TextField(null = True, blank = True,)
-    meeting_canceled = models.BooleanField(default = False, db_index = True,)
+    meeting_cancelled = models.BooleanField(default = False, db_index = True,)
     meeting_postponed = models.BooleanField(default = False, db_index = True, )
     meeting_adjourned = models.BooleanField(default = False, db_index = True, )
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )
@@ -58,8 +58,7 @@ class Meeting_attendees(models.Model):
 class Meeting_logs(models.Model): 
     meeting = models.ForeignKey('Contacts_meeting', null = True, db_index = True, blank = True, on_delete = models.CASCADE, )
     user = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL, )   
-    attended = models.BooleanField(db_index = True, default = False, )
-    comments = models.TextField(null = True, blank = True, )    
+    log = models.TextField(null = True, blank = True, )    
     created_on = models.DateTimeField(auto_now_add = True, auto_now = False, db_index = True, null = True, blank = True, )     
 
     class Meta:
