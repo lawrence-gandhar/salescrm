@@ -158,6 +158,7 @@ def dashboard(request,  usertype = None):
     #   Check System Settings
     #
     data_dict["show_counters"] = True
+    data_dict["show_polararea_charts"] = True
     data_dict["show_bar_graphs"] = True
     data_dict["show_line_charts"] = True
     data_dict["show_geo_graph"] = True
@@ -168,6 +169,7 @@ def dashboard(request,  usertype = None):
     try:
         dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
         data_dict["show_counters"] = dashboard_settings.counters
+        data_dict["show_polararea_charts"] = dashboard_settings.polar_area
         data_dict["show_bar_graphs"] = dashboard_settings.bar_graphs
         data_dict["show_line_charts"] = dashboard_settings.line_charts
         data_dict["show_geo_graph"] = dashboard_settings.geo_graph
@@ -179,6 +181,10 @@ def dashboard(request,  usertype = None):
     
     data_dict["lead_status"] = {"Others":0}
     data_dict["lead_active"] = {"Active":0, "Inactive":0}
+
+    #
+    #   Counters
+    #
 
     if data_dict["show_counters"] :
         counters = Counters_Settings.objects.filter(user_id =  int(request.session["user_id"]))
@@ -220,60 +226,78 @@ def dashboard(request,  usertype = None):
                 else:
                     data_dict["lead_active"]["Inactive"] += 1
 
+    #
+    #   Country Graphs
+    #
+
+    if data_dict["show_geo_graph"]:
+        leads_for_countries = Leads_tbl.objects.all()
+        
+        with open(settings.BASE_DIR+'/crm/static/scripts/country_codes_2.json') as json_file:  
+            country_codes = json.load(json_file)
+
+        leads_generated_from_countries = {}
+        leads_centers_interested = {}
+        leads_area_of_operation = {}
+
+        for lead in leads_for_countries:
+
+            try:
+                lead_questionnaire_model = Lead_questionnaire_model.objects.get(lead_id = lead.id)
+                centers = lead_questionnaire_model.centers_interested.split(",")
+                area_of_operation = lead_questionnaire_model.area_of_operation.split(",")
+
+                for i in centers:
+                    if country_codes[i]["alpha-3"] in leads_centers_interested:
+                        leads_centers_interested[country_codes[i]["alpha-3"]]["counter"] += 1
+                    else:
+                        leads_centers_interested[country_codes[i]["alpha-3"]] = {"counter":1, 
+                                                    "name":country_codes[i]["name"], 
+                                                    "centered":country_codes[i]["alpha-3"],
+                                                    "fillKey":"active",}
+
+                for i in area_of_operation:
+                    if country_codes[i]["alpha-3"] in leads_area_of_operation:
+                        leads_area_of_operation[country_codes[i]["alpha-3"]]["counter"] += 1
+                    else:
+                        leads_area_of_operation[country_codes[i]["alpha-3"]] = {"counter":1, 
+                                                    "name":country_codes[i]["name"], 
+                                                    "centered":country_codes[i]["alpha-3"],
+                                                    "fillKey":"active",}
+            except:
+                pass
+
+
+
+            if country_codes[lead.country]["alpha-3"] in leads_generated_from_countries:
+                leads_generated_from_countries[country_codes[lead.country]["alpha-3"]]["counter"] += 1
+            else:
+                leads_generated_from_countries[country_codes[lead.country]["alpha-3"]] = {"counter":1, 
+                                            "name":country_codes[lead.country]["name"], 
+                                            "centered":country_codes[lead.country]["alpha-3"],
+                                            "fillKey":"active",}                                
+
+        data_dict["leads_generated_from_countries"] = leads_generated_from_countries
+        data_dict["leads_centers_interested"] = leads_centers_interested
+        data_dict["leads_area_of_operation"] = leads_area_of_operation 
+
+    #
+    #   Polar Area Chart Counts
+    #
+
+    if data_dict["show_polararea_charts"]:
+        leads_t = Leads_tbl.objects.select_related('status').values('status__name', 'status__color').annotate(total = Count('status_id')).order_by()
+        data_dict["leads_count_pie_chart"] = leads_t
     
+    #
+    #   Bar Graphs
+    #
 
-    leads_for_countries = Leads_tbl.objects.all()
-    
-    with open(settings.BASE_DIR+'/crm/static/scripts/country_codes_2.json') as json_file:  
-        country_codes = json.load(json_file)
-
-    
-    leads_generated_from_countries = {}
-    leads_centers_interested = {}
-    leads_area_of_operation = {}
-
-    for lead in leads_for_countries:
-
-        try:
-            lead_questionnaire_model = Lead_questionnaire_model.objects.get(lead_id = lead.id)
-            centers = lead_questionnaire_model.centers_interested.split(",")
-            area_of_operation = lead_questionnaire_model.area_of_operation.split(",")
-
-            for i in centers:
-                if country_codes[i]["alpha-3"] in leads_centers_interested:
-                    leads_centers_interested[country_codes[i]["alpha-3"]]["counter"] += 1
-                else:
-                    leads_centers_interested[country_codes[i]["alpha-3"]] = {"counter":1, 
-                                                "name":country_codes[i]["name"], 
-                                                "centered":country_codes[i]["alpha-3"],
-                                                "fillKey":"active",}
-
-            for i in area_of_operation:
-                if country_codes[i]["alpha-3"] in leads_area_of_operation:
-                    leads_area_of_operation[country_codes[i]["alpha-3"]]["counter"] += 1
-                else:
-                    leads_area_of_operation[country_codes[i]["alpha-3"]] = {"counter":1, 
-                                                "name":country_codes[i]["name"], 
-                                                "centered":country_codes[i]["alpha-3"],
-                                                "fillKey":"active",}
-        except:
-            pass
+    if data_dict["show_bar_graphs"]:
+        
+        pass
 
 
-
-        if country_codes[lead.country]["alpha-3"] in leads_generated_from_countries:
-            leads_generated_from_countries[country_codes[lead.country]["alpha-3"]]["counter"] += 1
-        else:
-            leads_generated_from_countries[country_codes[lead.country]["alpha-3"]] = {"counter":1, 
-                                        "name":country_codes[lead.country]["name"], 
-                                        "centered":country_codes[lead.country]["alpha-3"],
-                                        "fillKey":"active",}                                
-
-
-
-    data_dict["leads_generated_from_countries"] = leads_generated_from_countries
-    data_dict["leads_centers_interested"] = leads_centers_interested
-    data_dict["leads_area_of_operation"] = leads_area_of_operation
 
     return render(request, template, data_dict)
 
@@ -1005,6 +1029,7 @@ def system_settings(request, usertype = None):
         dashboard_settings_data = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
 
         data_dict["counters"] = dashboard_settings_data.counters
+        data_dict["polar_area"] = dashboard_settings_data.polar_area
         data_dict["line_charts"] = dashboard_settings_data.line_charts
         data_dict["bar_graphs"] = dashboard_settings_data.bar_graphs
         data_dict["geo_graph"] = dashboard_settings_data.geo_graph
@@ -1013,6 +1038,7 @@ def system_settings(request, usertype = None):
         
     except:
         data_dict["counters"] = False
+        data_dict["polar_area"] = False
         data_dict["line_charts"] = False
         data_dict["bar_graphs"] = False
         data_dict["geo_graph"] = False
@@ -1051,6 +1077,7 @@ def dashboard_settings(request, usertype = None):
     if request.is_ajax():
 
         counters = request.POST.get("counters", False)
+        polar_area = request.POST.get("polar_area", False)
         line_charts = request.POST.get("line_charts", False)
         bar_graphs = request.POST.get("bar_graphs", False)
         geo_graph = request.POST.get("geo_graph", False)
@@ -1062,6 +1089,7 @@ def dashboard_settings(request, usertype = None):
 
             dashboard_settings.user_id = int(request.session["user_id"])
             dashboard_settings.counters = counters
+            dashboard_settings.polar_area = polar_area
             dashboard_settings.line_charts = line_charts
             dashboard_settings.bar_graphs = bar_graphs
             dashboard_settings.geo_graph = geo_graph
@@ -1071,6 +1099,7 @@ def dashboard_settings(request, usertype = None):
             dashboard_settings = Dashboard_Settings(
                 user_id = int(request.session["user_id"]),
                 counters = counters,
+                polar_area = polar_area,
                 line_charts = line_charts,
                 bar_graphs = bar_graphs,
                 geo_graph = geo_graph,
@@ -1408,6 +1437,11 @@ def save_meeting_opertions(request, usertype = None,):
                             rescheduled_to = meeting_date + " " + meeting_time + ":00",
                         )
                         res.save()
+
+                        meeting_change = Contacts_meeting.objects.get(pk = int(request.POST["meeting_id"]))
+                        meeting_change.meeting_schedule = meeting_date + " " + meeting_time + ":00"
+                        meeting_change.save()
+
                         meeting_logs(int(request.POST["meeting_id"]), int(request.session["user_id"]), res.id, 'RESCHEDULED')
                     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
                 
@@ -1464,7 +1498,6 @@ def save_meeting_opertions(request, usertype = None,):
     messages.add_message(request, messages.INFO, 'Operation Failed')
     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
         
-
 
 
 

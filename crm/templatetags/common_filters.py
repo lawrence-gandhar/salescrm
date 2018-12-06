@@ -50,41 +50,43 @@ def meeting_logs(id):
 	html = list()
 
 	meeting_logs = Meeting_logs.objects.filter(meeting_id = int(id)).values()
-	print(meeting_logs)
+	
 	for item in meeting_logs:
 		if item["log_type"] == "CANCELLED":
 			cancelled_meetings = Cancelled_meetings.objects.filter(pk = int(item["record_id"])).select_related('user')
 			
-			print(cancelled_meetings)
-
 			for i in cancelled_meetings:				
 				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"]+"</strong> ") 
-				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y')+ "</strong> ")
+				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y %X')+ "</strong> ")
 				html.append("by <strong style='color:#FFFFFF'>" + i.user.first_name +" "+ i.user.last_name + "</strong> ")
-				html.append("due to <strong style='color:#FFFFFF'>" + i.reason + "</strong></p>")
+				html.append("due to <strong style='color:#f6a821'>" + i.reason + "</strong></p>")
 			
 
 		if item["log_type"] == "POSTPONED":
-			postponed_meetings = Postponed_meetings.objects.filter(pk = int(item["record_id"])).values()
+			postponed_meetings = Postponed_meetings.objects.filter(pk = int(item["record_id"])).select_related('user')
 
 			for i in postponed_meetings:
 				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"]+"</strong> ") 
-				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y')+ "</strong> ")
-				html.append("due to <strong style='color:#FFFFFF'>" + i["reason"] + "</strong></p>")
+				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y %X')+ "</strong> ")
+				html.append("by <strong style='color:#FFFFFF'>" + i.user.first_name +" "+ i.user.last_name + "</strong> ")
+				html.append("due to <strong style='color:#f6a821'>" + i.reason + "</strong></p>")
 
 		if item["log_type"] == "ADJOURNED":
-			adjourned_meetings = Adjourned_meetings.objects.filter(pk = int(item["record_id"])).values()
+			adjourned_meetings = Adjourned_meetings.objects.filter(pk = int(item["record_id"])).select_related('user')
 
 			for i in adjourned_meetings:
-				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"] +"</strong> due to <strong style='color:#FFFFFF'>" + i["reason"] + "</strong></p>")
-				pass
+				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"]+"</strong> ") 
+				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y %X')+ "</strong> ")
+				html.append("by <strong style='color:#FFFFFF'>" + i.user.first_name +" "+ i.user.last_name + "</strong> ")
+				html.append("due to <strong style='color:#f6a821'>" + i.reason + "</strong></p>")
 
 		if item["log_type"] == "RESCHEDULED":
-			rescheduled_meetings = Rescheduled_meetings.objects.filter(pk = int(item["record_id"])).values()
+			rescheduled_meetings = Rescheduled_meetings.objects.filter(pk = int(item["record_id"])).select_related('user')
 
 			for i in rescheduled_meetings:
-				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"] +"</strong></p>")
-				pass
-
+				html.append("<p>Meeting was <strong style='color:#FFFFFF'>"+ item["log_type"]+"</strong> ") 
+				html.append("on <strong style='color:#FFFFFF'>" +item["created_on"].strftime('%b %d, %Y %X')+ "</strong> ")
+				html.append("by <strong style='color:#FFFFFF'>" + i.user.first_name +" "+ i.user.last_name + "</strong> ")
+				html.append("to <strong style='color:#f6a821'>" + i.rescheduled_to.strftime('%b %d, %Y %X') + "</strong></p>")
 
 	return safestring.mark_safe(''.join(html))

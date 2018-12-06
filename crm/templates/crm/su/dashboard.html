@@ -109,8 +109,116 @@
                 {% endif %}
                 <!-- Data End -->
 
+                <!-- POLAR AREA chart -->
+                {% if show_polararea_charts %}
+                <div class="row">
+                    <div class="panel panel-filled" style="border:1px solid #2f323b">
+                        <div class="panel-heading" style="background-color:#F8A900">Polar Area Chart For Leads</div>
+                        <div class="panel-body">
+                            <div class="col-md-6" style="height: 100%;">
+                                <canvas id="chartjs-4" height="250"></canvas>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <th>Lead Type</th>
+                                        <th width="100px">Total</th>
+                                        <th width="50px">Code</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for lead in leads_count_pie_chart %}
+                                        <tr>
+                                            <td>{{lead.status__name|safe}}</td>
+                                            <td>{{lead.total|safe}}</td>
+                                            <td class="text-center"><span style="display:block; border-radius:100%; width:20px; height:20px; border:2px solid #ffffff; background-color:{{lead.status__color|safe}}"></span></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <!-- POLAR AREA chart end -->
+
                 <!-- Datamap -->
                 {% if show_geo_graph %}
+                <script>
+                    $(document).ready(function () {
+                
+                        var leads_generated_from_countries = {{leads_generated_from_countries|safe}};
+                        var leads_centers_interested = {{leads_centers_interested|safe}};
+                        var leads_area_of_operation = {{leads_area_of_operation|safe}};
+                
+                        var dataset = [{}];
+                        x = 2;
+                
+                        setInterval(function(){ 
+                            if(x == 2){
+                                $("#panel_heading").text("Leads Generated From Different Countries");
+                                dataset = leads_generated_from_countries;
+                                $("#text-span").text("Total Leads : ");
+                                x = 1;
+                            } 
+                            else if(x == 1){
+                                $("#panel_heading").text("Centers Interested In");
+                                dataset = leads_centers_interested;
+                                $("#text-span").text("Total Centers : ");
+                                x = 2;
+                            }
+                            else{ 
+                                $("#panel_heading").text("Areas Of Operation");
+                                dataset = leads_area_of_operation;
+                                $("#text-span").text("Total Areas Of Operation : ");
+                            }
+                
+                            $('#serverMap').empty();
+                            call_map(dataset);
+                            call_data(dataset);
+                            x = 2 - x;
+                        }, 3000);
+                        
+                    });
+                
+                    function call_map(dataset){
+                        var bubble_map = new Datamap({
+                            element: document.getElementById("serverMap"),
+                            responsive: true,
+                            geographyConfig: {
+                                popupOnHover: true,
+                                highlightOnHover: false,
+                                borderWidth: 0,
+                                popupTemplate: function(geography, data) {
+                                        return '<div class="hoverinfo" style="color:#000000;">' + geography.properties.name + '<br/><strong>Leads:</strong>' +  data.counter + '</div> '
+                                    },
+                            },
+                            fills: {
+                                defaultFill: "#3B3D46",
+                                active: "#F8A900"
+                            },
+                            data: dataset,
+                        });
+                    }
+                
+                    function call_data(dataset){
+                        leads_generated_from_countries_total_leads = 0;
+                        leads_generated_from_countries_html = '';
+                
+                        $.each(dataset,function(i,v){
+                            leads_generated_from_countries_html += '<tr>';
+                            leads_generated_from_countries_html += '<td>'+v.name+'</td>';
+                            leads_generated_from_countries_html += '<td>'+v.counter+'</td>';
+                            leads_generated_from_countries_html += '</tr>';
+                
+                            leads_generated_from_countries_total_leads += v.counter;
+                        });
+                
+                        $("#value-span").text(leads_generated_from_countries_total_leads);
+                        $("tbody#leads_generated_from_countries_data").empty().append(leads_generated_from_countries_html);
+                    }
+                </script>
                 <div class="row">
                     <div class="panel" style="border:1px solid #2f323b">
                     <div class="panel-heading" style="background-color: rgb(43, 43, 43)">Location Activity</div>
@@ -177,90 +285,16 @@
                     </div> 
                 </div>
                 {% endif %}
+
+
             </div>
     </section>
     <!-- End main content-->
 
-<script>
 
-    
-
-    $(document).ready(function () {
-
-        var leads_generated_from_countries = {{leads_generated_from_countries|safe}};
-        var leads_centers_interested = {{leads_centers_interested|safe}};
-        var leads_area_of_operation = {{leads_area_of_operation|safe}};
-
-        var dataset = [{}];
-        x = 2;
-
-        setInterval(function(){ 
-            if(x == 2){
-                $("#panel_heading").text("Leads Generated From Different Countries");
-                dataset = leads_generated_from_countries;
-                $("#text-span").text("Total Leads : ");
-                x = 1;
-            } 
-            else if(x == 1){
-                $("#panel_heading").text("Centers Interested In");
-                dataset = leads_centers_interested;
-                $("#text-span").text("Total Centers : ");
-                x = 2;
-            }
-            else{ 
-                $("#panel_heading").text("Areas Of Operation");
-                dataset = leads_area_of_operation;
-                $("#text-span").text("Total Areas Of Operation : ");
-            }
-
-            $('#serverMap').empty();
-            call_map(dataset);
-            call_data(dataset);
-            x = 2 - x;
-        }, 3000);
-        
-    });
-
-    function call_map(dataset){
-        var bubble_map = new Datamap({
-            element: document.getElementById("serverMap"),
-            responsive: true,
-            geographyConfig: {
-                popupOnHover: true,
-                highlightOnHover: false,
-                borderWidth: 0,
-                popupTemplate: function(geography, data) {
-                        return '<div class="hoverinfo" style="color:#000000;">' + geography.properties.name + '<br/><strong>Leads:</strong>' +  data.counter + '</div> '
-                    },
-            },
-            fills: {
-                defaultFill: "#3B3D46",
-                active: "#F8A900"
-            },
-            data: dataset,
-        });
-    }
-
-    function call_data(dataset){
-        leads_generated_from_countries_total_leads = 0;
-        leads_generated_from_countries_html = '';
-
-        $.each(dataset,function(i,v){
-            leads_generated_from_countries_html += '<tr>';
-            leads_generated_from_countries_html += '<td>'+v.name+'</td>';
-            leads_generated_from_countries_html += '<td>'+v.counter+'</td>';
-            leads_generated_from_countries_html += '</tr>';
-
-            leads_generated_from_countries_total_leads += v.counter;
-        });
-
-        $("#value-span").text(leads_generated_from_countries_total_leads);
-        $("tbody#leads_generated_from_countries_data").empty().append(leads_generated_from_countries_html);
-    }
-</script>
 
 <script>
-        $(document).ready(function () {
+        $(document).ready(function(){
     
     
             /**
@@ -352,11 +386,50 @@
             new Chart(c3, {type: 'bar', data: barData, options: globalOptions});
     
             /**
-             * Options for Bar chart
+             * Options for Pie chart
              */
-    
+
+            // For a pie chart
+            
+            labels = new Array();
+            data = new Array();
+            color = new Array();
+
+            {% for leads_status in leads_count_pie_chart %}
+                labels.push('{{leads_status.status__name|safe}}')
+                data.push({{leads_status.total}});
+                color.push('{{leads_status.status__color|safe}}')
+            {% endfor %}
+
+            var canvas = document.getElementById("chartjs-4");
+            var ctx = canvas.getContext('2d');
+
+            new_data = {
+                datasets: [{
+                    backgroundColor: color,
+                    data: data
+                }],
+                
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: labels
+            };
+
+            var myPieChart = new Chart(ctx,{
+                type: 'polarArea',
+                data: new_data,
+                options : {
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        enabled: true
+                    }
+                }
+            });
     
         });
+
     </script>
 
 {% endblock %}
