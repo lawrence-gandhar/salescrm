@@ -27,3 +27,13 @@ class Counters_Settings(models.Model):
 
     class Meta:
         db_table = 'counters_settings'
+
+
+class Bargraph_Settings(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE, db_index = True, null = True, blank = True,)
+    bar_customization = models.BooleanField(default = True, db_index = True,)
+    lead_status = models.ForeignKey(Lead_status, on_delete = models.SET_NULL, db_index = True, null = True, blank = True,)
+    filters = models.BooleanField(db_index = True, default = True,)
+    
+    class Meta:
+        db_table = 'bargraph_settings'

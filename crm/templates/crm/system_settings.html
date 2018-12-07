@@ -126,6 +126,7 @@
                                 </form>
                                 </table>              
                             </div>
+                            <!-- COUNTER CUSTOMIZATION -->
                             <div class="table">
                                 <table class="table table-responsive table-bordered table-stripped" style="background:transparent">
                                 <form action="" method="post" id="counter-settings-form">
@@ -148,7 +149,7 @@
                                     </tr>
                                     <tr id="show_customize_counters" style="display:none">
                                         <td colspan="2">
-                                            Select Lead Types to view their counters?
+                                            Select Lead Types to view their counters.
                                             <div class="container-fluid" style="margin-top:10px; padding-left:30px;">
                                                 {% for item in lead_status_list %}
                                                     
@@ -182,6 +183,64 @@
                                 </form>
                                 </table>
                             </div>
+                            <!-- COUNTER CUSTOMIZATION END -->
+                            <!-- BAR GRAPH CUSTOMIZATION -->
+                            <div class="table">
+                                <table class="table table-responsive table-bordered table-stripped" style="background:transparent">
+                                <form action="" method="post" id="bargraph-settings-form">
+                                    {% csrf_token %}
+                                    <tr>
+                                        <td colspan="2" class="colored-td" style="padding:0px 8px;">
+                                            <h5>Bar Graph Customizations</h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Do you want to customize? By default you can see all the lead types present in the bar graph.
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="customize_bargraph" id="customize_bargraph" class="styled" type="checkbox" value="1" {% if bargraph_settings_data.bargraph_customization %}checked=""{% endif %}>
+                                                <label for="customize_bargraph" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="show_customize_bargraph" style="display:none">
+                                        <td colspan="2">
+                                            Select Lead Types to view them in bar graph.
+                                            <div class="container-fluid" style="margin-top:10px; padding-left:30px;">
+                                                {% for item in lead_status_list %}
+                                                    <div class="col-md-4">
+                                                        <div class="col-md-7">
+                                                            <div class="checkbox checkbox-success checkbox-inline" style="padding:0px; margin:0px;">
+                                                                <input name="lead_status[]" id="bargraph_lead_status_{{item.id|safe}}" class="styled" type="checkbox" value="{{item.id|safe}}" 
+                                                                {% for i in bargraph_settings_data.lead_status %}
+                                                                {% if i == item.id %}checked=""{% endif %}{% endfor %}>
+                                                                <label for="bargraph_lead_status_{{item.id|safe}}">{{item.name|safe}}</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div class="checkbox checkbox-warning checkbox-inline" style="padding:0px; margin:0px;">
+                                                                <input name="lead_status_active[]" id="bargraph_lead_status_active_{{item.id|safe}}" class="styled" type="checkbox" value="{{item.id|safe}}" 
+                                                                {% for i,j in bargraph_settings_data.lead_status.items %}
+                                                                {% if i == item.id and j == True %}checked=""{% endif %}{% endfor %}>
+                                                                <label for="bargraph_lead_status_active_{{item.id|safe}}">Active</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <button type="button" onclick="bargraph_settings_save()" class="btn btn-default btn-sm pull-right">SAVE</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                </table>
+                            </div>
+                            <!-- BAR GRAPH END -->
                         </div>
                     </div>
                 </div>
@@ -193,10 +252,10 @@
 
 $(document).ready(function(){
 
+    /* counter customization */
     if($("#customize_counters").prop("checked") == true){
         $("tr#show_customize_counters").show();
     }
-
 
     $("#customize_counters").click(function(){
         if($(this).prop("checked") == true){
@@ -206,8 +265,29 @@ $(document).ready(function(){
             $("tr#show_customize_counters").hide();
         }
     });
+
+    //
+    //
+    /* bar graph customization */
+    if($("#customize_bargraph").prop("checked") == true){
+        $("tr#show_customize_bargraph").show();
+    }
+
+    $("#customize_bargraph").click(function(){
+        if($(this).prop("checked") == true){
+            $("tr#show_customize_bargraph").show();
+        }
+        else if($(this).prop("checked") == false){
+            $("tr#show_customize_bargraph").hide();
+        }
+    });
+
+
 });
 
+//
+//  DASHBOARD SETTINGS
+//
 function dashboard_settings_save(){
     $.post("/{% current_user_link user.id %}/dashboard_settings/", $("#dashboard-settings-form").serialize(), function(data){
         if(data == 1) location.reload();
@@ -215,8 +295,21 @@ function dashboard_settings_save(){
     });
 }
 
+//
+//  COUNTERS SETTINGS
+//
 function counter_settings_save(){
     $.post("/{% current_user_link user.id %}/counters_customization/", $("#counter-settings-form").serialize(), function(data){
+        if(data == 1) location.reload();
+        else alert('Unknown Error Occurred!');
+    });
+}
+
+//
+//  BAR GRAPH SETTINGS
+//
+function bargraph_settings_save(){
+    $.post("/{% current_user_link user.id %}/bargraph_customization/", $("#bargraph-settings-form").serialize(), function(data){
         if(data == 1) location.reload();
         else alert('Unknown Error Occurred!');
     });

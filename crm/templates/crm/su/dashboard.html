@@ -1,6 +1,41 @@
 {% extends 'crm/base.html' %}
 {% block content %}
 
+<script>
+/**
+* Global Options for Line and bar charts
+*/
+
+
+
+var globalOptions = {
+    responsive: true,
+    legend: {
+        labels:{
+            fontColor:"#90969D"
+        }
+    },
+    scales: {
+        xAxes: [{
+            ticks: {
+                fontColor: "#90969D"
+            },
+            gridLines: {
+                color: "#37393F"
+            }
+        }],
+        yAxes: [{
+            ticks: {
+                fontColor: "#90969D"
+            },
+            gridLines: {
+                color: "#37393F"
+            }
+        }]
+    }
+};
+
+</script>
 
 <!-- Main content-->
     <section class="content" >
@@ -111,6 +146,53 @@
 
                 <!-- POLAR AREA chart -->
                 {% if show_polararea_charts %}
+                <script>
+                    $(document).ready(function(){
+
+                        /**
+                        * Options for Polor Area chart
+                        */
+
+                        // For a polar area chart
+                        
+                        labels = new Array();
+                        data = new Array();
+                        color = new Array();
+
+                        {% for leads_status in leads_count_pie_chart %}
+                            labels.push('{{leads_status.status__name|safe}}')
+                            data.push({{leads_status.total}});
+                            color.push('{{leads_status.status__color|safe}}')
+                        {% endfor %}
+
+                        var canvas = document.getElementById("chartjs-4");
+                        var ctx = canvas.getContext('2d');
+
+                        new_data = {
+                            datasets: [{
+                                backgroundColor: color,
+                                data: data
+                            }],
+                            
+
+                            // These labels appear in the legend and in the tooltips when hovering different arcs
+                            labels: labels
+                        };
+
+                        var myPolarArea = new Chart(ctx,{
+                            type: 'polarArea',
+                            data: new_data,
+                            options : {
+                                legend: {
+                                    display: false
+                                },
+                                tooltips: {
+                                    enabled: true
+                                }
+                            }
+                        });
+                    });
+                </script>
                 <div class="row">
                     <div class="panel panel-filled" style="border:1px solid #2f323b">
                         <div class="panel-heading" style="background-color:#F8A900">Polar Area Chart For Leads</div>
@@ -142,6 +224,106 @@
                 </div>
                 {% endif %}
                 <!-- POLAR AREA chart end -->
+
+                <!-- Bar Graphs Start -->
+                {% if show_bar_graphs %}
+                <script> 
+                    $(document).ready(function(){   
+                    
+                        /**
+                        * Data for Bar chart
+                        */
+                        var barData = {
+                            labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                            datasets: [
+                                {
+                                    label: "Assigned Leads",
+                                    backgroundColor: '#2fef6a',
+                                    borderColor: "#2fef6a",
+                                    borderWidth: 1,
+                                    data: [9, 8, 5, 6, 3, 2, 16]
+                                },
+                            ]
+                        };
+                    
+                        var c3 = document.getElementById("barOptions").getContext("2d");
+                        new Chart(c3, {type: 'bar', data: barData, options: globalOptions});
+                    });
+                </script>
+                <div class="row">
+                    <div class="panel panel-filled">
+                        <div class="panel-heading" style="background-color: #F8A900">Bar Graphs For Leads</div>
+                        <div class="panel-body">
+                            <div class="col-md-12">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        <div>
+                                            <canvas id="barOptions"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <!-- Bar Graphs End -->
+
+                <!-- Line Charts Start -->
+                {% if show_line_charts %}
+                <script>
+                    $(document).ready(function(){
+                        
+                        var lineData = {
+                            labels: ["January", "February", "March", "April", "May", "June", "July"],
+                            datasets: [
+                    
+                                {
+                                    label: "Rejected",
+                                    backgroundColor: 'transparent',
+                                    borderColor: "#f6a821",
+                                    pointBorderWidth: 0,
+                                    pointRadius: 2,
+                                    pointBorderColor: '#f6a821',
+                                    borderWidth: 1,
+                                    data: [16, 32, 18, 26, 42, 33, 44]
+                                },
+                                {
+                                    label: "Closed",
+                                    backgroundColor: 'transparent',
+                                    borderColor: "#676B73",
+                                    pointBorderWidth: 0,
+                                    pointRadius: 2,
+                                    pointBorderColor: '#676B73',
+                                    borderWidth: 1,
+                                    data: [22, 44, 67, 43, 76, 45, 12]
+                                }
+                            ]
+                        };
+                    
+                        var c1 = document.getElementById("lineOptions").getContext("2d");
+                        new Chart(c1, {type: 'line', data: lineData, options: globalOptions});
+                    
+                    });
+                </script>
+                <div class="row">
+                        <div class="panel panel-filled">
+                            <div class="panel-heading" style="background-color: #F8A900">Graphs</div>
+                            <div class="panel-body">
+
+                        <div class="col-md-6">
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <div>
+                                        <canvas id="lineOptions" height="292" width="488"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div> 
+                </div>
+                {% endif %}
 
                 <!-- Datamap -->
                 {% if show_geo_graph %}
@@ -256,180 +438,14 @@
                 </div>
                 {% endif %}
                 <!-- DATAMap End-->
-
-                {% if show_line_charts %}
-                <div class="row">
-                    <div class="panel panel-filled">
-                    <div class="panel-heading" style="background-color: #F8A900">Graphs</div>
-                    <div class="panel-body">
-                        <div class="col-md-6">
-                            <div class="panel">
-                                <div class="panel-body">
-                                    <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-                                        <canvas id="barOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="panel">
-                                <div class="panel-body">
-                                    <div><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-                                        <canvas id="lineOptions" height="292" width="488" style="display: block; width: 488px; height: 292px;"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div> 
-                </div>
-                {% endif %}
-
-
             </div>
     </section>
     <!-- End main content-->
 
 
 
-<script>
-        $(document).ready(function(){
-    
-    
-            /**
-             * Options for Line chart
-             */
-    
-            var globalOptions = {
-                responsive: true,
-                legend: {
-                    labels:{
-                        fontColor:"#90969D"
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        ticks: {
-                            fontColor: "#90969D"
-                        },
-                        gridLines: {
-                            color: "#37393F"
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            fontColor: "#90969D"
-                        },
-                        gridLines: {
-                            color: "#37393F"
-                        }
-                    }]
-                }
-            };
-    
-            var lineData = {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [
-    
-                    {
-                        label: "Rejected",
-                        backgroundColor: 'transparent',
-                        borderColor: "#f6a821",
-                        pointBorderWidth: 0,
-                        pointRadius: 2,
-                        pointBorderColor: '#f6a821',
-                        borderWidth: 1,
-                        data: [16, 32, 18, 26, 42, 33, 44]
-                    },
-                    {
-                        label: "Closed",
-                        backgroundColor: 'transparent',
-                        borderColor: "#676B73",
-                        pointBorderWidth: 0,
-                        pointRadius: 2,
-                        pointBorderColor: '#676B73',
-                        borderWidth: 1,
-                        data: [22, 44, 67, 43, 76, 45, 12]
-                    }
-                ]
-            };
-    
-            var c1 = document.getElementById("lineOptions").getContext("2d");
-            new Chart(c1, {type: 'line', data: lineData, options: globalOptions});
-    
-            
-            /**
-             * Data for Bar chart
-             */
-            var barData = {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [
-                    {
-                        label: "Assigned Leads",
-                        backgroundColor: '#2fef6a',
-                        borderColor: "#2fef6a",
-                        borderWidth: 1,
-                        data: [9, 8, 5, 6, 3, 2, 16]
-                    },
-                    {
-                        label: "Unassigned Leads",
-                        backgroundColor: '#56a5f5',
-                        borderColor: "#56a5f5",
-                        borderWidth: 1,
-                        data: [5, 5, 5, 4, 5, 2, 23]
-                    }
-                ]
-            };
-    
-            var c3 = document.getElementById("barOptions").getContext("2d");
-            new Chart(c3, {type: 'bar', data: barData, options: globalOptions});
-    
-            /**
-             * Options for Pie chart
-             */
 
-            // For a pie chart
-            
-            labels = new Array();
-            data = new Array();
-            color = new Array();
 
-            {% for leads_status in leads_count_pie_chart %}
-                labels.push('{{leads_status.status__name|safe}}')
-                data.push({{leads_status.total}});
-                color.push('{{leads_status.status__color|safe}}')
-            {% endfor %}
 
-            var canvas = document.getElementById("chartjs-4");
-            var ctx = canvas.getContext('2d');
-
-            new_data = {
-                datasets: [{
-                    backgroundColor: color,
-                    data: data
-                }],
-                
-
-                // These labels appear in the legend and in the tooltips when hovering different arcs
-                labels: labels
-            };
-
-            var myPieChart = new Chart(ctx,{
-                type: 'polarArea',
-                data: new_data,
-                options : {
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        enabled: true
-                    }
-                }
-            });
-    
-        });
-
-    </script>
 
 {% endblock %}

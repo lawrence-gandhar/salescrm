@@ -294,7 +294,35 @@ def dashboard(request,  usertype = None):
     #
 
     if data_dict["show_bar_graphs"]:
-        
+        """
+        [
+            {
+                label: "Assigned Leads",
+                backgroundColor: '#2fef6a',
+                borderColor: "#2fef6a",
+                borderWidth: 1,
+                data: [9, 8, 5, 6, 3, 2, 16]
+            },
+        ]
+        """
+
+        bar_data = Bargraph_Settings.objects.filter(user_id =  int(request.session["user_id"])).select_related('lead_status').values('lead_status','filters')
+        if bar_data.count() > 0:
+
+            bar_data_status = [x["lead_status"] for x in bar_data] 
+            
+            lead_stats = Leads_tbl.objects.filter(status_id__in = bar_data_status, creation_date__month = 1).values('status','creation_date').annotate(total = Count('status')).order_by()
+            print(lead_stats.query)
+
+
+
+
+            data_dict["show_custom_bargraph"] = True
+            data_dict["lead_bargraph_status"] = {}
+
+
+
+
         pass
 
 
@@ -1059,6 +1087,19 @@ def system_settings(request, usertype = None):
     data_dict["counters_settings_data"]["lead_status"] = lead_status
 
     #*******************************************
+    #   Bar Graph Settings
+    #*******************************************
+    bargraph_settings_data = Bargraph_Settings.objects.filter(user_id = int(request.session["user_id"])).values()
+
+    data_dict["bargraph_settings_data"] = dict({"bargraph_customization":False})
+    lead_status = {}
+    for item in bargraph_settings_data:
+        data_dict["bargraph_settings_data"]["bargraph_customization"] = item["bar_customization"]
+        lead_status[item["lead_status_id"]] = item["filters"]
+        
+    data_dict["bargraph_settings_data"]["lead_status"] = lead_status
+
+    #*******************************************
     #   Lead Status List
     #*******************************************
     data_dict["lead_status_list"] = Lead_status.objects.filter(active = 1).values('id','name')    
@@ -1156,8 +1197,6 @@ def contacts(request, usertype = None, view_type = None):
     data_dict["css_files"] = []
     data_dict["view_type"] = view_type
     data_dict["back_link"] = "/"+ current_user_url(request.session["user_id"]) + "/contacts/"+view_type+"/"
-
-    print(data_dict["back_link"])
 
     data_dict["js_files"] = ["vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"]
 
@@ -1497,7 +1536,40 @@ def save_meeting_opertions(request, usertype = None,):
 
     messages.add_message(request, messages.INFO, 'Operation Failed')
     return redirect('/'+current_user_url(request.session["user_id"]) + '/meeting/schedule/'+ str(meeting.contact_id))
-        
+
+#*******************************************************************************
+# BAR GRAPH CUSTOMIZATION
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def bargraph_customization(request, usertype = None):
+    if request.is_ajax():
+
+        Bargraph_Settings.objects.filter(user_id = int(request.session["user_id"])).delete()
+
+        customize_bargraph = request.POST.get('customize_bargraph', False)
+        lead_status = request.POST.getlist('lead_status[]')
+        filters = request.POST.getlist('lead_status_active[]') 
+
+        if customize_bargraph:
+            main_tup = [] 
+            for id in lead_status:
+                if id in filters:
+                    main_tup.append((id,1))
+                else:
+                    main_tup.append((id,0))
+
+            for i,j in main_tup:
+                counters = Bargraph_Settings( 
+                    user_id = int(request.session["user_id"]),
+                    bar_customization = int(customize_bargraph),
+                    lead_status_id = int(i),
+                    filters = int(j)
+                )
+                counters.save()    
+        return HttpResponse(1)
+    return HttpResponse(0)      
 
 
 
