@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 from django.conf import settings	
 
 # Condition operators for models
-from django.db.models import Q, Count, Sum, Prefetch
+from django.db.models import Q, Count, Sum, Prefetch, Func
 from django.core.exceptions import ObjectDoesNotExist
 
 # Other imports
@@ -30,7 +30,7 @@ from django.shortcuts import render, redirect
 from crm.helpers import *
 
 # system imports
-import sys, os, csv, json, datetime
+import sys, os, csv, json, datetime, calendar
 from django.utils import timezone
 
 #
@@ -41,7 +41,17 @@ from django.contrib.auth.decorators import login_required
 #
 from django.contrib import messages
 
+
 # Create your views here.
+
+#******************************************************************************
+#   DB HELPERS
+#******************************************************************************
+
+class Month(Func):
+    function = 'Extract'
+    template = '%(function)s(MONTH from %(expression)s)'
+    output_field = models.IntegerField()
 
 #*******************************************************************************
 # AUTHENTICATION  
@@ -294,38 +304,50 @@ def dashboard(request,  usertype = None):
     #
 
     if data_dict["show_bar_graphs"]:
-        """
-        [
-            {
-                label: "Assigned Leads",
-                backgroundColor: '#2fef6a',
-                borderColor: "#2fef6a",
-                borderWidth: 1,
-                data: [9, 8, 5, 6, 3, 2, 16]
-            },
-        ]
-        """
-
-        bar_data = Bargraph_Settings.objects.filter(user_id =  int(request.session["user_id"])).select_related('lead_status').values('lead_status','filters')
+        
+        bar_data = Bargraph_Settings.objects.filter(user_id =  int(request.session["user_id"])).values('lead_status','filters')
         if bar_data.count() > 0:
 
-            bar_data_status = [x["lead_status"] for x in bar_data] 
-            
-            lead_stats = Leads_tbl.objects.filter(status_id__in = bar_data_status, creation_date__month = 1).values('status','creation_date').annotate(total = Count('status')).order_by()
-            print(lead_stats.query)
+            gs = []
 
+            for bar_item in bar_data:
+                now = timezone.now()
 
+                lead_status_var = Lead_status.objects.filter(active = True).filter(pk = int(bar_item["lead_status"])).values_list('id','name','color')
 
+                for i in lead_status_var:
+
+                    fd = {
+                        'label': i[1],
+                        'backgroundColor': i[2],
+                        'borderColor': "#ffffff",
+                        'borderWidth': '1',
+                        'data': []
+                    }   
+
+                    for month in [x for x in range(1,13)]:
+                        date_end = str(now.year)+"-"+str(month)+"-"+str(calendar.monthrange(now.year,int(month))[1])+" 23:59:59"
+                        
+                        date_end = timezone.datetime.strptime(date_end, '%Y-%m-%d %H:%M:%S') 
+                        date_start = timezone.datetime.strptime(str(now.year)+"-"+str(month)+"-01 00:00:00", '%Y-%m-%d %H:%M:%S') 
+
+                        lead_list = Leads_tbl.objects.filter(creation_date__gte = date_start).filter(creation_date__lte = date_end).filter(status_id = int(i[0]))
+                        
+                        if bar_item["filters"]:
+                            lead_list = lead_list.filter(active = bar_item["filters"])
+                        
+                        lead_list = lead_list.values('status').annotate(total = Count('status')).order_by()
+
+                        if len(lead_list) > 0:
+                            for xx in lead_list:
+                                fd['data'].append(xx["total"])
+                        else:
+                            fd['data'].append(0)
+
+                    gs.append(fd)
 
             data_dict["show_custom_bargraph"] = True
-            data_dict["lead_bargraph_status"] = {}
-
-
-
-
-        pass
-
-
+            data_dict["lead_bargraph_status"] = json.dumps(gs)
 
     return render(request, template, data_dict)
 
