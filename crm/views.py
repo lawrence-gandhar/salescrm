@@ -212,9 +212,11 @@ def dashboard(request,  usertype = None):
                     pass
         else:
             leads = Leads_tbl.objects.all()
+
             data_dict["lead_status"]["New"] = 0
             data_dict["lead_status"]["Closed"] = 0
             data_dict["lead_status"]["Reject"] = 0
+            
             for lead in leads:
 
                 if lead.status.name in data_dict["lead_status"].keys():
