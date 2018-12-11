@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 from django.conf import settings	
 
 # Condition operators for models
-from django.db.models import Q, Count, Sum, Prefetch, Func
+from django.db.models import Q, Count, Sum, Prefetch
 from django.core.exceptions import ObjectDoesNotExist
 
 # Other imports
@@ -44,14 +44,6 @@ from django.contrib import messages
 
 # Create your views here.
 
-#******************************************************************************
-#   DB HELPERS
-#******************************************************************************
-
-class Month(Func):
-    function = 'Extract'
-    template = '%(function)s(MONTH from %(expression)s)'
-    output_field = models.IntegerField()
 
 #*******************************************************************************
 # AUTHENTICATION  
@@ -220,6 +212,9 @@ def dashboard(request,  usertype = None):
                     pass
         else:
             leads = Leads_tbl.objects.all()
+            data_dict["lead_status"]["New"] = 0
+            data_dict["lead_status"]["Closed"] = 0
+            data_dict["lead_status"]["Reject"] = 0
             for lead in leads:
 
                 if lead.status.name in data_dict["lead_status"].keys():
