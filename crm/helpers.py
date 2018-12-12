@@ -24,7 +24,6 @@ from crm.models.contacts import *
 import sys, os, csv, json, datetime, random, string
 from django.utils import timezone, safestring
 
-
 #******************************************************************************* 
 # CURRENT USERTYPE SUBLINK
 #******************************************************************************* 
@@ -80,7 +79,10 @@ def dropdowns(data = (), selected = 0, select_text = "-- Select --"):
 #
 def checkboxes(data = (),selected = [], name = ""):
 
-    html_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    try:
+        html_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    except:
+        html_id = 'abcdefghijkl'
 
     html = []
 
@@ -204,3 +206,18 @@ def meeting_logs(meeting_id = None, user_id = None, record_id = None, log = None
         meeting.save()
     except:
         pass
+
+#******************************************************************************* 
+# INPUT VALIDATIONS
+#******************************************************************************* 
+#
+
+def check_required(val = None):
+    if val is None:
+        return False
+    else:
+        if len(val.strip()) > 0 :
+            return True
+        return False
+
+

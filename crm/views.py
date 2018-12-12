@@ -38,7 +38,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-#
 from django.contrib import messages
 
 
@@ -216,7 +215,7 @@ def dashboard(request,  usertype = None):
             data_dict["lead_status"]["New"] = 0
             data_dict["lead_status"]["Closed"] = 0
             data_dict["lead_status"]["Reject"] = 0
-            
+
             for lead in leads:
 
                 if lead.status.name in data_dict["lead_status"].keys():
@@ -294,22 +293,30 @@ def dashboard(request,  usertype = None):
 
     if data_dict["show_polararea_charts"]:
         leads_t = Leads_tbl.objects.select_related('status').values('status__name', 'status__color').annotate(total = Count('status_id')).order_by()
-        data_dict["leads_count_pie_chart"] = leads_t
-    
+        
+        if leads_t.count() >0:
+            data_dict["leads_count_pie_chart_count"] = True
+            data_dict["leads_count_pie_chart"] = leads_t
+        else:
+            leads_status_t = Lead_status.objects.filter(active = True)
+            data_dict["leads_count_pie_chart_count"] = False
+            data_dict["leads_count_pie_chart"] = leads_status_t
+
     #
     #   Bar Graphs
     #
 
     if data_dict["show_bar_graphs"]:
-        
+        gs = []
+        data_dict["lead_bargraph_status"] = json.dumps(gs)
+
+        now = timezone.now()
+
         bar_data = Bargraph_Settings.objects.filter(user_id =  int(request.session["user_id"])).values('lead_status','filters')
+        
         if bar_data.count() > 0:
-
-            gs = []
-
             for bar_item in bar_data:
-                now = timezone.now()
-
+                
                 lead_status_var = Lead_status.objects.filter(active = True).filter(pk = int(bar_item["lead_status"])).values_list('id','name','color')
 
                 for i in lead_status_var:
@@ -346,6 +353,39 @@ def dashboard(request,  usertype = None):
             data_dict["show_custom_bargraph"] = True
             data_dict["lead_bargraph_status"] = json.dumps(gs)
 
+        else:           
+            lead_status_var = Lead_status.objects.filter(active = True).values_list('id','name','color')
+
+            for i in lead_status_var:
+
+                fd = {
+                    'label': i[1],
+                    'backgroundColor': i[2],
+                    'borderColor': "#ffffff",
+                    'borderWidth': '1',
+                    'data': []
+                }   
+
+                for month in [x for x in range(1,13)]:
+                    date_end = str(now.year)+"-"+str(month)+"-"+str(calendar.monthrange(now.year,int(month))[1])+" 23:59:59"
+                    
+                    date_end = timezone.datetime.strptime(date_end, '%Y-%m-%d %H:%M:%S') 
+                    date_start = timezone.datetime.strptime(str(now.year)+"-"+str(month)+"-01 00:00:00", '%Y-%m-%d %H:%M:%S') 
+
+                    lead_list = Leads_tbl.objects.filter(creation_date__gte = date_start).filter(creation_date__lte = date_end).filter(status_id = int(i[0]))                                        
+                    lead_list = lead_list.values('status').annotate(total = Count('status')).order_by()
+
+                    if len(lead_list) > 0:
+                        for xx in lead_list:
+                            fd['data'].append(xx["total"])
+                    else:
+                        fd['data'].append(0)
+
+                gs.append(fd)
+
+            data_dict["show_custom_bargraph"] = False
+            data_dict["lead_bargraph_status"] = json.dumps(gs)
+
     return render(request, template, data_dict)
 
 
@@ -377,6 +417,40 @@ def add_lead(request, usertype = None):
     submit = request.POST.get("submit", False)
 
     if submit:
+
+        #
+        #   VALIDATION
+        #
+
+        error_found = 0
+
+        if not check_required(request.POST["company_name"]):
+            error_found += 1
+            messages.error(request, 'Company Name cannot be blank')
+
+        if not check_required(request.POST["contact_firstname"]):
+            error_found += 1
+            messages.error(request, 'Contact Firstname cannot be blank')
+
+        if not check_required(request.POST["contact_lastname"]):
+            error_found += 1
+            messages.error(request, 'Contact Lastname cannot be blank')
+
+        if not check_required(request.POST["contact_phone"]):
+            error_found += 1
+            messages.error(request, 'Contact Phone cannot be blank')
+
+        if not check_required(request.POST["contact_email"]):
+            error_found += 1
+            messages.error(request, 'Contact Email cannot be blank')
+
+        if error_found > 0 :
+            return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add/')
+
+
+        #
+        #
+        #
 
         try:
             lead = Leads_tbl(
@@ -697,6 +771,8 @@ def manage_leads(request, usertype = None):
             return render(request,'crm/error.html',data_dict)
     except EmptyPage:
         return render(request,'crm/error.html',data_dict) 
+    except AttributeError:
+        leads = paginator.page(page)
 
     data_dict["leads"] = leads
     
@@ -794,6 +870,8 @@ def lead_assignments(request, usertype = None):
             return render(request,'crm/error.html',{})
     except EmptyPage:
         return render(request,'crm/error.html',{}) 
+    except AttributeError:
+        leads = paginator.page(page)
 
     data_dict["leads"] = leads
 
@@ -1268,6 +1346,8 @@ def contacts(request, usertype = None, view_type = None):
             return render(request,'crm/error.html',data_dict)
     except EmptyPage:
         return render(request,'crm/error.html', data_dict) 
+    except AttributeError:
+        data_dict["contacts"] = paginator.page(page)
 
     return render(request, template, data_dict)  
 

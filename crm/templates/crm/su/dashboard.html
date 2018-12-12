@@ -26,7 +26,9 @@ var globalOptions = {
         }],
         yAxes: [{
             ticks: {
-                fontColor: "#90969D"
+                fontColor: "#90969D",
+                min: 0,
+                beginAtZero: true,
             },
             gridLines: {
                 color: "#37393F"
@@ -159,11 +161,19 @@ var globalOptions = {
                         data = new Array();
                         color = new Array();
 
-                        {% for leads_status in leads_count_pie_chart %}
-                            labels.push('{{leads_status.status__name|safe}}')
-                            data.push({{leads_status.total}});
-                            color.push('{{leads_status.status__color|safe}}')
-                        {% endfor %}
+                        {% if leads_count_pie_chart_count %}
+                            {% for leads_status in leads_count_pie_chart %}
+                                labels.push('{{leads_status.status__name|safe}}')
+                                data.push({{leads_status.total}});
+                                color.push('{{leads_status.status__color|safe}}')
+                            {% endfor %}
+                        {% else %}
+                            {% for leads_status in leads_count_pie_chart %}
+                                labels.push('{{leads_status.name|safe}}')
+                                data.push(0);
+                                color.push('{{leads_status.color|safe}}')
+                            {% endfor %}
+                        {% endif %}
 
                         var canvas = document.getElementById("chartjs-4");
                         var ctx = canvas.getContext('2d');
@@ -209,13 +219,23 @@ var globalOptions = {
                                         <th width="50px">Code</th>
                                     </thead>
                                     <tbody>
-                                        {% for lead in leads_count_pie_chart %}
-                                        <tr>
-                                            <td>{{lead.status__name|safe}}</td>
-                                            <td>{{lead.total|safe}}</td>
-                                            <td class="text-center"><span style="display:block; border-radius:100%; width:20px; height:20px; border:2px solid #ffffff; background-color:{{lead.status__color|safe}}"></span></td>
-                                        </tr>
-                                        {% endfor %}
+                                        {% if leads_count_pie_chart_count %}
+                                            {% for lead in leads_count_pie_chart %}
+                                            <tr>
+                                                <td>{{lead.status__name|safe}}</td>
+                                                <td>{{lead.total|safe}}</td>
+                                                <td class="text-center"><span style="display:block; border-radius:100%; width:20px; height:20px; border:2px solid #ffffff; background-color:{{lead.status__color|safe}}"></span></td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for lead in leads_count_pie_chart %}
+                                            <tr>
+                                                <td>{{lead.name|safe}}</td>
+                                                <td>0</td>
+                                                <td class="text-center"><span style="display:block; border-radius:100%; width:20px; height:20px; border:2px solid #ffffff; background-color:{{lead.color|safe}}"></span></td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>
