@@ -52,8 +52,9 @@ def page_title():
 #
 
 @register.simple_tag
-def current_user_link(value):
-    return current_user_url(value)
+def current_user_link( value):
+    return settings.MY_URL+current_user_url(value)
+    
 
 
 #

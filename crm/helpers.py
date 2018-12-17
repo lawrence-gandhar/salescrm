@@ -19,10 +19,10 @@ from crm.models.leads import *
 from crm.models.system_settings import * 
 from crm.models.contacts import * 
 
-
 # system related imports
 import sys, os, csv, json, datetime, random, string
 from django.utils import timezone, safestring
+
 
 #******************************************************************************* 
 # CURRENT USERTYPE SUBLINK

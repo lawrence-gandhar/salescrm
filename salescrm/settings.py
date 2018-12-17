@@ -125,3 +125,9 @@ PAGE_TITLE = 'SalesCRM | FUSION BPO SERVICES'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+#
+# USER CONSTANT
+#  
+MY_URL = ''

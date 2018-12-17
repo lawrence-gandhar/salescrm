@@ -222,13 +222,13 @@ label.control-label{font-size:90%;}
                                                                     <div class="form-group" style="margin-bottom:5px;">
                                                                         <label for="inputEmail3" class="col-md-2 control-label">Inbound</label>
                                                                         <div class="col-md-10">
-                                                                            <input type="text" class="form-control" id="inputEmail3" required name="inbound_per_month" value="{{inbound_per_month|safe}}">
+                                                                            <input type="number" class="form-control" id="inputEmail3" required name="inbound_per_month" value="{{inbound_per_month|safe}}">
                                                                         </div>
                                                                     </div> 
                                                                     <div class="form-group" style="">
                                                                         <label for="inputEmail3" class="col-md-2 control-label">Outbound</label>
                                                                         <div class="col-md-10">
-                                                                            <input type="text" class="form-control" id="inputEmail3" required name="outbound_per_month"  value="{{outbound_per_month|safe}}">
+                                                                            <input type="number" class="form-control" id="inputEmail3" required name="outbound_per_month"  value="{{outbound_per_month|safe}}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -248,13 +248,13 @@ label.control-label{font-size:90%;}
                                                                     <div class="form-group" style="margin-bottom:5px;">
                                                                         <label for="inputEmail3" class="col-md-2 control-label">Inbound m/call</label>
                                                                         <div class="col-md-10">
-                                                                            <input type="text" class="form-control" id="inputEmail3" required name="inbound_mins_per_call"   value="{{inbound_mins_per_call|safe}}">
+                                                                            <input type="number" class="form-control" id="inputEmail3" required name="inbound_mins_per_call"   value="{{inbound_mins_per_call|safe}}">
                                                                         </div>
                                                                     </div> 
-                                                                    <div class="form-group" style="">
+                                                                    <div class="form-group">
                                                                         <label for="inputEmail3" class="col-md-2 control-label">Outbound m/call</label>
                                                                         <div class="col-md-10">
-                                                                            <input type="text" class="form-control" id="inputEmail3" required name="outbound_mins_per_call"   value="{{outbound_mins_per_call|safe}}">
+                                                                            <input type="number" class="form-control" id="inputEmail3" required name="outbound_mins_per_call"   value="{{outbound_mins_per_call|safe}}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -407,6 +407,7 @@ label.control-label{font-size:90%;}
                                                         </div>
                                                     </div>                
                                                     <div class="col-md-12" style="margin-top:20px">
+                                                        <a style="margin-left:5px;" href="/{% current_user_link user.id %}/leads/manage/" type="button" class="btn btn-w-md btn-info pull-right">SKIP</a>
                                                         <input type="submit" name="submit" value="SUBMIT" class="btn btn-w-md btn-success pull-right">
                                                     </div>
                                                 </div>  

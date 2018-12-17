@@ -479,7 +479,7 @@ def add_lead(request, usertype = None):
 
             add_lead_logs(lead.id, request.session["user_id"], 'Lead Added')
 
-            messages.error(request, 'Data Saved')
+            messages.success(request, 'Data Saved')
             return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/add/2/'+str(lead.id))
 
         except:
@@ -621,6 +621,37 @@ def add_lead_step_2(request, usertype = None, slug = None, step = 1,  id = None)
 
         if step == '1':
 
+            #
+            #   VALIDATION
+            #
+
+            error_found = 0
+
+            if not check_required(request.POST["company_name"]):
+                error_found += 1
+                messages.error(request, 'Company Name cannot be blank')
+
+            if not check_required(request.POST["contact_firstname"]):
+                error_found += 1
+                messages.error(request, 'Contact Firstname cannot be blank')
+
+            if not check_required(request.POST["contact_lastname"]):
+                error_found += 1
+                messages.error(request, 'Contact Lastname cannot be blank')
+
+            if not check_required(request.POST["phone"]):
+                error_found += 1
+                messages.error(request, 'Contact Phone cannot be blank')
+
+            if not check_required(request.POST["email"]):
+                error_found += 1
+                messages.error(request, 'Contact Email cannot be blank')
+
+            if error_found > 0 :
+                return redirect("/"+current_user_url(request.session["user_id"]) + '/leads/'+slug+'/'+step+'/' + str(id) +'/')
+
+
+
             try:
                 lead_present = Leads_tbl.objects.get(pk = int(id))
                 found_lead = True
@@ -736,7 +767,8 @@ def manage_leads(request, usertype = None):
 
     data_dict["error"] = ""
     data_dict["country_json"] = country_json()
-    data_dict["back_link"] = 'crm/'+current_user_url(request.session["user_id"])+'/leads/manage/'
+
+    data_dict["back_link"] = "/"+settings.MY_URL+current_user_url(request.session["user_id"])+'/leads/manage/'
 
     leads = Leads_tbl.objects
     submit = request.POST.get('submit', False)
@@ -765,15 +797,19 @@ def manage_leads(request, usertype = None):
             page = 1
         leads = paginator.get_page(page)
         check = paginator.page(page)
+    except AttributeError:
+        try:
+            leads = paginator.page(page)
+        except EmptyPage:
+            return render(request,'crm/error.html',data_dict)  
+    except EmptyPage:
+        return render(request,'crm/error.html',data_dict) 
     except InvalidPage:
         return render(request,'crm/error.html',data_dict)
     except PageNotAnInteger:
-            return render(request,'crm/error.html',data_dict)
-    except EmptyPage:
-        return render(request,'crm/error.html',data_dict) 
-    except AttributeError:
-        leads = paginator.page(page)
-
+        return render(request,'crm/error.html',data_dict)
+    
+    
     data_dict["leads"] = leads
     
     return render(request, template, data_dict)
@@ -1347,7 +1383,10 @@ def contacts(request, usertype = None, view_type = None):
     except EmptyPage:
         return render(request,'crm/error.html', data_dict) 
     except AttributeError:
-        data_dict["contacts"] = paginator.page(page)
+        try:
+            data_dict["contacts"] = paginator.page(page)
+        except EmptyPage:
+            return render(request,'crm/error.html', data_dict) 
 
     return render(request, template, data_dict)  
 
