@@ -2,6 +2,7 @@
 {% block content %}
 {% load navigation %}
 {% load static %}
+{% load userdata %}
 
 <style>
 div.highlighted-div{background-color:rgba(255,0,0,0.7)}
@@ -41,7 +42,7 @@ div.highlighted-div{background-color:rgba(255,0,0,0.7)}
                                         <input type="hidden" disabled value="{{user.id}}">
                                         <div class="panel panel-filled ">
                                             <div class="panel-body">
-                                                <img alt="image" class="img-rounded image-lg" src="{% static 'images/a2.jpg' %}">
+                                                <img alt="image" class="img-rounded image-lg" src="{% user_profile_pic user.id %}">
                                                 <h5 class="m-b-none"><a href="#"> {{user.first_name|safe|title}} {{user.last_name|safe|title}}</a></h5>
                                                 <div class="m-b-xs c-white small">{{user.email|safe}}</div>
                                                 <small><i class="fa fa-clock-o"></i> Last active in: 24.05.2017</small>
@@ -69,7 +70,7 @@ div.highlighted-div{background-color:rgba(255,0,0,0.7)}
                                                         <tbody data-boxtype="dont-drop-on-me">
                                                             <tr data-boxtype="dont-drop-on-me">
                                                                 <td style="padding:5px; width:65px;" data-boxtype="dont-drop-on-me">
-                                                                    <img alt="image" class="img-rounded image-lg" src="/static/images/a2.jpg" data-boxtype="dont-drop-on-me">
+                                                                    <img alt="image" class="img-rounded image-lg" src="{% user_profile_pic user_present.id %}" data-boxtype="dont-drop-on-me">
                                                                 </td>
                                                                 <td style="padding:5px" data-boxtype="dont-drop-on-me">
                                                                     <i onclick="remove_me($(this))" class="fa fa-fw fa-trash pull-right" style="color:#f6a821;cursor:pointer;" data-boxtype="dont-drop-on-me"></i>

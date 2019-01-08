@@ -104,19 +104,19 @@
                                             <table class="table table-bordered hide" style="margin-bottom:0px;">
                                                 <thead style="background-color:#b3b3b3;color:#000000;"> 
                                                     <th style="color:#000000">Assigned To</th> 
-                                                    <th style="color:#000000">L.O.B</th> 
-                                                    <th style="color:#000000">Payment Type</th> 
-                                                    <th style="color:#000000">Probability</th> 
-                                                    <th style="color:#000000">FTE</th> 
-                                                    <th style="color:#000000">Annual</th> 
+                                                    <!--<th style="color:#000000">L.O.B</th>--> 
+                                                    <th style="color:#000000">Conference</th> 
+                                                    <!--<th style="color:#000000">Probability</th>
+                                                    <th style="color:#000000">FTE</th> --> 
+                                                    <th style="color:#000000">Sweet Spot</th> 
                                                 </thead>
                                                 <tbody style="color:#000000">
                                                     <tr>
                                                         <td></td>
-                                                        <td>{{lead.line_of_business__name|safe}}</td>
+                                                        <!--<td>{{lead.line_of_business__name|safe}}</td>-->
                                                         <td>{{lead.payment_type__name|safe}}</td>
-                                                        <td>{{lead.probability__name|safe}}</td>
-                                                        <td>{{lead.fte|safe}}</td>
+                                                        <!--<td>{{lead.probability__name|safe}}</td>
+                                                        <td>{{lead.fte|safe}}</td>-->
                                                         <td>{{lead.annual|safe}}</td>
                                                     </tr>
                                                 </tbody>
@@ -226,24 +226,7 @@
 </section>
 
 <script>
-
-    var country_json = {{country_json|safe}};
-
-    $(document).ready(function(){
-        $("td.address").each(function(i,v){
-            elem = $(this).find("p.country")
-            country_code = $(elem).text();
-            
-            $.each(country_json, function(i, item){
-                if(item.code == country_code){
-                    $(elem).text(item.name+" ("+item.code+")");
-                }
-            });
-        });
-
-    });
-
-
+   
     //======================================================================
     // SHOW MORE DATA ON ICON CLICK
     //======================================================================
@@ -269,6 +252,7 @@
                 $("td#product_service_description-"+id).text(data.product_service_description);
                 $("td#anticipated_date-"+id).text(data.anticipated_date);
 
+                /*
                 area_of_operation = data.area_of_operation.split(",");
                 area_of_operation_data = "";
                 for(i = 0; i< area_of_operation.length; i++){
@@ -279,7 +263,11 @@
                     });
                 }
                 $("td#area_of_operation-"+id).text(area_of_operation_data);
+                */
 
+                $("td#area_of_operation-"+id).text(data.area_of_operation)
+
+                /*
                 centers_interested = data.centers_interested.split(",");
                 centers_interested_data = "";
                 for(i = 0; i< centers_interested.length; i++){
@@ -290,6 +278,8 @@
                     });
                 }
                 $("td#centers_interested-"+id).text(centers_interested_data);
+                */
+                $("td#centers_interested-"+id).text(data.centers_interested);
 
                 $("td#lpm-"+id).text(data.lpm);
                 $("td#work_hours-"+id).text(data.work_hours);
@@ -308,6 +298,24 @@
         $(elem).parent().find("i.fa-level-down").removeClass("hide");
         $(elem).addClass("hide");
     }
+
+    /*
+    var country_json ={{country_json}};
+
+    $(document).ready(function(){
+        $("td.address").each(function(i,v){
+            elem = $(this).find("p.country")
+            country_code = $(elem).text();
+            
+            $.each(country_json, function(i, item){
+                if(item.code == country_code){
+                    $(elem).text(item.name+" ("+item.code+")");
+                }
+            });
+        });
+
+    });*/
+
 
 </script>
 {% endblock %}
