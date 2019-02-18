@@ -1196,6 +1196,7 @@ def system_settings(request, usertype = None):
         data_dict["geo_graph"] = dashboard_settings_data.geo_graph
         data_dict["geo_list"] = dashboard_settings_data.geo_list
         data_dict["geo_list_filters"] = dashboard_settings_data.geo_list_filters
+        data_dict["form2_enabled"] = dashboard_settings_data.form2_enabled 
         
     except:
         data_dict["counters"] = False
@@ -1205,6 +1206,9 @@ def system_settings(request, usertype = None):
         data_dict["geo_graph"] = False
         data_dict["geo_list"] = False
         data_dict["geo_list_filters"] = False
+        data_dict["form2_enabled"] = False
+
+        print(data_dict)
 
     #*******************************************
     #   Counter Settings
@@ -1709,5 +1713,62 @@ def bargraph_customization(request, usertype = None):
         return HttpResponse(1)
     return HttpResponse(0)      
 
+#*******************************************************************************
+#   LEAD FORM 2/ STEP 2 - FORM SETTINGS 
+#*******************************************************************************
+#
+@user_access_check
+@login_required
+def form2_customization(request, usertype = None):
+    if request.is_ajax():
+        form2_enabled = request.POST.get('customize_form2',False)
 
+        if form2_enabled == "1":
+            form2_enabled = True
+
+        try:
+            dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
+            dashboard_settings.form2_enabled = form2_enabled
+            dashboard_settings.save()
+        except:
+            dashboard_settings = Dashboard_Settings(
+                user_id = int(request.session["user_id"]),
+                counters = True,
+                polar_area = False,
+                line_charts = False,
+                bar_graphs = True,
+                geo_graph = False,
+                geo_list = False,
+                geo_list_filters = False,
+                form2_enabled = form2_enabled,
+            )
+            dashboard_settings.save()
+        return HttpResponse(1)
+    return HttpResponse(0)
+
+#*******************************************************************************
+# CALENDER
+#*******************************************************************************
+#
+@user_access_check     
+@login_required
+def my_calendar(request, usertype = None):
+    data_dict = {}
+
+    template = 'crm/calendar.html'
+
+    from .calendar_structure import Calendar_Format
+
+    change_month_box = request.POST.get('change_month_box',timezone.now().month)
+    change_year_box = request.POST.get('change_year_box',timezone.now().year)
+    
+    if request.POST:
+        calen = Calendar_Format(change_year_box, change_month_box)
+    else:
+        calen = Calendar_Format()
+
+
+    data_dict["calendar"] = calen.create_html_structure()
+
+    return render(request, template, data_dict)
 

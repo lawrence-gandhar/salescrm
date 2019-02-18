@@ -241,6 +241,35 @@
                                 </table>
                             </div>
                             <!-- BAR GRAPH END -->
+                            <!-- DISPLAY LEAD FORM 2 -->
+                            <div class="table">
+                                <table class="table table-responsive table-bordered table-stripped" style="background:transparent">
+                                <form action="" method="post" id="form2-form">
+                                    {% csrf_token %}
+                                    <tr>
+                                        <td colspan="2" class="colored-td" style="padding:0px 8px;">
+                                            <h5>Lead Form 2/Step 2 Customizations</h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Enable Lead - Form 2/ Step 2 form. By default it is disabled.
+                                        </td>
+                                        <td width="20px" class="text-center" style="padding: 0px 4px 0px 7px">
+                                            <div class="checkbox checkbox-success">
+                                                <input name="customize_form2" id="customize_form2" class="styled" type="checkbox" value="1" {% if form2_enabled %} checked="" {% endif %}>
+                                                <label for="customize_form2" style="padding:0px;margin:0px"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <button type="button" onclick="lead_form2_settings_save()" class="btn btn-default btn-sm pull-right">SAVE</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -310,6 +339,16 @@ function counter_settings_save(){
 //
 function bargraph_settings_save(){
     $.post("/{% current_user_link user.id %}/bargraph_customization/", $("#bargraph-settings-form").serialize(), function(data){
+        if(data == 1) location.reload();
+        else alert('Unknown Error Occurred!');
+    });
+}
+
+//
+//  LEAD FORM 2/STEP 2 SETTINGS
+//
+function lead_form2_settings_save(){
+    $.post("/{% current_user_link user.id %}/form2_customization/", $("#form2-form").serialize(), function(data){
         if(data == 1) location.reload();
         else alert('Unknown Error Occurred!');
     });

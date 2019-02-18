@@ -1,0 +1,75 @@
+{% extends 'crm/base.html' %}
+{% block content %}
+{% load navigation %}
+{% load userdata %}
+{% load common_filters %}
+
+<style>
+.table th,td{
+    border: 1px solid #3d404c;
+    text-align: center;
+}
+
+.table th{
+    background-color: #f6a821;
+}
+
+.hide_me{display: none !important}
+.show_me{display: inline !important}
+
+</style>
+
+<section class="content">
+    <div class="container-fluid" style="padding-right: 30px">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="view-header">
+                    <div class="header-icon">
+                        <i class="pe page-header-icon pe-7s-users"></i>
+                    </div>
+                    <div class="header-title">
+                        <h3>Calendar</h3>
+                        <small>
+                            Schedules & Events
+                        </small>
+                        <div class="btn-group pull-right" style="margin-top: -20px;">
+                            <a href="/{% current_user_link user.id %}/contacts/list/" type="button" class="btn btn-warning"><i class="pe page-header-icon pe-7s-menu"></i> List View</a>
+                            <a href="/{% current_user_link user.id %}/contacts/grid/" type="button" class="btn btn-warning"><i class="pe page-header-icon pe-7s-keypad"></i> Grid View</a>
+                            <button type="button" class="pull-right btn btn-warning" data-toggle="modal" data-target="#modal-add-contact">Add Event</button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel" style="margin-bottom:0px">
+                            <div class="table-responsive" style="padding:10px;">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    {{calendar|safe}}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+$(document).ready(function(){
+
+    $('select#change_month_box').on('change',function(){
+        $("form").submit()
+    });
+
+});
+
+
+
+
+</script>
+
+{% endblock %}

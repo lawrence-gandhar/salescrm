@@ -14,6 +14,7 @@ class Dashboard_Settings(models.Model):
     geo_graph = models.BooleanField(default = False, db_index = True,)
     geo_list = models.BooleanField(default = False, db_index = True,)
     geo_list_filters = models.BooleanField(default = False, db_index = True,)
+    form2_enabled = models.BooleanField(default = False, db_index = True)
 
     class Meta:
         db_table = 'dashboard_settings'

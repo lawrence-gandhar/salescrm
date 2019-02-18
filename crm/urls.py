@@ -26,11 +26,13 @@ try:
         re_path(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),
         re_path(r'^(?P<usertype>[\w.@+-]+)/counters_customization/$', views.counters_customization),
         re_path(r'^(?P<usertype>[\w.@+-]+)/bargraph_customization/$', views.bargraph_customization),
+        re_path(r'^(?P<usertype>[\w.@+-]+)/form2_customization/$', views.form2_customization),
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/get_data/$', views.contacts_get_data),
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/save_data/$', views.contacts_save_data),
         re_path(r'^(?P<usertype>[\w.@+-]+)/contacts/(?P<view_type>[\w.@+-]+)/$', views.contacts),        
         re_path(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d]+)/$', views.meetings_scheduled),   
         re_path(r'^(?P<usertype>[\w.@+-]+)/meeting/operation/$', views.save_meeting_opertions),     
+        re_path(r'^(?P<usertype>[\w.@+-]+)/my_calendar/$', views.my_calendar),     
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 except ImportError:
@@ -57,9 +59,11 @@ except ImportError:
         url(r'^(?P<usertype>[\w.@+-]+)/dashboard_settings/$', views.dashboard_settings),  
         url(r'^(?P<usertype>[\w.@+-]+)/counters_customization/$', views.counters_customization),
         url(r'^(?P<usertype>[\w.@+-]+)/bargraph_customization/$', views.bargraph_customization),
+        url(r'^(?P<usertype>[\w.@+-]+)/form2_customization/$', views.form2_customization),
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/get_data/$', views.contacts_get_data),
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/save_data/$', views.contacts_save_data),
         url(r'^(?P<usertype>[\w.@+-]+)/contacts/(?P<view_type>[\w.@+-]+)/$', views.contacts),   
         url(r'^(?P<usertype>[\w.@+-]+)/meeting/schedule/(?P<contact_id>[\d]+)/$', views.meetings_scheduled),     
-        url(r'^(?P<usertype>[\w.@+-]+)/meeting/operation/$', views.save_meeting_opertions),     
+        url(r'^(?P<usertype>[\w.@+-]+)/meeting/operation/$', views.save_meeting_opertions), 
+        url(r'^(?P<usertype>[\w.@+-]+)/my_calendar/$', views.my_calendar),     
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
