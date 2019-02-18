@@ -166,6 +166,7 @@ def dashboard(request,  usertype = None):
     data_dict["show_geo_list"] = True
     data_dict["show_geo_list_filters"] = True
     data_dict["show_custom_counters"] = False
+    data_dict["enable_form2"] = False
 
     try:
         dashboard_settings = Dashboard_Settings.objects.get(user_id = int(request.session["user_id"]))
@@ -176,6 +177,7 @@ def dashboard(request,  usertype = None):
         data_dict["show_geo_graph"] = dashboard_settings.geo_graph
         data_dict["show_geo_list"] = dashboard_settings.geo_list
         data_dict["show_geo_list_filters"] = dashboard_settings.geo_list_filters
+        data_dict["enable_form2"] = dashboard_settings.enable_form2
     except:
         pass
 

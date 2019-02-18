@@ -44,7 +44,7 @@
                                             {% for lead in leads %}
                                                 {% ifequal lead.status_id item.id %}
                                                     
-                                                    <table data-boxtype="dont-drop-on-me" id="tab-{{lead.id}}" draggable="true" ondragstart="drag(event)" class="table table-responsive" style="cursor:pointer; margin-bottom:0px; font-size: 80%; background-color:transparent; border:none">
+                                                    <table data-boxtype="dont-drop-on-me" id="tab-{{lead.id}}" draggable="true" ondragstart="drag(event)" class="table table-responsive" style="cursor:pointer; margin:10px 0px; font-size: 80%; background-color:transparent; border:none">
                                                         <tr data-boxtype="dont-drop-on-me">
                                                             <td data-boxtype="dont-drop-on-me" width="70px" style="border: none; padding:0px 5px; font-weight:bold;">Company</td>
                                                             <td data-boxtype="dont-drop-on-me" style="border: none; padding:0px 5px">: {{lead.company_name|title|safe}}</td>
@@ -72,7 +72,7 @@
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                    <hr data-boxtype="dont-drop-on-me" id="hr-{{lead.id}}">
+                                                    <hr style="margin:0px" data-boxtype="dont-drop-on-me" id="hr-{{lead.id}}">
                                                 {% endifequal %}
                                             {% endfor %}
                                         </div>
@@ -111,12 +111,10 @@
         if(ev.target.getAttribute('data-boxtype') != document.getElementById(data).getAttribute('data-boxtype')){
             ev.target.appendChild(document.getElementById(data));
             $("#hr-"+data.replace("tab-","")).remove();
-            $("#tab-"+data.replace("tab-","")).after('<hr data-boxtype="dont-drop-on-me" id="hr-'+data.replace("tab-","")+'">');
+            $("#tab-"+data.replace("tab-","")).after('<hr data-boxtype="dont-drop-on-me" style="margin:0px" id="hr-'+data.replace("tab-","")+'">');
             
-            //console.log($("#"+data).parent("td").attr("id"));
-            drop_point = ($("#"+data).parent("td").attr("id")).replace("drop_point","");
+            drop_point = ($("#"+data).closest("td").attr("id")).replace("drop_point","");
 
-            
             $.post("/{% current_user_link user.id %}/leads/lead_multiple_status_set/",{'case':parseInt(data.replace("tab-","")), 'lead_status':parseInt(drop_point), 'csrfmiddlewaretoken': '{{ csrf_token }}'},function(data){
                 if(data==1){
                     location.reload();
